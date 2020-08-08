@@ -25,6 +25,12 @@
       <small>
         Easily remix Lego Art sets into custom pictures using computer vision
       </small>
+      <div style="margin-bottom: 10px;">
+        <small>
+          <span>Made with ♥ by Deb</span> &bull;
+          <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
+        </small>
+      </div>
     </div>
 
     <div class="row" id="steps-row" hidden>
@@ -132,7 +138,7 @@
 
     </div>
 
-    <div id="image-input" class="card card-body" style="padding-bottom: 30px">
+    <div id="image-input" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
           <h4 id="input-image-text">Input Image</h4>
@@ -150,18 +156,22 @@
       </div>
     </div>
 
-    <div class="card card-body" style="padding-bottom: 30px; margin-top: 10px">
+    <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px">
       <div class="row">
         <div class="col-sm">
-          <h4 id="input-image-text">About</h4>
-          <div style="margin-bottom: 10px;">
-            <small>
-              <span id="version-number"></span> &bull;
-              <span>Made with ♥ by Deb</span> &bull;
-              <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
-            </small>
-          </div>
-          <div>
+          <h4>
+            <a data-toggle="collapse" href="#about-collapse" aria-expanded="false" aria-controls="about-collapse">
+              About
+            </a>
+          </h4>
+          <div class="collapse" id="about-collapse">
+            <div style="margin-bottom: 10px;">
+              <small>
+                <span id="version-number"></span> &bull;
+                <span>Made with ♥ by Deb</span> &bull;
+                <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
+              </small>
+            </div>
             <h6>What is it?</h6>
             <p>In mid 2020, The Lego Group released the <a href="https://www.lego.com/en-us/campaigns/art">Lego Art<a /> theme,
                 which allows people to create a predetermined image using lego studs.<br>
