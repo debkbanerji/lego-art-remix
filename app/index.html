@@ -33,13 +33,20 @@
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-1-canvas" hidden></canvas>
           <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
-          <h2>Step 1: Scale input image</h2>
+          <h4>Step 1: Scale input image</h4>
           <div class="btn-group">
             <button class="btn dropdown-toggle" type="button" id="target-resolution-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Target Resolution: 48x48
             </button>
             <div class="dropdown-menu" id="target-resolution-options" aria-labelledby="target-resolution-button">
             </div>
+          </div>
+          <div style="margin-left: 4px; margin-top: 10px">
+            <small>
+              <b>Tips</b>
+              <p>Supported image formats are dependent on your browser's compatibility</p>
+              <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+            </small>
           </div>
         </div>
       </div>
@@ -49,7 +56,7 @@
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-2-canvas" hidden></canvas>
           <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
-          <h2>Step 2: Adjust colors</h2>
+          <h4>Step 2: Adjust colors</h4>
           <div style="width: 100%">
             <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
             <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
@@ -73,7 +80,7 @@
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-3-canvas" hidden></canvas>
           <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
-          <h2>Step 3: Align to closest pixel from available colors</h2>
+          <h4>Step 3: Align to closest pixel from available colors</h4>
           <div class="btn-group">
             <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Input Set: RGB (Example)
@@ -81,11 +88,24 @@
             <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
             </div>
           </div>
-          <div class="checkbox">
+          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
             <label>
               <input type="checkbox" id="use-bleedthrough-check" checked>
               Account for round stud bleedthrogh
             </label>
+          </div>
+          <div style="margin-left: 4px">
+            <small>
+              <b>Tip</b>
+              <p>
+                Depending on the set, many images don't easily translate to the available color palette.
+                Try to use an image with similar colors to those of the set you're remixing.
+              </p>
+              <p>
+                In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
+                For more robust color adjustments, I recommend making the changes in another tool before remixing the image.
+              </p>
+            </small>
           </div>
         </div>
       </div>
@@ -95,10 +115,19 @@
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-4-canvas" hidden></canvas>
           <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
-          <h2>Step 4: Correct for actually available studs</h2>
-          <br>
+          <h4>Step 4: Correct for actually available studs</h4>
           <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
           <div id="instructions-canvas-container" hidden></div>
+          <div style="margin-left: 4px; margin-top: 10px">
+            <small>
+              <b>Tip</b>
+              <p>
+                If there is a significant loss of quality between steps 3 and 4, the set you're using is running out of studs.
+                If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
+                help by reducing the number of studs required.
+              </p>
+            </small>
+          </div>
         </div>
       </div>
 
@@ -107,11 +136,17 @@
     <div id="image-input" class="card card-body" style="padding-bottom: 30px">
       <div class="row">
         <div class="col-sm">
-          <h2 id="input-image-text">Input Image</h2>
+          <h4 id="input-image-text">Input Image</h4>
           <div>
             <input type="file" id="input-image-selector" name="input-image-selector" />
           </div>
           <canvas id="input-canvas" hidden></canvas>
+          <div style="margin-left: 4px; margin-top: 10px">
+            <small>
+              <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
+              <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+            </small>
+          </div>
         </div>
       </div>
     </div>
