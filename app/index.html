@@ -160,12 +160,12 @@
       <div class="row">
         <div class="col-sm">
           <h4>
-            <a data-toggle="collapse" href="#about-collapse" aria-expanded="false" aria-controls="about-collapse">
+            <a data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="about">
               About
             </a>
           </h4>
-          <div class="collapse" id="about-collapse">
-            <div style="margin-bottom: 10px;">
+          <div class="collapse" id="about">
+            <div style="margin-bottom: 15px;">
               <small>
                 <span id="version-number"></span> &bull;
                 <span>Made with ♥ by Deb</span> &bull;
@@ -173,11 +173,34 @@
               </small>
             </div>
             <h6>What is it?</h6>
-            <p>In mid 2020, The Lego Group released the <a href="https://www.lego.com/en-us/campaigns/art">Lego Art<a /> theme,
-                which allows people to create a predetermined image using lego studs.<br>
+            <p style="margin-bottom: 5px">In 2020, The Lego Group released the <a href="https://www.lego.com/en-us/campaigns/art" target="_blank">Lego Art<a />
+                theme, which allows people to create a predetermined image using lego studs.<br>
                 Lego Art Remix lets you upload your own image, and then uses computer vision to use the
                 studs from a Lego Art set that you already have to recreate the image.</p>
-            <p>This project is in no way affiliated with The Lego Group</p>
+            <p>This project is not affiliated with The Lego Group</p>
+            <h6>Performance and Security</h6>
+            <p style="margin-bottom: 5px">
+              The computer vision techniques used are pretty inexpensive, and the resolutions being dealt with are naturally quite
+              low, so as of the time of writing, the algorithm runs quite quickly. This allows for it to be run on the client, and
+              on the machines that I tested, it ran in near real time.
+            </p>
+            <p>
+              Since it runs entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>),
+              no image data is sent to a server and so it's very secure.
+            </p>
+            <p></p>
+            <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
+            <em style="margin-bottom: 5px">Direct any concerns or ideas for improvements <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em>
+            <p style="margin-bottom: 5px">As of the time of writing, I don't have all of the sets, and I haven't had much time to test.
+              As a result, there's probably quite a few bugs, so let me know if you find any.
+            </p>
+            <p style="margin-bottom: 5px">There's probably quite a few features that could be added, such as more/custom resolutions or more
+              flexible set selection. I can get to these if there's enough need.
+            </p>
+            <p style="margin-bottom: 5px">Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within
+              a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in
+              the work to add a server side computation option would allow for more complex approaches. (such as constrained VAEs, etc.)
+            </p>
           </div>
         </div>
       </div>
