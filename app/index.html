@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <link href="favicon.png" rel="icon" type="image/x-icon" />
+
+  <title>Lego Art Remix</title>
+
+  <meta property="og:title" content="Lego Art Remix" />
+  <meta property="og:description" content="Easily remix Lego Art sets into custom pictures using computer vision" />
+  <meta property="og:image" content="https://lego-art-remix.debkbanerji.com/favicon.png" />
+</head>
+
+<body>
+  <div style="margin: 10px; padding-bottom: 30px; overflow: hidden">
+    <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
+    <div style="margin-bottom: 10px; margin-left: 6px">
+      <small>
+        <span id="version-number"></span> -
+        <span>Made with ♥ by Deb</span>
+      </small>
+    </div>
+
+    <div class="row" id="steps-row" hidden>
+      <div id="step-1" class="col-6 col-md-3">
+        <div class="card" style="padding: 10px; margin-bottom: 10px">
+          <canvas id="step-1-canvas" hidden></canvas>
+          <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
+          <h2>Step 1: Scale input image</h2>
+          <div class="btn-group">
+            <button class="btn dropdown-toggle" type="button" id="target-resolution-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Target Resolution: 48x48
+            </button>
+            <div class="dropdown-menu" id="target-resolution-options" aria-labelledby="target-resolution-button">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="step-2" class="col-6 col-md-3">
+        <div class="card" style="padding: 10px; margin-bottom: 10px">
+          <canvas id="step-2-canvas" hidden></canvas>
+          <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
+          <h2>Step 2: Adjust colors</h2>
+          <div style="width: 100%">
+            <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
+            <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+          </div>
+          <div style="width: 100%">
+            <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
+            <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
+          </div>
+          <div style="width: 100%">
+            <div>Value adjustment: <span id="value-text">0%</span></div>
+            <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
+          </div>
+          <button class="btn" type="button" id="reset-colors-button">
+            Reset Colors
+          </button>
+        </div>
+      </div>
+
+
+      <div id="step-3" class="col-6 col-md-3">
+        <div class="card" style="padding: 10px; margin-bottom: 10px">
+          <canvas id="step-3-canvas" hidden></canvas>
+          <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
+          <h2>Step 3: Align to closest pixel from available colors</h2>
+          <div class="btn-group">
+            <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Input Set: RGB (Example)
+            </button>
+            <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+            </div>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="use-bleedthrough-check" checked>
+              Account for round stud bleedthrogh
+            </label>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="step-4" class="col-6 col-md-3">
+        <div class="card" style="padding: 10px; margin-bottom: 10px">
+          <canvas id="step-4-canvas" hidden></canvas>
+          <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
+          <h2>Step 4: Correct for actually available studs</h2>
+          <br>
+          <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+          <div id="instructions-canvas-container" hidden></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="image-input" class="card card-body" style="padding-bottom: 30px">
+      <div class="row">
+        <div class="col-sm">
+          <h2 id="input-image-text">Input Image</h2>
+          <div>
+            <input type="file" id="input-image-selector" name="input-image-selector" />
+          </div>
+          <canvas id="input-canvas" hidden></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+  <script src="js/stud-maps.js"></script>
+  <script src="js/algo.js"></script>
+  <script src="js/index.js"></script>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+
+</html>
