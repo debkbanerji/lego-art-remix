@@ -24,7 +24,7 @@ Since it runs entirely within the browser, no image data is sent to a server and
 
 As of the time of writing, I don't have all of the sets, and I haven't had much time to test. As a result, there's probably quite a few bugs, so let me know if you find any.
 
-There's quite a few features that could be added, such as more/custom resolutions or more flexible set selection. I can get to these if there's enough need.
+There's many features that could be added, such as more/custom resolutions or more flexible set selection. I can get to these if there's enough need.
 
 Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in the work to add a server side computation option would allow for more complex approaches (such as constrained VAEs, etc.).
             
