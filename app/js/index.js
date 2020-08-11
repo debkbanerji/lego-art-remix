@@ -321,7 +321,7 @@ function generateInstructions() {
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
         const pdf = new jsPDF({
-            orientation: 'l',
+            orientation: titlePageCanvas.width < titlePageCanvas.height ? 'p' : 'l',
             unit: 'mm',
             format: [titlePageCanvas.width, titlePageCanvas.height]
         });

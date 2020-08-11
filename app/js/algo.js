@@ -327,13 +327,14 @@ function generateInstructionTitlePage(pixelArray, width, plateWidth, availableSt
     pictureWidth = plateWidth * scalingFactor;
     pictureHeight = plateWidth * scalingFactor;
 
-    canvas.height = pictureHeight * 1.5;
+    const radius = scalingFactor / 2;
+
+    canvas.height = Math.max(pictureHeight * 1.5, pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5);
     canvas.width = pictureWidth * 2;
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 
-    const radius = scalingFactor / 2;
 
     drawStudCountForContext(getUsedPixelsStudMap(pixelArray), availableStudHexList, scalingFactor, ctx, pictureWidth * 0.25, pictureHeight * 0.20 - radius);
 
@@ -373,7 +374,9 @@ function generateInstructionPage(pixelArray, plateWidth, availableStudHexList, s
     pictureWidth = plateWidth * scalingFactor;
     pictureHeight = (pixelArray.length / 4) * scalingFactor / plateWidth;
 
-    canvas.height = pictureHeight * 1.5;
+    const radius = scalingFactor / 2;
+
+    canvas.height = Math.max(pictureHeight * 1.5, pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5);
     canvas.width = pictureWidth * 2;
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -393,8 +396,6 @@ function generateInstructionPage(pixelArray, plateWidth, availableStudHexList, s
     ctx.stroke();
 
     ctx.lineWidth = 1;
-
-    const radius = scalingFactor / 2;
 
     const studToNumber = {};
     availableStudHexList.forEach((stud, i) => {
