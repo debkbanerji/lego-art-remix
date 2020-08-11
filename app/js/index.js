@@ -1,4 +1,4 @@
-const VERSION_NUMBER = 'v2020.8.8';
+const VERSION_NUMBER = 'v2020.8.10';
 document.getElementById('version-number').innerHTML = VERSION_NUMBER;
 
 const interactionSelectors = [
@@ -10,7 +10,8 @@ const interactionSelectors = [
     'value-slider',
     'reset-colors-button',
     'use-bleedthrough-check',
-    'download-instructions-button'
+    'download-instructions-button',
+    'add-custom-stud-button'
 ].map(id => document.getElementById(id));
 
 function disableInteraction() {
@@ -85,6 +86,7 @@ Object.keys(STUD_MAPS).forEach(studMap => {
     option.textContent = STUD_MAPS[studMap].name;
     option.value = studMap;
     option.addEventListener("click", () => {
+        document.getElementById("custom-stud-map-controls").hidden = true;
         selectedStudMap = STUD_MAPS[studMap].studMap;
         selectedFullSetName = STUD_MAPS[studMap].officialName;
         selectedSortedStuds = STUD_MAPS[studMap].sortedStuds;
@@ -94,6 +96,75 @@ Object.keys(STUD_MAPS).forEach(studMap => {
         }
     });
     studMapOptions.appendChild(option);
+});
+
+const customStudTableBody = document.getElementById('custom-stud-table-body');
+
+function runCustomStudMap() {
+    const customStudMap = {};
+    const customSortedStuds = [];
+    Array.from(customStudTableBody.children).forEach((stud) => {
+        const studHex = stud.children[0].children[0].value;
+        customSortedStuds.push(studHex);
+        const numStuds = parseInt(stud.children[1].children[0].value);
+        customStudMap[studHex] = (customStudMap[studHex] || 0) + numStuds;
+    });
+    if (customSortedStuds.length > 0) {
+        selectedStudMap = customStudMap;
+        selectedFullSetName = 'Custom'
+        selectedSortedStuds = customSortedStuds;
+    }
+    runStep1();
+}
+
+const customOption = document.createElement("a");
+customOption.className = "dropdown-item btn";
+customOption.textContent = "Custom";
+customOption.value = "custom";
+customOption.addEventListener("click", () => {
+    document.getElementById("custom-stud-map-controls").hidden = false;
+    document.getElementById('stud-map-button').innerHTML = 'Custom set';
+    runCustomStudMap();
+});
+studMapOptions.appendChild(customOption);
+
+document.getElementById('add-custom-stud-button').addEventListener("click", () => {
+    const studRow = document.createElement("tr");
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "btn btn-danger"
+    removeButton.style = "padding: 2px"
+    removeButton.innerHTML = "X";
+    removeButton.addEventListener("click", () => {
+        customStudTableBody.removeChild(studRow);
+        runCustomStudMap();
+    });
+
+    const colorCell = document.createElement("td");
+    const colorInput = document.createElement("input");
+    colorInput.type = "color";
+    colorInput.value = "#ff0000"
+    colorInput.addEventListener("change", runCustomStudMap);
+    colorCell.appendChild(colorInput);
+    studRow.appendChild(colorCell);
+
+
+    const numberCell = document.createElement("td");
+    const numberInput = document.createElement("input");
+    numberInput.style = "max-width: 80px"
+    numberInput.type = "number";
+    numberInput.value = 10;
+    numberInput.addEventListener("change", (v) => {
+        numberInput.value = Math.round(Math.min(Math.max(parseFloat(numberInput.value) || 0, 0), 99999));
+        runCustomStudMap();
+    });
+    numberCell.style = "display: flex; flex-direction: horizontal; width: 100%"
+    numberCell.appendChild(numberInput);
+    numberCell.appendChild(removeButton);
+    studRow.appendChild(numberCell);
+
+    customStudTableBody.appendChild(studRow);
+    runCustomStudMap();
 });
 
 document.getElementById('target-resolution-button').innerHTML = `Target Resolution: ${targetResolution[0]}x${targetResolution[1]}`;
@@ -199,21 +270,29 @@ function runStep3() {
 function runStep4(callback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
-    const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(step3PixelArray,
-        document.getElementById('use-bleedthrough-check').checked ? getDarkenedStudMap(selectedStudMap) : selectedStudMap, step2PixelArray);
-    step4Canvas.width = targetResolution[0];
-    step4Canvas.height = targetResolution[1];
-    drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
-    setTimeout(() => {
+    step4Canvas.width = 0;
+    try {
+        step4Canvas.width = targetResolution[0];
+        step4Canvas.height = targetResolution[1];
+        step4CanvasContext.clearRect(0, 0, targetResolution[0], targetResolution[1]);
+        step4CanvasUpscaledContext.clearRect(0, 0, targetResolution[0] * SCALING_FACTOR, targetResolution[1] * SCALING_FACTOR);
+        const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(step3PixelArray,
+            document.getElementById('use-bleedthrough-check').checked ? getDarkenedStudMap(selectedStudMap) : selectedStudMap, step2PixelArray);
+
+        drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
+        setTimeout(() => {
+            enableInteraction();
+            step4CanvasUpscaledContext.imageSmoothingEnabled = false;
+            drawStudImageOnCanvas(
+                document.getElementById('use-bleedthrough-check').checked ? revertDarkenedImage(availabilityCorrectedPixelArray, getDarkenedStudsToStuds(Object.keys(selectedStudMap))) : availabilityCorrectedPixelArray,
+                targetResolution[0], SCALING_FACTOR, step4CanvasUpscaled);
+            if (callback) {
+                callback();
+            }
+        }, 1); // TODO: find better way to check that input is finished
+    } catch (_e) {
         enableInteraction();
-        step4CanvasUpscaledContext.imageSmoothingEnabled = false;
-        drawStudImageOnCanvas(
-            document.getElementById('use-bleedthrough-check').checked ? revertDarkenedImage(availabilityCorrectedPixelArray, getDarkenedStudsToStuds(Object.keys(selectedStudMap))) : availabilityCorrectedPixelArray,
-            targetResolution[0], SCALING_FACTOR, step4CanvasUpscaled);
-        if (callback) {
-            callback();
-        }
-    }, 1); // TODO: find better way to check that input is finished
+    }
 }
 
 function addWaterMark(pdf) {

@@ -86,6 +86,12 @@
           <canvas id="step-3-canvas" hidden></canvas>
           <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
           <h4>Step 3: Align to closest pixel from available colors</h4>
+          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
+            <label>
+              <input type="checkbox" id="use-bleedthrough-check" checked>
+              Account for round stud bleedthrogh
+            </label>
+          </div>
           <div class="btn-group">
             <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Input Set: RGB (Example)
@@ -93,11 +99,20 @@
             <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
             </div>
           </div>
-          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
-            <label>
-              <input type="checkbox" id="use-bleedthrough-check" checked>
-              Account for round stud bleedthrogh
-            </label>
+          <div id="custom-stud-map-controls" style="margin-top: 30px; margin-bottom: 30px" hidden>
+            <b>Note: Step 4 of the algorithm cannot run unless you select enough studs to fill the picture</b>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Color</th>
+                  <th scope="col">Number Available</th>
+                </tr>
+              </thead>
+              <tbody id="custom-stud-table-body">
+              </tbody>
+            </table>
+            <button class="btn btn-success" id="add-custom-stud-button">
+              <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
           </div>
           <div style="margin-left: 4px">
             <small>
