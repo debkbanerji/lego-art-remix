@@ -3,8 +3,9 @@ document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 const interactionSelectors = [
     "input-image-selector",
-    "target-resolution-button",
     "stud-map-button",
+    "width-slider",
+    "height-slider",
     "hue-slider",
     "saturation-slider",
     "value-slider",
@@ -52,8 +53,10 @@ const step4CanvasContext = step4Canvas.getContext("2d");
 const step4CanvasUpscaled = document.getElementById("step-4-canvas-upscaled");
 const step4CanvasUpscaledContext = step4CanvasUpscaled.getContext("2d");
 
-const targetResolutions = [[32, 32], [48, 48], [32, 48], [48, 32], [16, 16]];
-let targetResolution = targetResolutions[1];
+let targetResolution = [
+    document.getElementById("width-slider").value,
+    document.getElementById("height-slider").value
+];
 const SCALING_FACTOR = 40;
 const PLATE_WIDTH = 16;
 
@@ -64,6 +67,42 @@ window.addEventListener("resize", () => {
             targetResolution[0];
     });
 });
+
+function updateStudCountText() {
+    const requiredStuds = targetResolution[0] * targetResolution[1];
+    let availableStuds = 0;
+    Array.from(customStudTableBody.children).forEach(stud => {
+        availableStuds += parseInt(stud.children[1].children[0].value);
+    });
+    const missingStuds = Math.max(requiredStuds - availableStuds, 0);
+    document.getElementById("required-studs").innerHTML = requiredStuds;
+    document.getElementById("available-studs").innerHTML = availableStuds;
+    document.getElementById("missing-studs").innerHTML = missingStuds;
+}
+
+document.getElementById("width-slider").addEventListener(
+    "change",
+    () => {
+        document.getElementById(
+            "width-text"
+        ).innerHTML = document.getElementById("width-slider").value;
+        targetResolution[0] = document.getElementById("width-slider").value;
+        runStep1();
+    },
+    false
+);
+
+document.getElementById("height-slider").addEventListener(
+    "change",
+    () => {
+        document.getElementById(
+            "height-text"
+        ).innerHTML = document.getElementById("height-slider").value;
+        targetResolution[1] = document.getElementById("height-slider").value;
+        runStep1();
+    },
+    false
+);
 
 const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
@@ -182,34 +221,6 @@ document
         runCustomStudMap();
     });
 
-document.getElementById(
-    "target-resolution-button"
-).innerHTML = `Target Resolution: ${targetResolution[0]}x${
-    targetResolution[1]
-}`;
-const targetResolutionOptions = document.getElementById(
-    "target-resolution-options"
-);
-targetResolutionOptions.innerHTML = "";
-targetResolutions.forEach(resolution => {
-    const option = document.createElement("a");
-    option.className = "dropdown-item btn";
-    option.textContent = `${resolution[0]} X ${resolution[1]}`;
-    option.value = resolution;
-    option.addEventListener("click", () => {
-        targetResolution = resolution;
-        document.getElementById(
-            "target-resolution-button"
-        ).innerHTML = `Target Resolution: ${targetResolution[0]}x${
-            targetResolution[1]
-        }`;
-        if (inputImage) {
-            runStep1();
-        }
-    });
-    targetResolutionOptions.appendChild(option);
-});
-
 document.getElementById("hue-slider").addEventListener(
     "change",
     () => {
@@ -267,6 +278,7 @@ document.getElementById("use-bleedthrough-check").addEventListener(
 
 function runStep1() {
     disableInteraction();
+    updateStudCountText();
     step1Canvas.width = targetResolution[0];
     step1Canvas.height = targetResolution[1];
     step1CanvasContext.drawImage(

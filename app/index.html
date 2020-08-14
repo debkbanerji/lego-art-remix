@@ -39,11 +39,15 @@
           <canvas id="step-1-canvas" hidden></canvas>
           <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
           <h4>Step 1: Scale input image</h4>
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" id="target-resolution-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Target Resolution: 48x48
-            </button>
-            <div class="dropdown-menu" id="target-resolution-options" aria-labelledby="target-resolution-button">
+          <div>
+            <b>Target Resolution:</b>
+            <div style="width: 100%">
+              <div>Width: <span id="width-text">48</span></div>
+              <input type="range" id="width-slider" name="points" min="16" max="144" step="16" value="48" style="width: 100%">
+            </div>
+            <div style="width: 100%">
+              <div>Height: <span id="height-text">48</span></div>
+              <input type="range" id="height-slider" name="points" min="16" max="144" step="16" value="48" style="width: 100%">
             </div>
           </div>
           <div style="margin-left: 4px; margin-top: 10px">
@@ -100,11 +104,15 @@
             </div>
           </div>
           <div id="custom-stud-map-controls" style="margin-top: 30px; margin-bottom: 30px">
-            <small>
-              <b>Tip</b>
-              <p>Step 4 of the algorithm cannot run unless you select enough studs to fill the picture
-              </p>
-            </small>
+            <div style="margin-bottom: 30px">
+              <small>
+                <b>Required Studs: <span id="required-studs"></span></b><br>
+                <b>Available Studs: <span id="available-studs"></span></b><br>
+                <b>Missing Studs: <span id="missing-studs"></span></b><br>
+                <em>Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
+                </em>
+              </small>
+            </div>
             <table class="table">
               <thead>
                 <tr>
@@ -123,7 +131,7 @@
               <b>Tip</b>
               <p>
                 Depending on the set, many images don't easily translate to the available color palette.
-                Try to use an image with similar colors to those of the set you're remixing.
+                Try to use an image with similar colors to those of the set of studs you have available.
               </p>
               <p>
                 In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
@@ -144,6 +152,12 @@
           <div id="instructions-canvas-container" hidden></div>
           <div style="margin-left: 4px; margin-top: 10px">
             <small>
+              <b style="color: #ff4c00">Important</b>
+              <p>
+                Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                Be prepared to wait if you're generating instructions for larger resolutions.
+              </p>
+            </small><small>
               <b>Tip</b>
               <p>
                 If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.

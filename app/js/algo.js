@@ -429,7 +429,7 @@ function drawStudCountForContext(
     ctx.rect(
         horizontalOffset - radius * 2,
         verticalOffset + radius * 0.75,
-        radius * 7,
+        radius * 8,
         radius * 2.5 * (availableStudHexList.length + 0.5)
     );
     ctx.stroke();
