@@ -15,13 +15,17 @@ const interactionSelectors = [
     "add-custom-stud-button"
 ].map(id => document.getElementById(id));
 
+const customStudTableBody = document.getElementById("custom-stud-table-body");
+
 function disableInteraction() {
+    customStudTableBody.hidden = true;
     interactionSelectors.forEach(button => {
         button.disabled = true;
     });
 }
 
 function enableInteraction() {
+    customStudTableBody.hidden = false;
     interactionSelectors.forEach(button => {
         button.disabled = false;
     });
@@ -110,8 +114,6 @@ let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
 document.getElementById("stud-map-button").innerHTML =
     "Input Set: " + STUD_MAPS[DEFAULT_STUD_MAP].name;
-
-const customStudTableBody = document.getElementById("custom-stud-table-body");
 
 function populateCustomStudSelectors(studMap) {
     customStudTableBody.innerHTML = "";
