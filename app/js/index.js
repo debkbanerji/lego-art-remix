@@ -109,7 +109,7 @@ document.getElementById("height-slider").addEventListener(
     false
 );
 
-const DEFAULT_STUD_MAP = "rgb";
+const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
 let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
