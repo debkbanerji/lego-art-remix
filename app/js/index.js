@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.13";
+const VERSION_NUMBER = "v2020.8.14";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 const interactionSelectors = [
