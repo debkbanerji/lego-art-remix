@@ -207,7 +207,7 @@ const BRICKLINK_TILE_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(color =>
     return a.name > b.name ? 1 : -1;
 });
 
-const ALL_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(
+const ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(
     color =>
         KNOWN_BRICKLINK_STUD_COLOR_NAMES.includes(color.name) ||
         KNOWN_BRICKLINK_TILE_COLOR_NAMES.includes(color.name)

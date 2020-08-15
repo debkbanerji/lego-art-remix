@@ -25,6 +25,14 @@ function inverseHex(hex) {
     );
 }
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+
 function getPixelArrayFromCanvas(canvas) {
     const context = canvas.getContext("2d");
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
