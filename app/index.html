@@ -96,14 +96,7 @@
               Account for round stud bleedthrough
             </label>
           </div>
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Input Set: RGB (Example)
-            </button>
-            <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
-            </div>
-          </div>
-          <div id="custom-stud-map-controls" style="margin-top: 30px; margin-bottom: 30px">
+          <div id="custom-stud-map-controls" style="margin-bottom: 30px">
             <div style="margin-bottom: 30px">
               <small>
                 <b>Required Studs: <span id="required-studs"></span></b><br>
@@ -123,14 +116,35 @@
               <tbody id="custom-stud-table-body">
               </tbody>
             </table>
-            <button class="btn btn-success" id="add-custom-stud-button">
-              <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
+            <div style="padding-bottom: 10px">
+              <button class="btn btn-success" id="add-custom-stud-button">
+                <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
+            </div>
+            <div class="btn-group" style="padding-bottom: 10px" hidden>
+              <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Input Set
+              </button>
+              <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+              </div>
+            </div>
+            <div style="padding-bottom: 10px">
+              <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
+                Clear Existing Studs
+              </button>
+            </div>
+            <div class="btn-group">
+              <button class="btn dropdown-toggle" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Add Studs From Set
+              </button>
+              <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
+              </div>
+            </div>
           </div>
           <div style="margin-left: 4px">
             <small>
               <b>Tip</b>
               <p>
-                Depending on the set, many images don't easily translate to the available color palette.
+                Depending on the input set of studs, many images don't easily translate to the available color palette.
                 Try to use an image with similar colors to those of the set of studs you have available.
               </p>
               <p>

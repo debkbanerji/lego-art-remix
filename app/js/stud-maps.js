@@ -1,26 +1,40 @@
 STUD_MAPS = {
-    'warhol_marilyn_monroe': {
-        'name': 'Warhol (31197)',
-        'officialName': 'Andy Warhol\'s Marilyn Monroe (31197)',
+    'rgb': {
+        'name': 'RGB',
+        'officialName': 'RGB Example',
         'sortedStuds': [
-            '#000000',
-            '#666561',
-            '#11b8d2',
-            '#ffce00',
-            '#eaa0c6',
-            '#d14b96',
-            '#b80874'
+          '#ff6666',
+          '#66ff66',
+          '#6666ff',
         ],
         'studMap': {
-            '#ffce00': 587,
-            '#000000': 629,
-            '#666561': 131,
-            '#b80874': 46,
-            '#eaa0c6': 587,
-            '#d14b96': 587,
-            '#11b8d2': 587
+          '#ff6666': 1000,
+          '#66ff66': 1000,
+          '#6666ff': 1000,
         }
     },
+        'warhol_marilyn_monroe': {
+            'name': 'Warhol (31197)',
+            'officialName': 'Andy Warhol\'s Marilyn Monroe (31197)',
+            'sortedStuds': [
+                '#000000',
+                '#666561',
+                '#11b8d2',
+                '#ffce00',
+                '#eaa0c6',
+                '#d14b96',
+                '#b80874'
+            ],
+            'studMap': {
+                '#ffce00': 587,
+                '#000000': 629,
+                '#666561': 131,
+                '#b80874': 46,
+                '#eaa0c6': 587,
+                '#d14b96': 587,
+                '#11b8d2': 587
+            }
+        },
     'the_beatles': {
         'name': 'The Beatles (31198)',
         'officialName': 'The Beatles (31198)',

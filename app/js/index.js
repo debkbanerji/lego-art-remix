@@ -4,6 +4,7 @@ document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 const interactionSelectors = [
     "input-image-selector",
     "stud-map-button",
+    "mix-in-stud-map-button",
     "width-slider",
     "height-slider",
     "hue-slider",
@@ -108,7 +109,7 @@ document.getElementById("height-slider").addEventListener(
     false
 );
 
-const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
+const DEFAULT_STUD_MAP = "rgb";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
 let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
@@ -126,23 +127,75 @@ function populateCustomStudSelectors(studMap) {
     runCustomStudMap();
 }
 
+function mixInStudMap(studMap) {
+    document.getElementById("stud-map-button").innerHTML = "Custom set";
+    studMap.sortedStuds.forEach(stud => {
+        let existingRow = null;
+        Array.from(customStudTableBody.children).forEach(row => {
+            if (
+                row.children[0].children[0].value == stud &&
+                existingRow == null
+            ) {
+                existingRow = row;
+            }
+        });
+
+        if (existingRow == null) {
+            const newStudRow = getNewCustomStudRow();
+            newStudRow.children[0].children[0].value = stud;
+            newStudRow.children[1].children[0].value = studMap.studMap[stud];
+            customStudTableBody.appendChild(newStudRow);
+        } else {
+            existingRow.children[1].children[0].value =
+                parseInt(existingRow.children[1].children[0].value) +
+                studMap.studMap[stud];
+        }
+    });
+    runCustomStudMap();
+}
+
 populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP]);
 
 const studMapOptions = document.getElementById("stud-map-options");
 studMapOptions.innerHTML = "";
-Object.keys(STUD_MAPS).forEach(studMap => {
-    const option = document.createElement("a");
-    option.className = "dropdown-item btn";
-    option.textContent = STUD_MAPS[studMap].name;
-    option.value = studMap;
-    option.addEventListener("click", () => {
-        populateCustomStudSelectors(STUD_MAPS[studMap]);
-        document.getElementById("stud-map-button").innerHTML =
-            STUD_MAPS[studMap].name;
-        selectedFullSetName = STUD_MAPS[studMap].officialName;
+Object.keys(STUD_MAPS)
+    .filter(key => key !== "rgb")
+    .forEach(studMap => {
+        const option = document.createElement("a");
+        option.className = "dropdown-item btn";
+        option.textContent = STUD_MAPS[studMap].name;
+        option.value = studMap;
+        option.addEventListener("click", () => {
+            populateCustomStudSelectors(STUD_MAPS[studMap]);
+            document.getElementById("stud-map-button").innerHTML =
+                STUD_MAPS[studMap].name;
+            selectedFullSetName = STUD_MAPS[studMap].officialName;
+        });
+        studMapOptions.appendChild(option);
     });
-    studMapOptions.appendChild(option);
-});
+
+const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
+
+Object.keys(STUD_MAPS)
+    .filter(key => key !== "rgb")
+    .forEach(studMap => {
+        const option = document.createElement("a");
+        option.className = "dropdown-item btn";
+        option.textContent = STUD_MAPS[studMap].name;
+        option.value = studMap;
+        option.addEventListener("click", () => {
+            mixInStudMap(STUD_MAPS[studMap]);
+        });
+        mixInStudMapOptions.appendChild(option);
+    });
+
+document
+    .getElementById("clear-custom-studs-button")
+    .addEventListener("click", () => {
+        document.getElementById("stud-map-button").innerHTML = "Custom set";
+        customStudTableBody.innerHTML = "";
+        runCustomStudMap();
+    });
 
 function runCustomStudMap() {
     const customStudMap = {};
