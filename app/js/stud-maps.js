@@ -10,26 +10,25 @@ STUD_MAPS = {
     //     }
     // },
     warhol_marilyn_monroe: {
-        // TODO: Align to Lego colors
         name: "Warhol (31197)",
         officialName: "Andy Warhol's Marilyn Monroe (31197)",
         sortedStuds: [
             "#212121",
             "#595d60",
-            "#11b8d2",
-            "#ffce00",
-            "#eaa0c6",
-            "#d14b96",
-            "#b80874"
+            "#42c0fb",
+            "#f7d117",
+            "#ffbbff",
+            "#c87080",
+            "#b52952"
         ],
         studMap: {
-            "#ffce00": 587,
             "#212121": 629,
             "#595d60": 131,
-            "#b80874": 46,
-            "#eaa0c6": 587,
-            "#d14b96": 587,
-            "#11b8d2": 587
+            "#42c0fb": 587,
+            "#f7d117": 587,
+            "#ffbbff": 587,
+            "#c87080": 587,
+            "#b52952": 46
         }
     },
     the_beatles: {

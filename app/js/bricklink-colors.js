@@ -207,7 +207,12 @@ const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
     "Glow In Dark White",
     "Glitter Trans-Clear",
     "Glitter Trans-Dark Pink",
-    "Glitter Trans-Light Blue"
+    "Glitter Trans-Light Blue",
+    "Dark Bluish Gray", // manually added from Warhol
+    "Dark Pink", // manually added from Warhol
+    "Magenta", // manually added from Warhol
+    "Medium Azure", // manually added from Warhol
+
 ];
 
 const BRICKLINK_STUD_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(color =>
