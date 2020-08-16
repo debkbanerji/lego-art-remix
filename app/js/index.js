@@ -268,9 +268,14 @@ function getColorSelectorDropdown() {
 
     ALL_VALID_BRICKLINK_COLORS.forEach(color => {
         const option = document.createElement("a");
+        option.style.display = "flex";
         option.className = "dropdown-item btn";
-        option.textContent = color.name;
-        option.value = color.hex;
+        const text = document.createElement("span");
+        text.innerHTML = "&nbsp;" + color.name;
+        const colorSquare = getColorSquare(color.hex);
+        colorSquare.style.marginTop = "3px";
+        option.appendChild(colorSquare);
+        option.appendChild(text);
         option.addEventListener("click", () => {
             button.innerHTML = "";
             button.appendChild(getColorSquare(color.hex));
