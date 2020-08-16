@@ -60,6 +60,8 @@ const step4CanvasContext = step4Canvas.getContext("2d");
 const step4CanvasUpscaled = document.getElementById("step-4-canvas-upscaled");
 const step4CanvasUpscaledContext = step4CanvasUpscaled.getContext("2d");
 
+const bricklinkCacheCanvas = document.getElementById("bricklink-cache-canvas");
+
 let targetResolution = [
     document.getElementById("width-slider").value,
     document.getElementById("height-slider").value
@@ -478,6 +480,8 @@ function runStep4(callback) {
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
     step4Canvas.width = 0;
     try {
+        bricklinkCacheCanvas.width = targetResolution[0];
+        bricklinkCacheCanvas.height = targetResolution[1];
         step4Canvas.width = targetResolution[0];
         step4Canvas.height = targetResolution[1];
         step4CanvasContext.clearRect(
@@ -511,7 +515,7 @@ function runStep4(callback) {
                           getDarkenedStudsToStuds(Object.keys(selectedStudMap))
                       )
                     : availabilityCorrectedPixelArray,
-                step4Canvas
+                bricklinkCacheCanvas
             );
 
             drawStudImageOnCanvas(
@@ -658,7 +662,9 @@ document
         navigator.clipboard
             .writeText(
                 getWantedListXML(
-                    getUsedPixelsStudMap(getPixelArrayFromCanvas(step4Canvas)),
+                    getUsedPixelsStudMap(
+                        getPixelArrayFromCanvas(bricklinkCacheCanvas)
+                    ),
                     document.getElementById("use-tiles-for-export").checked
                         ? BRICKLINK_TILE_PART_NUMBER
                         : BRICKLINK_STUD_PART_NUMBER
