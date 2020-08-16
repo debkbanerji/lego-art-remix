@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.14";
+const VERSION_NUMBER = "v2020.8.15";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 const interactionSelectors = [
@@ -13,7 +13,9 @@ const interactionSelectors = [
     "reset-colors-button",
     "use-bleedthrough-check",
     "download-instructions-button",
-    "add-custom-stud-button"
+    "add-custom-stud-button",
+    "export-to-bricklink-button",
+    "use-tiles-for-export"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -120,7 +122,7 @@ function populateCustomStudSelectors(studMap) {
     customStudTableBody.innerHTML = "";
     studMap.sortedStuds.forEach(stud => {
         const studRow = getNewCustomStudRow();
-        studRow.children[0].children[0].value = stud;
+        studRow.children[0].children[0].children[0].children[0].style.backgroundColor = stud;
         studRow.children[1].children[0].value = studMap.studMap[stud];
         customStudTableBody.appendChild(studRow);
     });
@@ -132,23 +134,31 @@ function mixInStudMap(studMap) {
     studMap.sortedStuds.forEach(stud => {
         let existingRow = null;
         Array.from(customStudTableBody.children).forEach(row => {
-            if (
-                row.children[0].children[0].value == stud &&
-                existingRow == null
-            ) {
+            const rgb = row.children[0].children[0].children[0].children[0].style.backgroundColor
+                .replace("rgb(", "")
+                .replace(")", "")
+                .split(/,\s*/)
+                .map(shade => parseInt(shade));
+            const rowHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+            if (rowHex == stud && existingRow == null) {
                 existingRow = row;
             }
         });
 
         if (existingRow == null) {
             const newStudRow = getNewCustomStudRow();
-            newStudRow.children[0].children[0].value = stud;
+            newStudRow.children[0].children[0].children[0].innerHTML = "";
+            newStudRow.children[0].children[0].children[0].appendChild(
+                getColorSquare(stud)
+            );
             newStudRow.children[1].children[0].value = studMap.studMap[stud];
             customStudTableBody.appendChild(newStudRow);
         } else {
-            existingRow.children[1].children[0].value =
+            existingRow.children[1].children[0].value = Math.min(
                 parseInt(existingRow.children[1].children[0].value) +
-                studMap.studMap[stud];
+                    studMap.studMap[stud],
+                99999
+            );
         }
     });
     runCustomStudMap();
@@ -201,7 +211,12 @@ function runCustomStudMap() {
     const customStudMap = {};
     const customSortedStuds = [];
     Array.from(customStudTableBody.children).forEach(stud => {
-        const studHex = stud.children[0].children[0].value;
+        const rgb = stud.children[0].children[0].children[0].children[0].style.backgroundColor
+            .replace("rgb(", "")
+            .replace(")", "")
+            .split(/,\s*/)
+            .map(shade => parseInt(shade));
+        const studHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
         customSortedStuds.push(studHex);
         const numStuds = parseInt(stud.children[1].children[0].value);
         customStudMap[studHex] = (customStudMap[studHex] || 0) + numStuds;
@@ -225,6 +240,58 @@ customOption.addEventListener("click", () => {
 });
 studMapOptions.appendChild(customOption);
 
+function getColorSquare(hex) {
+    const result = document.createElement("div");
+    result.style.backgroundColor = hex;
+    result.style.width = "1em";
+    result.style.height = "1em";
+    return result;
+}
+
+function getColorSelectorDropdown() {
+    const DEFAULT_COLOR = "#a6ca55";
+
+    const container = document.createElement("div");
+    const id = "color-selector" + uuidv4();
+
+    const button = document.createElement("button");
+    button.className = "btn ";
+    button.type = "button";
+    button.setAttribute("data-toggle", "dropdown");
+    button.setAttribute("aria-haspopup", "true");
+    button.setAttribute("aria-expanded", "false");
+    button.id = id;
+    button.appendChild(getColorSquare(DEFAULT_COLOR));
+    button.value = DEFAULT_COLOR;
+
+    const dropdown = document.createElement("div");
+    dropdown.setAttribute("aria-labelledby", id);
+    dropdown.className = "dropdown-menu";
+
+    ALL_VALID_BRICKLINK_COLORS.forEach(color => {
+        const option = document.createElement("a");
+        option.style.display = "flex";
+        option.className = "dropdown-item btn";
+        const text = document.createElement("span");
+        text.innerHTML = "&nbsp;" + color.name;
+        const colorSquare = getColorSquare(color.hex);
+        colorSquare.style.marginTop = "3px";
+        option.appendChild(colorSquare);
+        option.appendChild(text);
+        option.addEventListener("click", () => {
+            button.innerHTML = "";
+            button.appendChild(getColorSquare(color.hex));
+            document.getElementById("stud-map-button").innerHTML = "Custom set";
+            runCustomStudMap();
+        });
+        dropdown.appendChild(option);
+    });
+
+    container.appendChild(button);
+    container.appendChild(dropdown);
+    return container;
+}
+
 function getNewCustomStudRow() {
     const studRow = document.createElement("tr");
 
@@ -238,13 +305,7 @@ function getNewCustomStudRow() {
     });
 
     const colorCell = document.createElement("td");
-    const colorInput = document.createElement("input");
-    colorInput.type = "color";
-    colorInput.value = "#ff0000";
-    colorInput.addEventListener("change", () => {
-        document.getElementById("stud-map-button").innerHTML = "Custom set";
-        runCustomStudMap();
-    });
+    const colorInput = getColorSelectorDropdown();
     colorCell.appendChild(colorInput);
     studRow.appendChild(colorCell);
 
@@ -443,6 +504,16 @@ function runStep4(callback) {
         setTimeout(() => {
             enableInteraction();
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
+            drawPixelsOnCanvas(
+                document.getElementById("use-bleedthrough-check").checked
+                    ? revertDarkenedImage(
+                          availabilityCorrectedPixelArray,
+                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                      )
+                    : availabilityCorrectedPixelArray,
+                step4Canvas
+            );
+
             drawStudImageOnCanvas(
                 document.getElementById("use-bleedthrough-check").checked
                     ? revertDarkenedImage(
@@ -578,6 +649,29 @@ document
     .getElementById("download-instructions-button")
     .addEventListener("click", () => {
         generateInstructions();
+    });
+
+document
+    .getElementById("export-to-bricklink-button")
+    .addEventListener("click", () => {
+        disableInteraction();
+        navigator.clipboard
+            .writeText(
+                getWantedListXML(
+                    getUsedPixelsStudMap(getPixelArrayFromCanvas(step4Canvas)),
+                    document.getElementById("use-tiles-for-export").checked
+                        ? BRICKLINK_TILE_PART_NUMBER
+                        : BRICKLINK_STUD_PART_NUMBER
+                )
+            )
+            .then(
+                function() {
+                    enableInteraction();
+                },
+                function(err) {
+                    console.error("Async: Could not copy text: ", err);
+                }
+            );
     });
 
 function handleInputImage(e) {
