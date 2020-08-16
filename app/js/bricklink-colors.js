@@ -81,7 +81,12 @@ const ALL_BRICKLINK_SOLID_COLORS = [
     {name: "Medium Dark Pink", hex: "#f785b1", id: 94},
     {name: "Bright Pink", hex: "#ffbbff", id: 104},
     {name: "Pink", hex: "#ffc0cb", id: 23},
-    {name: "Light Pink", hex: "#ffe1ff", id: 56}
+    {name: "Light Pink", hex: "#ffe1ff", id: 56},
+    // add in some epral colors to support specific sets,
+    // but avoid the other pearl colors for now since they
+    // may weirdly replace similar solid non pearl
+    {name: "Pearl Gold", hex: "#e79500", id: 115},
+    {name: "Pearl Dark Gray", hex: "#666660", id: 77}
 ];
 
 const HEX_TO_COLOR_NAME = {};
