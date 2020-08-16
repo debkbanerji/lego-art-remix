@@ -247,7 +247,7 @@ function getColorSquare(hex) {
 }
 
 function getColorSelectorDropdown() {
-    const DEFAULT_COLOR = "#ff0000";
+    const DEFAULT_COLOR = "#a6ca55";
 
     const container = document.createElement("div");
     const id = "color-selector" + uuidv4();

@@ -84,6 +84,16 @@ const ALL_BRICKLINK_SOLID_COLORS = [
     {name: "Light Pink", hex: "#ffe1ff", id: 56}
 ];
 
+const HEX_TO_COLOR_NAME = {};
+ALL_BRICKLINK_SOLID_COLORS.forEach(color => {
+    HEX_TO_COLOR_NAME[color.hex] = color.name;
+});
+
+const COLOR_NAME_TO_ID = {};
+ALL_BRICKLINK_SOLID_COLORS.forEach(color => {
+    COLOR_NAME_TO_ID[color.name] = color.id;
+});
+
 const BRICKLINK_STUD_PART_NUMBER = 4073;
 const KNOWN_BRICKLINK_STUD_COLOR_NAMES = [
     "Black",
