@@ -13,7 +13,9 @@ const interactionSelectors = [
     "reset-colors-button",
     "use-bleedthrough-check",
     "download-instructions-button",
-    "add-custom-stud-button"
+    "add-custom-stud-button",
+    "export-to-bricklink-button",
+    "use-tiles-for-export"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -502,6 +504,16 @@ function runStep4(callback) {
         setTimeout(() => {
             enableInteraction();
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
+            drawPixelsOnCanvas(
+                document.getElementById("use-bleedthrough-check").checked
+                    ? revertDarkenedImage(
+                          availabilityCorrectedPixelArray,
+                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                      )
+                    : availabilityCorrectedPixelArray,
+                step4Canvas
+            );
+
             drawStudImageOnCanvas(
                 document.getElementById("use-bleedthrough-check").checked
                     ? revertDarkenedImage(
@@ -637,6 +649,29 @@ document
     .getElementById("download-instructions-button")
     .addEventListener("click", () => {
         generateInstructions();
+    });
+
+document
+    .getElementById("export-to-bricklink-button")
+    .addEventListener("click", () => {
+        disableInteraction();
+        navigator.clipboard
+            .writeText(
+                getWantedListXML(
+                    getUsedPixelsStudMap(getPixelArrayFromCanvas(step4Canvas)),
+                    document.getElementById("use-tiles-for-export").checked
+                        ? BRICKLINK_TILE_PART_NUMBER
+                        : BRICKLINK_STUD_PART_NUMBER
+                )
+            )
+            .then(
+                function() {
+                    enableInteraction();
+                },
+                function(err) {
+                    console.error("Async: Could not copy text: ", err);
+                }
+            );
     });
 
 function handleInputImage(e) {

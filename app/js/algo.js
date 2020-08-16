@@ -26,12 +26,12 @@ function inverseHex(hex) {
 }
 
 function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+        var r = (Math.random() * 16) | 0,
+            v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+    });
 }
-
 
 function getPixelArrayFromCanvas(canvas) {
     const context = canvas.getContext("2d");
@@ -609,4 +609,20 @@ function generateInstructionPage(
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius
     );
+}
+
+function getWantedListXML(studMap, partID) {
+    const items = Object.keys(studMap).map(
+        stud =>
+            `<ITEM>
+      <ITEMTYPE>P</ITEMTYPE>
+      <ITEMID>${partID}</ITEMID>
+      <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[stud]]}</COLOR>
+      <MINQTY>${studMap[stud]}</MINQTY>
+    </ITEM>`
+    );
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <INVENTORY>
+    \n${items.join("\n")}\n
+  </INVENTORY>`;
 }

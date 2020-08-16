@@ -168,7 +168,19 @@
           <canvas id="step-4-canvas" hidden></canvas>
           <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
           <h4>Step 4: Correct for actually available studs</h4>
-          <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+          <button type="button" id="download-instructions-button" class="btn btn-info" style="margin-bottom: 10px">Generate Instructions PDF</button>
+          <button type="button" id="export-to-bricklink-button" class="btn btn-info">Copy Bricklink XML to Clipboard</button>
+          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
+            <label>
+              <input type="checkbox" id="use-tiles-for-export">
+              Use Tiles Instead of Studs
+            </label>
+          </div>
+          <small style=" margin-left: 4px">
+            <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+              Bricklink Upload Page
+            </a>
+          </small>
           <div id="instructions-canvas-container" hidden></div>
           <div style="margin-left: 4px; margin-top: 10px">
             <small>
