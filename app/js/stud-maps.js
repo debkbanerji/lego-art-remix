@@ -164,3 +164,30 @@ STUD_MAPS["all_tile_colors"] = {
     sortedStuds: availableTileHexes,
     studMap: tileHexToCount
 };
+
+
+const availablePickABrickStudHexes = [
+    '#ff7e14',
+    '#0057a6',
+    '#afb5c7',
+    '#595d60',
+    '#ffffff',
+    '#a6ca55',
+    '#10cb31',
+    '#f7d117',
+    '#b30006',
+    '#5f2683',
+    '#89351d',
+    '#dec69c',
+    '#ffbbff'
+];
+const pickABricStudkHexToCount = {};
+availablePickABrickStudHexes.forEach(hex => {
+    pickABricStudkHexToCount[hex] = 99999;
+});
+STUD_MAPS["all_tile_colors"] = {
+    name: "Pick a Brick",
+    officialName: "Lego.com Pick a Brick",
+    sortedStuds: availablePickABrickStudHexes,
+    studMap: pickABricStudkHexToCount
+};

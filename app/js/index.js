@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.15";
+const VERSION_NUMBER = "v2020.8.16";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 const interactionSelectors = [
@@ -158,7 +158,7 @@ function mixInStudMap(studMap) {
         } else {
             existingRow.children[1].children[0].value = Math.min(
                 parseInt(existingRow.children[1].children[0].value) +
-                    studMap.studMap[stud],
+                studMap.studMap[stud],
                 99999
             );
         }
@@ -451,9 +451,9 @@ function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
     const alignedPixelArray = alignPixelsToStudMap(
         fiteredPixelArray,
-        document.getElementById("use-bleedthrough-check").checked
-            ? getDarkenedStudMap(selectedStudMap)
-            : selectedStudMap
+        document.getElementById("use-bleedthrough-check").checked ?
+        getDarkenedStudMap(selectedStudMap) :
+        selectedStudMap
     );
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
@@ -462,12 +462,12 @@ function runStep3() {
         runStep4();
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
-            document.getElementById("use-bleedthrough-check").checked
-                ? revertDarkenedImage(
-                      alignedPixelArray,
-                      getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-                  )
-                : alignedPixelArray,
+            document.getElementById("use-bleedthrough-check").checked ?
+            revertDarkenedImage(
+                alignedPixelArray,
+                getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+            ) :
+            alignedPixelArray,
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled
@@ -498,9 +498,9 @@ function runStep4(callback) {
         );
         const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
             step3PixelArray,
-            document.getElementById("use-bleedthrough-check").checked
-                ? getDarkenedStudMap(selectedStudMap)
-                : selectedStudMap,
+            document.getElementById("use-bleedthrough-check").checked ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
             step2PixelArray
         );
 
@@ -509,22 +509,22 @@ function runStep4(callback) {
             enableInteraction();
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked
-                    ? revertDarkenedImage(
-                          availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-                      )
-                    : availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked ?
+                revertDarkenedImage(
+                    availabilityCorrectedPixelArray,
+                    getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                ) :
+                availabilityCorrectedPixelArray,
                 bricklinkCacheCanvas
             );
 
             drawStudImageOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked
-                    ? revertDarkenedImage(
-                          availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-                      )
-                    : availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked ?
+                revertDarkenedImage(
+                    availabilityCorrectedPixelArray,
+                    getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                ) :
+                availabilityCorrectedPixelArray,
                 targetResolution[0],
                 SCALING_FACTOR,
                 step4CanvasUpscaled
@@ -565,12 +565,12 @@ function generateInstructions() {
     runStep4(() => {
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
-            .checked
-            ? revertDarkenedImage(
-                  step4PixelArray,
-                  getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-              )
-            : step4PixelArray;
+            .checked ?
+            revertDarkenedImage(
+                step4PixelArray,
+                getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+            ) :
+            step4PixelArray;
 
         const titlePageCanvas = document.createElement("canvas");
         instructionsCanvasContainer.appendChild(titlePageCanvas);
@@ -587,8 +587,7 @@ function generateInstructions() {
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
         const pdf = new jsPDF({
-            orientation:
-                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            orientation: titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
             unit: "mm",
             format: [titlePageCanvas.width, titlePageCanvas.height]
         });
@@ -639,7 +638,7 @@ function generateInstructions() {
                 0,
                 pdfWidth,
                 (pdfWidth * instructionPageCanvas.height) /
-                    instructionPageCanvas.width
+                instructionPageCanvas.width
             );
         }
 
@@ -665,9 +664,9 @@ document
                     getUsedPixelsStudMap(
                         getPixelArrayFromCanvas(bricklinkCacheCanvas)
                     ),
-                    document.getElementById("use-tiles-for-export").checked
-                        ? BRICKLINK_TILE_PART_NUMBER
-                        : BRICKLINK_STUD_PART_NUMBER
+                    document.getElementById("use-tiles-for-export").checked ?
+                    BRICKLINK_TILE_PART_NUMBER :
+                    BRICKLINK_STUD_PART_NUMBER
                 )
             )
             .then(
