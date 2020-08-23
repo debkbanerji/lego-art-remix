@@ -1,6 +1,13 @@
 const VERSION_NUMBER = "v2020.8.22";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
+// TODO: Display these values at the top of the page if they are large enough
+const perfLoggingDatabase = firebase.database();
+
+function incrementTransaction(count) {
+    return (count || 0) + 1
+};
+
 const interactionSelectors = [
     "input-image-selector",
     "stud-map-button",
@@ -676,6 +683,10 @@ function generateInstructions() {
         addWaterMark(pdf);
         pdf.save("Lego-Art-Remix-Instructions.pdf");
         enableInteraction();
+
+        perfLoggingDatabase.ref('instructions-generated-count/total').transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor((Date.now() - (Date.now() % 8.64e+7)) / 1000); // 8.64e+7 = ms in day
+        perfLoggingDatabase.ref('instructions-generated-count/per-day/' + loggingTimestamp).transaction(incrementTransaction);
     });
 }
 
@@ -726,6 +737,10 @@ function handleInputImage(e) {
         setTimeout(() => {
             runStep1();
         }, 20); // TODO: find better way to check that input is finished
+
+        perfLoggingDatabase.ref('input-image-count/total').transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor((Date.now() - (Date.now() % 8.64e+7)) / 1000); // 8.64e+7 = ms in day
+        perfLoggingDatabase.ref('input-image-count/per-day/' + loggingTimestamp).transaction(incrementTransaction);
     };
     reader.readAsDataURL(e.target.files[0]);
 }

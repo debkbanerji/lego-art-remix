@@ -266,17 +266,15 @@
               done client side.
             </p>
             <p>
-              Since it runs entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>),
-              no image data is sent to a server and so it's very secure.
+              Since it runs almost entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>),
+              no image data is sent to a server and so it's very secure. The only server code consists of simple increments to count how many images were
+              generated, for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
             <p></p>
             <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
             <em style="margin-bottom: 5px">Direct any concerns or ideas for improvements <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em>
             <p style="margin-bottom: 5px">As of the time of writing, I don't have all of the sets, and I haven't had much time to test.
-              As a result, there's probably quite a few bugs, so let me know if you find any.
-            </p>
-            <p style="margin-bottom: 5px">There's many features that could be added, such as more/custom resolutions or more
-              flexible set selection. I can get to these if there's enough need.
+              As a result, there's probably a few bugs, so let me know if you find any.
             </p>
             <p style="margin-bottom: 5px">Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within
               a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in
@@ -288,6 +286,21 @@
     </div>
 
   </div>
+
+  <!-- Add firebase to log performance -->
+  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+  <script>
+    firebase.initializeApp({
+      apiKey: "AIzaSyDZpG-5SrDxpwV9kmbwNiiKXJhg-qaH1d8",
+      authDomain: "lego-art-remix-stats.firebaseapp.com",
+      databaseURL: "https://lego-art-remix-stats.firebaseio.com",
+      projectId: "lego-art-remix-stats",
+      storageBucket: "lego-art-remix-stats.appspot.com",
+      messagingSenderId: "622482243553",
+      appId: "1:622482243553:web:3ef8ee3f3796190528dca0"
+    });
+  </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
   <script src="js/bricklink-colors.js"></script>
