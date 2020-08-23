@@ -2,7 +2,12 @@ const VERSION_NUMBER = "v2020.8.22";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
-const perfLoggingDatabase = firebase.database();
+let perfLoggingDatabase;
+try {
+    perfLoggingDatabase = firebase.database();
+} catch (_e) {
+    // we don't care if this fails
+}
 
 function incrementTransaction(count) {
     return (count || 0) + 1
