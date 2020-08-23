@@ -218,9 +218,11 @@
     <div id="image-input" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <h4 id="input-image-text">Input Image</h4>
           <div>
-            <input type="file" id="input-image-selector" name="input-image-selector" />
+            <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
+            <button class="btn btn-success" type="button" id="input-image-selector">
+              Select Input Image
+            </button>
           </div>
           <canvas id="input-canvas" hidden></canvas>
           <div style="margin-left: 4px; margin-top: 10px">

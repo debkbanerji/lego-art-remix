@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.22";
+const VERSION_NUMBER = "v2020.8.23";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -15,6 +15,7 @@ function incrementTransaction(count) {
 
 const interactionSelectors = [
     "input-image-selector",
+    "input-image-selector-hidden",
     "stud-map-button",
     "mix-in-stud-map-button",
     "width-slider",
@@ -737,7 +738,7 @@ function handleInputImage(e) {
         };
         inputImage.src = event.target.result;
         document.getElementById("steps-row").hidden = false;
-        document.getElementById("input-image-text").innerHTML =
+        document.getElementById("input-image-selector").innerHTML =
             "Reselect Input Image";
         setTimeout(() => {
             runStep1();
@@ -750,5 +751,8 @@ function handleInputImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
-const imageSelector = document.getElementById("input-image-selector");
-imageSelector.addEventListener("change", handleInputImage, false);
+const imageSelectorHidden = document.getElementById("input-image-selector-hidden");
+imageSelectorHidden.addEventListener("change", handleInputImage, false);
+document.getElementById("input-image-selector").addEventListener("click", () => {
+    imageSelectorHidden.click();
+});
