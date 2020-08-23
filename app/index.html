@@ -78,7 +78,7 @@
             <div>Value adjustment: <span id="value-text">0%</span></div>
             <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
           </div>
-          <button class="btn" type="button" id="reset-colors-button">
+          <button class="btn btn-info" type="button" id="reset-colors-button">
             Reset Colors
           </button>
         </div>
@@ -96,7 +96,7 @@
               Account for round stud bleedthrough
             </label>
           </div>
-          <div id="custom-stud-map-controls" style="margin-bottom: 30px">
+          <div id="custom-stud-map-controls" style="margin-bottom: 20px">
             <div style="margin-bottom: 30px">
               <small>
                 <b>Required Studs: <span id="required-studs"></span></b><br>
@@ -132,13 +132,21 @@
                 Clear Existing Studs
               </button>
             </div>
+            <div style="padding-bottom: 10px">
+              <a class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
+                Export Selected Studs
+              </a>
+            </div>
             <div class="btn-group">
-              <button class="btn dropdown-toggle" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Mix in Studs From Existing Set
               </button>
               <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
               </div>
+              <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
             </div>
+            <br>
+            <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
           </div>
           <small>
             <b style="color: #ff4c00">Important</b>

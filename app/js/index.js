@@ -15,6 +15,8 @@ const interactionSelectors = [
     "download-instructions-button",
     "add-custom-stud-button",
     "export-to-bricklink-button",
+    "export-stud-map-button",
+    "import-stud-map-file-input",
     "use-tiles-for-export"
 ].map(id => document.getElementById(id));
 
@@ -200,6 +202,26 @@ Object.keys(STUD_MAPS)
         });
         mixInStudMapOptions.appendChild(option);
     });
+
+const importOption = document.createElement("a");
+importOption.className = "dropdown-item btn";
+importOption.textContent = "Import From File";
+importOption.value = null;
+importOption.addEventListener("click", () => {
+    document.getElementById('import-stud-map-file-input').click();
+});
+mixInStudMapOptions.appendChild(importOption);
+
+document.getElementById("import-stud-map-file-input").addEventListener("change",
+    (e) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            mixInStudMap(JSON.parse(reader.result));
+            document.getElementById("import-stud-map-file-input").value = null;
+        };
+        reader.readAsText(e.target.files[0]);
+    }, false);
+
 
 document
     .getElementById("clear-custom-studs-button")
@@ -397,6 +419,15 @@ document.getElementById("use-bleedthrough-check").addEventListener(
 function runStep1() {
     disableInteraction();
     updateStudCountText();
+
+    window.URL.revokeObjectURL(document.getElementById('export-stud-map-button').href);
+    document.getElementById('export-stud-map-button').href = window.URL.createObjectURL(new Blob([JSON.stringify({
+        studMap: selectedStudMap,
+        sortedStuds: Object.keys(selectedStudMap)
+    })], {
+        type: 'text/plain'
+    }));
+
     step1Canvas.width = targetResolution[0];
     step1Canvas.height = targetResolution[1];
     step1CanvasContext.drawImage(
