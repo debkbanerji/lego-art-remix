@@ -427,6 +427,13 @@ function drawStudCountForContext(
             x + radius * 1.5,
             y + scalingFactor / 8
         );
+        ctx.font = `${scalingFactor / 4}px Arial`;
+        ctx.fillText(
+            HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
+            x + radius * 1.5,
+            y + scalingFactor / 2.5
+        );
+        ctx.font = `${scalingFactor / 2}px Arial`;
     });
 
     ctx.lineWidth = 5;
