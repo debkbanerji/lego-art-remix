@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.29";
+const VERSION_NUMBER = "v2020.8.30";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -140,6 +140,7 @@ function populateCustomStudSelectors(studMap) {
     studMap.sortedStuds.forEach(stud => {
         const studRow = getNewCustomStudRow();
         studRow.children[0].children[0].children[0].children[0].style.backgroundColor = stud;
+        studRow.children[0].children[0].setAttribute("title", HEX_TO_COLOR_NAME[stud] || stud);
         studRow.children[1].children[0].value = studMap.studMap[stud];
         customStudTableBody.appendChild(studRow);
     });
@@ -168,6 +169,7 @@ function mixInStudMap(studMap) {
             newStudRow.children[0].children[0].children[0].appendChild(
                 getColorSquare(stud)
             );
+            newStudRow.children[0].children[0].setAttribute("title", HEX_TO_COLOR_NAME[stud] || stud);
             newStudRow.children[1].children[0].value = studMap.studMap[stud];
             customStudTableBody.appendChild(newStudRow);
         } else {
@@ -306,8 +308,9 @@ function getColorSquare(hex) {
 
 function getColorSelectorDropdown() {
     const DEFAULT_COLOR = "#a6ca55";
+    const DEFAULT_COLOR_NAME = "Lime";
 
-    const container = document.createElement("div");
+    const container = document.createElement("a");
     const id = "color-selector" + uuidv4();
 
     const button = document.createElement("button");
@@ -338,11 +341,16 @@ function getColorSelectorDropdown() {
             button.innerHTML = "";
             button.appendChild(getColorSquare(color.hex));
             document.getElementById("stud-map-button").innerHTML = "Custom set";
+            container.setAttribute("title", color.name);
             runCustomStudMap();
         });
         dropdown.appendChild(option);
     });
 
+
+    container.setAttribute("data-toggle", "tooltip");
+    container.setAttribute("data-placement", "top");
+    container.setAttribute("title", DEFAULT_COLOR_NAME);
     container.appendChild(button);
     container.appendChild(dropdown);
     return container;
