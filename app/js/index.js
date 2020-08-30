@@ -651,6 +651,7 @@ function generateInstructions() {
             PLATE_WIDTH,
             selectedSortedStuds,
             SCALING_FACTOR,
+            step4CanvasUpscaled,
             titlePageCanvas
             // selectedFullSetName
         );
