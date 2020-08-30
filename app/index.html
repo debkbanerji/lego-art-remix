@@ -178,14 +178,15 @@
           <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
           <h4>Step 4: Correct for actually available studs</h4>
           <button type="button" id="download-instructions-button" class="btn btn-info" style="margin-bottom: 10px">Generate Instructions PDF</button>
-          <button type="button" id="export-to-bricklink-button" class="btn btn-info">Copy Bricklink XML to Clipboard</button>
-          <small style=" margin-left: 4px"><b>Frame elements are not exported</b></small>
-          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
-            <label>
-              <input type="checkbox" id="use-tiles-for-export">
-              Use Tiles Instead of Studs
-            </label>
+          <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px">Copy Bricklink XML to Clipboard</button>
+          <div class="btn-group" style="padding-bottom: 10px">
+            <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Bricklink Pixel Piece
+            </button>
+            <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+            </div>
           </div>
+          <small style=" margin-left: 4px"><b>Frame elements are not exported</b></small>
           <small style=" margin-left: 4px">
             <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
               Bricklink Upload Page

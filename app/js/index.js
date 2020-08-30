@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.23";
+const VERSION_NUMBER = "v2020.8.29";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -30,7 +30,7 @@ const interactionSelectors = [
     "export-to-bricklink-button",
     "export-stud-map-button",
     "import-stud-map-file-input",
-    "use-tiles-for-export"
+    "bricklink-piece-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -202,6 +202,25 @@ Object.keys(STUD_MAPS)
     });
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
+
+let selectedPixelPartNumber = BRICKLINK_PART_OPTIONS[0].number;
+document.getElementById("bricklink-piece-button").innerHTML =
+    BRICKLINK_PART_OPTIONS[0].name;
+const bricklinkPieceOptions = document.getElementById("bricklink-piece-options");
+bricklinkPieceOptions.innerHTML = "";
+BRICKLINK_PART_OPTIONS
+    .forEach(part => {
+        const option = document.createElement("a");
+        option.className = "dropdown-item btn";
+        option.textContent = part.name;
+        option.value = part.number;
+        option.addEventListener("click", () => {
+            document.getElementById("bricklink-piece-button").innerHTML =
+                part.name;
+            selectedPixelPartNumber = part.number;
+        });
+        bricklinkPieceOptions.appendChild(option);
+    });
 
 Object.keys(STUD_MAPS)
     .filter(key => key !== "rgb")
@@ -712,9 +731,7 @@ document
                     getUsedPixelsStudMap(
                         getPixelArrayFromCanvas(bricklinkCacheCanvas)
                     ),
-                    document.getElementById("use-tiles-for-export").checked ?
-                    BRICKLINK_TILE_PART_NUMBER :
-                    BRICKLINK_STUD_PART_NUMBER
+                    selectedPixelPartNumber
                 )
             )
             .then(
