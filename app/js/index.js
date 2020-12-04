@@ -750,6 +750,40 @@ function generateInstructions() {
 }
 
 document
+    .getElementById("hogwarts-crest-example-instructions-link")
+    .addEventListener("click", () => {
+        perfLoggingDatabase
+            .ref("examples-click-count/hogwarts-crest-instructions/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "examples-click-count/hogwarts-crest-instructions/per-day/" +
+                    loggingTimestamp
+            )
+            .transaction(incrementTransaction);
+    });
+
+document
+    .getElementById("31201-lego-website-link")
+    .addEventListener("click", () => {
+        perfLoggingDatabase
+            .ref("examples-click-count/31201-lego-website-link/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "examples-click-count/31201-lego-website-link/per-day/" +
+                    loggingTimestamp
+            )
+            .transaction(incrementTransaction);
+    });
+
+document
     .getElementById("download-instructions-button")
     .addEventListener("click", () => {
         generateInstructions();
