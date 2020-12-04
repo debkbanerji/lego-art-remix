@@ -21,7 +21,7 @@ The computer vision techniques used are pretty inexpensive, and the resolutions 
 
 The most computationally expensive part of the process is generating the instructions, since even pdf generation is done client side.
 
-Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. The only server code consists of simple increments to count how many images were generated, for the purposes for tracking performance in case the static deployment needs to be scaled up.
+Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously estimate usage, for the purposes for tracking performance in case the static deployment needs to be scaled up.
 
 ## Bugs, Feature Requests, and Algorithm Improvements
 *Direct any concerns or ideas for improvements to the [issues tab](https://github.com/debkbanerji/lego-art-remix/issues)*
