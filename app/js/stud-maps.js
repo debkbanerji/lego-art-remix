@@ -139,7 +139,7 @@ STUD_MAPS = {
             "#330000": 100
         }
     },
-    harry_potter_hogwarts_quest: {
+    harry_potter_hogwarts_crests: {
         name: "Harry Potter (31201)",
         officialName: "Harry Potter Hogwarts Crests (31201)",
         sortedStuds: [
@@ -169,6 +169,32 @@ STUD_MAPS = {
             "#6a0e15": 503,
             "#e79500": 604,
             "#ffffff": 369
+        }
+    },
+    mickey_mouse: {
+        name: "Mickey Mouse (31202)",
+        officialName: "Disney's Mickey Mouse (31202)",
+        sortedStuds: [
+            "#212121",
+            "#595d60",
+            "#afb5c7",
+            "#143044",
+            "#ffffff",
+            "#dec69c",
+            "#b30006",
+            "#6a0e15",
+            "#330000"
+        ],
+        studMap: {
+            "#212121": 662,
+            "#595d60": 79,
+            "#afb5c7": 59,
+            "#143044": 409,
+            "#ffffff": 835,
+            "#dec69c": 32,
+            "#b30006": 213,
+            "#6a0e15": 96,
+            "#330000": 76
         }
     }
 };
