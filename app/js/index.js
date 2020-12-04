@@ -10,8 +10,8 @@ try {
 }
 
 function incrementTransaction(count) {
-    return (count || 0) + 1
-};
+    return (count || 0) + 1;
+}
 
 const interactionSelectors = [
     "input-image-selector",
@@ -140,7 +140,10 @@ function populateCustomStudSelectors(studMap) {
     studMap.sortedStuds.forEach(stud => {
         const studRow = getNewCustomStudRow();
         studRow.children[0].children[0].children[0].children[0].style.backgroundColor = stud;
-        studRow.children[0].children[0].setAttribute("title", HEX_TO_COLOR_NAME[stud] || stud);
+        studRow.children[0].children[0].setAttribute(
+            "title",
+            HEX_TO_COLOR_NAME[stud] || stud
+        );
         studRow.children[1].children[0].value = studMap.studMap[stud];
         customStudTableBody.appendChild(studRow);
     });
@@ -169,13 +172,16 @@ function mixInStudMap(studMap) {
             newStudRow.children[0].children[0].children[0].appendChild(
                 getColorSquare(stud)
             );
-            newStudRow.children[0].children[0].setAttribute("title", HEX_TO_COLOR_NAME[stud] || stud);
+            newStudRow.children[0].children[0].setAttribute(
+                "title",
+                HEX_TO_COLOR_NAME[stud] || stud
+            );
             newStudRow.children[1].children[0].value = studMap.studMap[stud];
             customStudTableBody.appendChild(newStudRow);
         } else {
             existingRow.children[1].children[0].value = Math.min(
                 parseInt(existingRow.children[1].children[0].value) +
-                studMap.studMap[stud],
+                    studMap.studMap[stud],
                 99999
             );
         }
@@ -208,21 +214,21 @@ const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 let selectedPixelPartNumber = BRICKLINK_PART_OPTIONS[0].number;
 document.getElementById("bricklink-piece-button").innerHTML =
     BRICKLINK_PART_OPTIONS[0].name;
-const bricklinkPieceOptions = document.getElementById("bricklink-piece-options");
+const bricklinkPieceOptions = document.getElementById(
+    "bricklink-piece-options"
+);
 bricklinkPieceOptions.innerHTML = "";
-BRICKLINK_PART_OPTIONS
-    .forEach(part => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = part.name;
-        option.value = part.number;
-        option.addEventListener("click", () => {
-            document.getElementById("bricklink-piece-button").innerHTML =
-                part.name;
-            selectedPixelPartNumber = part.number;
-        });
-        bricklinkPieceOptions.appendChild(option);
+BRICKLINK_PART_OPTIONS.forEach(part => {
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = part.name;
+    option.value = part.number;
+    option.addEventListener("click", () => {
+        document.getElementById("bricklink-piece-button").innerHTML = part.name;
+        selectedPixelPartNumber = part.number;
     });
+    bricklinkPieceOptions.appendChild(option);
+});
 
 Object.keys(STUD_MAPS)
     .filter(key => key !== "rgb")
@@ -242,20 +248,22 @@ importOption.className = "dropdown-item btn";
 importOption.textContent = "Import From File";
 importOption.value = null;
 importOption.addEventListener("click", () => {
-    document.getElementById('import-stud-map-file-input').click();
+    document.getElementById("import-stud-map-file-input").click();
 });
 mixInStudMapOptions.appendChild(importOption);
 
-document.getElementById("import-stud-map-file-input").addEventListener("change",
-    (e) => {
+document.getElementById("import-stud-map-file-input").addEventListener(
+    "change",
+    e => {
         const reader = new FileReader();
         reader.onload = function(event) {
             mixInStudMap(JSON.parse(reader.result));
             document.getElementById("import-stud-map-file-input").value = null;
         };
         reader.readAsText(e.target.files[0]);
-    }, false);
-
+    },
+    false
+);
 
 document
     .getElementById("clear-custom-studs-button")
@@ -346,7 +354,6 @@ function getColorSelectorDropdown() {
         });
         dropdown.appendChild(option);
     });
-
 
     container.setAttribute("data-toggle", "tooltip");
     container.setAttribute("data-placement", "top");
@@ -460,13 +467,24 @@ function runStep1() {
     disableInteraction();
     updateStudCountText();
 
-    window.URL.revokeObjectURL(document.getElementById('export-stud-map-button').href);
-    document.getElementById('export-stud-map-button').href = window.URL.createObjectURL(new Blob([JSON.stringify({
-        studMap: selectedStudMap,
-        sortedStuds: Object.keys(selectedStudMap)
-    })], {
-        type: 'text/plain'
-    }));
+    window.URL.revokeObjectURL(
+        document.getElementById("export-stud-map-button").href
+    );
+    document.getElementById(
+        "export-stud-map-button"
+    ).href = window.URL.createObjectURL(
+        new Blob(
+            [
+                JSON.stringify({
+                    studMap: selectedStudMap,
+                    sortedStuds: Object.keys(selectedStudMap)
+                })
+            ],
+            {
+                type: "text/plain"
+            }
+        )
+    );
 
     step1Canvas.width = targetResolution[0];
     step1Canvas.height = targetResolution[1];
@@ -522,9 +540,9 @@ function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
     const alignedPixelArray = alignPixelsToStudMap(
         fiteredPixelArray,
-        document.getElementById("use-bleedthrough-check").checked ?
-        getDarkenedStudMap(selectedStudMap) :
-        selectedStudMap
+        document.getElementById("use-bleedthrough-check").checked
+            ? getDarkenedStudMap(selectedStudMap)
+            : selectedStudMap
     );
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
@@ -533,12 +551,12 @@ function runStep3() {
         runStep4();
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
-            document.getElementById("use-bleedthrough-check").checked ?
-            revertDarkenedImage(
-                alignedPixelArray,
-                getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-            ) :
-            alignedPixelArray,
+            document.getElementById("use-bleedthrough-check").checked
+                ? revertDarkenedImage(
+                      alignedPixelArray,
+                      getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                  )
+                : alignedPixelArray,
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled
@@ -569,9 +587,9 @@ function runStep4(callback) {
         );
         const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
             step3PixelArray,
-            document.getElementById("use-bleedthrough-check").checked ?
-            getDarkenedStudMap(selectedStudMap) :
-            selectedStudMap,
+            document.getElementById("use-bleedthrough-check").checked
+                ? getDarkenedStudMap(selectedStudMap)
+                : selectedStudMap,
             step2PixelArray
         );
 
@@ -580,22 +598,22 @@ function runStep4(callback) {
             enableInteraction();
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
-                revertDarkenedImage(
-                    availabilityCorrectedPixelArray,
-                    getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-                ) :
-                availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked
+                    ? revertDarkenedImage(
+                          availabilityCorrectedPixelArray,
+                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                      )
+                    : availabilityCorrectedPixelArray,
                 bricklinkCacheCanvas
             );
 
             drawStudImageOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
-                revertDarkenedImage(
-                    availabilityCorrectedPixelArray,
-                    getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-                ) :
-                availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked
+                    ? revertDarkenedImage(
+                          availabilityCorrectedPixelArray,
+                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                      )
+                    : availabilityCorrectedPixelArray,
                 targetResolution[0],
                 SCALING_FACTOR,
                 step4CanvasUpscaled
@@ -636,12 +654,12 @@ function generateInstructions() {
     runStep4(() => {
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
-            .checked ?
-            revertDarkenedImage(
-                step4PixelArray,
-                getDarkenedStudsToStuds(Object.keys(selectedStudMap))
-            ) :
-            step4PixelArray;
+            .checked
+            ? revertDarkenedImage(
+                  step4PixelArray,
+                  getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+              )
+            : step4PixelArray;
 
         const titlePageCanvas = document.createElement("canvas");
         instructionsCanvasContainer.appendChild(titlePageCanvas);
@@ -659,7 +677,8 @@ function generateInstructions() {
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
         const pdf = new jsPDF({
-            orientation: titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            orientation:
+                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
             unit: "mm",
             format: [titlePageCanvas.width, titlePageCanvas.height]
         });
@@ -710,7 +729,7 @@ function generateInstructions() {
                 0,
                 pdfWidth,
                 (pdfWidth * instructionPageCanvas.height) /
-                instructionPageCanvas.width
+                    instructionPageCanvas.width
             );
         }
 
@@ -718,9 +737,15 @@ function generateInstructions() {
         pdf.save("Lego-Art-Remix-Instructions.pdf");
         enableInteraction();
 
-        perfLoggingDatabase.ref('instructions-generated-count/total').transaction(incrementTransaction);
-        const loggingTimestamp = Math.floor((Date.now() - (Date.now() % 8.64e+7)) / 1000); // 8.64e+7 = ms in day
-        perfLoggingDatabase.ref('instructions-generated-count/per-day/' + loggingTimestamp).transaction(incrementTransaction);
+        perfLoggingDatabase
+            .ref("instructions-generated-count/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref("instructions-generated-count/per-day/" + loggingTimestamp)
+            .transaction(incrementTransaction);
     });
 }
 
@@ -770,15 +795,25 @@ function handleInputImage(e) {
             runStep1();
         }, 20); // TODO: find better way to check that input is finished
 
-        perfLoggingDatabase.ref('input-image-count/total').transaction(incrementTransaction);
-        const loggingTimestamp = Math.floor((Date.now() - (Date.now() % 8.64e+7)) / 1000); // 8.64e+7 = ms in day
-        perfLoggingDatabase.ref('input-image-count/per-day/' + loggingTimestamp).transaction(incrementTransaction);
+        perfLoggingDatabase
+            .ref("input-image-count/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref("input-image-count/per-day/" + loggingTimestamp)
+            .transaction(incrementTransaction);
     };
     reader.readAsDataURL(e.target.files[0]);
 }
 
-const imageSelectorHidden = document.getElementById("input-image-selector-hidden");
+const imageSelectorHidden = document.getElementById(
+    "input-image-selector-hidden"
+);
 imageSelectorHidden.addEventListener("change", handleInputImage, false);
-document.getElementById("input-image-selector").addEventListener("click", () => {
-    imageSelectorHidden.click();
-});
+document
+    .getElementById("input-image-selector")
+    .addEventListener("click", () => {
+        imageSelectorHidden.click();
+    });
