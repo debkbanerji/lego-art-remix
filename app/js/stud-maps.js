@@ -138,6 +138,12 @@ STUD_MAPS = {
             "#6a0e15": 328,
             "#330000": 100
         }
+    },
+    harry_potter_hogwarts_quest: {
+        name: "Harry Potter (31201)",
+        officialName: "Harry Potter Hogwarts Crests (31201)",
+        sortedStuds: [],
+        studMap: {}
     }
 };
 
