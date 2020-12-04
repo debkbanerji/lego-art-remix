@@ -1,4 +1,5 @@
-const ALL_BRICKLINK_SOLID_COLORS = [{
+const ALL_BRICKLINK_SOLID_COLORS = [
+    {
         name: "White",
         hex: "#ffffff",
         id: 1
@@ -413,7 +414,7 @@ const ALL_BRICKLINK_SOLID_COLORS = [{
         hex: "#ffe1ff",
         id: 56
     },
-    // add in some epral colors to support specific sets,
+    // add in some pearl colors to support specific sets,
     // but avoid the other pearl colors for now since they
     // may weirdly replace similar solid non pearl
     {
@@ -425,6 +426,11 @@ const ALL_BRICKLINK_SOLID_COLORS = [{
         name: "Pearl Dark Gray",
         hex: "#666660",
         id: 77
+    },
+    {
+        name: "Flat Silver",
+        hex: "#898788",
+        id: 95
     }
 ];
 
@@ -548,8 +554,7 @@ const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
     "Dark Bluish Gray", // manually added from Warhol
     "Dark Pink", // manually added from Warhol
     "Magenta", // manually added from Warhol
-    "Medium Azure", // manually added from Warhol
-
+    "Medium Azure" // manually added from Warhol
 ];
 
 const BRICKLINK_STUD_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(color =>
@@ -566,30 +571,31 @@ const BRICKLINK_TILE_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(color =>
 
 const ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(
     color =>
-    KNOWN_BRICKLINK_STUD_COLOR_NAMES.includes(color.name) ||
-    KNOWN_BRICKLINK_TILE_COLOR_NAMES.includes(color.name)
+        KNOWN_BRICKLINK_STUD_COLOR_NAMES.includes(color.name) ||
+        KNOWN_BRICKLINK_TILE_COLOR_NAMES.includes(color.name)
 ).sort((a, b) => {
     return a.name > b.name ? 1 : -1;
 });
 
-const BRICKLINK_PART_OPTIONS = [{
-        name: '1x1 Round Plate - Default',
+const BRICKLINK_PART_OPTIONS = [
+    {
+        name: "1x1 Round Plate - Default",
         number: 4073
     },
     {
-        name: '1x1 Round Tile',
+        name: "1x1 Round Tile",
         number: 98138
     },
     {
-        name: '1x1 Square Plate',
+        name: "1x1 Square Plate",
         number: 3024
     },
     {
-        name: '1x1 Square  Tile',
-        number: '3070b'
+        name: "1x1 Square  Tile",
+        number: "3070b"
     },
     {
-        name: '1x1 Square  Brick',
+        name: "1x1 Square  Brick",
         number: 3005
     }
-]
+];
