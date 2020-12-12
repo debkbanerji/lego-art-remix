@@ -138,7 +138,8 @@ function studMapDifference(map1, map2) {
 function correctPixelsForAvailableStuds(
     anchorAlignedPixels,
     availableStudMap,
-    originalPixels
+    originalPixels,
+    randomizeTies
 ) {
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
     const remainingStudMap = studMapDifference(
@@ -174,10 +175,9 @@ function correctPixelsForAvailableStuds(
             index: i,
             originalRGB,
             alignedRGB,
-            alignmentDistSquared: RGBPixelDistanceSquared(
-                originalRGB,
-                alignedRGB
-            )
+            alignmentDistSquared:
+                RGBPixelDistanceSquared(originalRGB, alignedRGB) +
+                (randomizeTies ? Math.random() : 0)
         });
     }
 
