@@ -15,13 +15,13 @@ function inverseHex(hex) {
     return (
         "#" +
         hex
-        .match(/[a-f0-9]{2}/gi)
-        .map(e =>
-            ((255 - parseInt(e, 16)) | 0)
-            .toString(16)
-            .replace(/^([a-f0-9])$/, "0$1")
-        )
-        .join("")
+            .match(/[a-f0-9]{2}/gi)
+            .map(e =>
+                ((255 - parseInt(e, 16)) | 0)
+                    .toString(16)
+                    .replace(/^([a-f0-9])$/, "0$1")
+            )
+            .join("")
     );
 }
 
@@ -79,7 +79,9 @@ function alignPixelsToStudMap(inputPixels, studMap) {
         }
         let closestAnchorPixel = 0;
         for (
-            let anchorPixelIndex = 1; anchorPixelIndex < anchorPixels.length; anchorPixelIndex++
+            let anchorPixelIndex = 1;
+            anchorPixelIndex < anchorPixels.length;
+            anchorPixelIndex++
         ) {
             if (
                 RGBPixelDistanceSquared(
@@ -136,7 +138,8 @@ function studMapDifference(map1, map2) {
 function correctPixelsForAvailableStuds(
     anchorAlignedPixels,
     availableStudMap,
-    originalPixels
+    originalPixels,
+    randomizeTies
 ) {
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
     const remainingStudMap = studMapDifference(
@@ -172,10 +175,9 @@ function correctPixelsForAvailableStuds(
             index: i,
             originalRGB,
             alignedRGB,
-            alignmentDistSquared: RGBPixelDistanceSquared(
-                originalRGB,
-                alignedRGB
-            )
+            alignmentDistSquared:
+                RGBPixelDistanceSquared(originalRGB, alignedRGB) +
+                (randomizeTies ? Math.random() : 0)
         });
     }
 
@@ -224,10 +226,10 @@ function correctPixelsForAvailableStuds(
         possibleReplacements.forEach(possibleReplacement => {
             if (
                 (RGBPixelDistanceSquared(
-                        problematicPixel.originalRGB,
-                        hexToRgb(possibleReplacement)
-                    ) < problematicPixel.originalRGB,
-                    hexToRgb(replacement))
+                    problematicPixel.originalRGB,
+                    hexToRgb(possibleReplacement)
+                ) < problematicPixel.originalRGB,
+                hexToRgb(replacement))
             ) {
                 replacement = possibleReplacement;
             }
@@ -491,19 +493,28 @@ function generateInstructionTitlePage(
         pictureHeight * 0.34
     );
 
-
     const legendHorizontalOffset = pictureWidth * 0.75;
     const legendVerticalOffset = pictureHeight * 0.41;
     const numPlates = pixelArray.length / (4 * plateWidth * plateWidth);
     const legendSquareSide = scalingFactor;
 
-    ctx.drawImage(finalImageCanvas, 0, 0, finalImageCanvas.width, finalImageCanvas.height,
-        legendHorizontalOffset + legendSquareSide / 4 + legendSquareSide * width / plateWidth, legendVerticalOffset,
-        legendSquareSide * width / plateWidth, legendSquareSide * (numPlates * plateWidth / width));
+    ctx.drawImage(
+        finalImageCanvas,
+        0,
+        0,
+        finalImageCanvas.width,
+        finalImageCanvas.height,
+        legendHorizontalOffset +
+            legendSquareSide / 4 +
+            (legendSquareSide * width) / plateWidth,
+        legendVerticalOffset,
+        (legendSquareSide * width) / plateWidth,
+        legendSquareSide * ((numPlates * plateWidth) / width)
+    );
 
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#000000";
-    ctx.font = `${legendSquareSide/2}px Arial`;
+    ctx.font = `${legendSquareSide / 2}px Arial`;
 
     for (var i = 0; i < numPlates; i++) {
         const horIndex = ((i * plateWidth) % width) / plateWidth;
@@ -604,9 +615,9 @@ function generateInstructionPage(
             ctx.fillText(
                 studToNumber[pixelHex],
                 x -
-                (scalingFactor *
-                    (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
-                8,
+                    (scalingFactor *
+                        (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
+                        8,
                 y + scalingFactor / 8
             );
         }
@@ -625,7 +636,7 @@ function generateInstructionPage(
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(
         stud =>
-        `<ITEM>
+            `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
       <ITEMID>${partID}</ITEMID>
       <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[stud]]}</COLOR>

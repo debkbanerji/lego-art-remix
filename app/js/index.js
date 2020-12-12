@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.8.30";
+const VERSION_NUMBER = "v2020.12.11";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -463,6 +463,14 @@ document.getElementById("use-bleedthrough-check").addEventListener(
     false
 );
 
+document.getElementById("use-randomize-ties").addEventListener(
+    "change",
+    () => {
+        runStep1();
+    },
+    false
+);
+
 function runStep1() {
     disableInteraction();
     updateStudCountText();
@@ -590,7 +598,8 @@ function runStep4(callback) {
             document.getElementById("use-bleedthrough-check").checked
                 ? getDarkenedStudMap(selectedStudMap)
                 : selectedStudMap,
-            step2PixelArray
+            step2PixelArray,
+            document.getElementById("use-randomize-ties").checked
         );
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
@@ -748,6 +757,40 @@ function generateInstructions() {
             .transaction(incrementTransaction);
     });
 }
+
+document
+    .getElementById("hogwarts-crest-example-instructions-link")
+    .addEventListener("click", () => {
+        perfLoggingDatabase
+            .ref("examples-click-count/hogwarts-crest-instructions/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "examples-click-count/hogwarts-crest-instructions/per-day/" +
+                    loggingTimestamp
+            )
+            .transaction(incrementTransaction);
+    });
+
+document
+    .getElementById("31201-lego-website-link")
+    .addEventListener("click", () => {
+        perfLoggingDatabase
+            .ref("examples-click-count/31201-lego-website-link/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "examples-click-count/31201-lego-website-link/per-day/" +
+                    loggingTimestamp
+            )
+            .transaction(incrementTransaction);
+    });
 
 document
     .getElementById("download-instructions-button")

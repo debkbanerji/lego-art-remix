@@ -96,6 +96,12 @@
               Account for round stud bleedthrough
             </label>
           </div>
+          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
+            <label>
+              <input type="checkbox" id="use-randomize-ties">
+              Randomize color ties
+            </label>
+          </div>
           <div id="custom-stud-map-controls" style="margin-bottom: 20px">
             <div style="margin-bottom: 20px">
               <small>
@@ -233,6 +239,9 @@
               <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
               <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
             </small>
+            <small><a target="_blank" id="hogwarts-crest-example-instructions-link" href="examples/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
+                Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
+              <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
           </div>
         </div>
       </div>
@@ -272,8 +281,8 @@
             </p>
             <p>
               Since it runs almost entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>),
-              no image data is sent to a server and so it's very secure. The only server code consists of simple increments to count how many images were
-              generated, for the purposes for tracking performance in case the static deployment needs to be scaled up.
+              no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously
+              estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
             <p></p>
             <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
