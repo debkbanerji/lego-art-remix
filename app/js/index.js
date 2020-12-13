@@ -665,6 +665,9 @@ function runStep4(callback) {
                 ? getDarkenedStudMap(selectedStudMap)
                 : selectedStudMap,
             step2PixelArray,
+            document.getElementById("use-bleedthrough-check").checked
+                ? getDarkenedImage(overridePixelArray)
+                : overridePixelArray,
             document.getElementById("use-randomize-ties").checked
         );
 

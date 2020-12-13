@@ -144,6 +144,7 @@ function correctPixelsForAvailableStuds(
     anchorAlignedPixels,
     availableStudMap,
     originalPixels,
+    overridePixelArray,
     randomizeTies
 ) {
     availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
@@ -170,11 +171,17 @@ function correctPixelsForAvailableStuds(
             anchorAlignedPixels[i + 1],
             anchorAlignedPixels[i + 2]
         );
-        const originalRGB = [
-            originalPixels[i],
-            originalPixels[i + 1],
-            originalPixels[i + 2]
-        ];
+        const wasOverridden =
+            overridePixelArray[i] != null &&
+            overridePixelArray[i + 1] != null &&
+            overridePixelArray[i + 2] != null;
+        const originalRGB = wasOverridden
+            ? [
+                  overridePixelArray[i],
+                  overridePixelArray[i + 1],
+                  overridePixelArray[i + 2]
+              ]
+            : [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
         const alignedRGB = [
             anchorAlignedPixels[i],
             anchorAlignedPixels[i + 1],
