@@ -247,6 +247,30 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     bricklinkPieceOptions.appendChild(option);
 });
 
+let selectedTiebreakTechnique = "none";
+const TIEBREAK_TECHNIQUES = [
+    {name: "None", value: "none"},
+    {name: "Random", value: "random"},
+    {name: "Mod 2", value: "mod2"},
+    {name: "Mod 3", value: "mod3"},
+    {name: "Mod 4", value: "mod4"}
+];
+TIEBREAK_TECHNIQUES.forEach(technique => {
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = technique.name;
+    option.value = technique.value;
+    option.addEventListener("click", () => {
+        document.getElementById("color-ties-resolution-button").innerHTML =
+            "Color Tie Resolution: " + technique.name;
+        selectedTiebreakTechnique = technique.value;
+        runStep1();
+    });
+    document
+        .getElementById("color-ties-resolution-options")
+        .appendChild(option);
+});
+
 Object.keys(STUD_MAPS)
     .filter(key => key !== "rgb")
     .forEach(studMap => {
@@ -483,14 +507,6 @@ document.getElementById("use-bleedthrough-check").addEventListener(
     false
 );
 
-document.getElementById("use-randomize-ties").addEventListener(
-    "change",
-    () => {
-        runStep1();
-    },
-    false
-);
-
 function runStep1() {
     disableInteraction();
     updateStudCountText();
@@ -676,7 +692,8 @@ function runStep4(callback) {
             document.getElementById("use-bleedthrough-check").checked
                 ? getDarkenedImage(overridePixelArray)
                 : overridePixelArray,
-            document.getElementById("use-randomize-ties").checked
+            selectedTiebreakTechnique,
+            targetResolution[0]
         );
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);

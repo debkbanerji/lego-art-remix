@@ -146,7 +146,8 @@ function correctPixelsForAvailableStuds(
     availableStudMap,
     originalPixels,
     overridePixelArray,
-    randomizeTies
+    tieResolutionMethod,
+    imageWidth
 ) {
     availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
@@ -188,13 +189,26 @@ function correctPixelsForAvailableStuds(
             anchorAlignedPixels[i + 1],
             anchorAlignedPixels[i + 2]
         ];
+        const adjustedIndex = i / 4;
+        const row = Math.floor(adjustedIndex / imageWidth);
+        const col = adjustedIndex % imageWidth;
+        let tiebreakFactor = TIEBREAKER_RATIO; // 'none'
+        if (tieResolutionMethod === "random") {
+            tiebreakFactor *= Math.random();
+        } else if (tieResolutionMethod === "mod2") {
+            tiebreakFactor *= (row + col) % 2;
+        } else if (tieResolutionMethod === "mod3") {
+            tiebreakFactor *= (row + col) % 3;
+        } else if (tieResolutionMethod === "mod4") {
+            tiebreakFactor *= (row + col) % 4;
+        }
         problematicPixelsMap[alignedHex].push({
             index: i,
             originalRGB,
             alignedRGB,
             alignmentDistSquared:
                 RGBPixelDistanceSquared(originalRGB, alignedRGB) +
-                (randomizeTies ? Math.random() * TIEBREAKER_RATIO : 0)
+                tiebreakFactor
         });
     }
 
