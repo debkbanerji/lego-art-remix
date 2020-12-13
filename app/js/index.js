@@ -374,7 +374,7 @@ function getColorSelectorDropdown() {
 
     const dropdown = document.createElement("div");
     dropdown.setAttribute("aria-labelledby", id);
-    dropdown.className = "dropdown-menu";
+    dropdown.className = "dropdown-menu pre-scrollable";
 
     ALL_VALID_BRICKLINK_COLORS.forEach(color => {
         const option = document.createElement("a");
