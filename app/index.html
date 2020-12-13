@@ -90,19 +90,28 @@
           <canvas id="step-3-canvas" hidden></canvas>
           <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
           <h4>Step 3: Align to closest pixel from available colors</h4>
-          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
+          <small style="margin-top: 12px; margin-left: 4px">Click on a pixel to override its color</small>
+          <div style="margin-left: 4px">
+            Override color:
+            <span id="paintbrush-controls">
+            </span>
+            <button class="btn btn-warning" type="button" id="clear-overrides-button">
+              Clear Overrides
+            </button>
+          </div>
+          <div class="checkbox" style="margin-top: 12px; margin-left: 4px">
             <label>
               <input type="checkbox" id="use-bleedthrough-check" checked>
               Account for round stud bleedthrough
             </label>
           </div>
-          <div class="checkbox" style="margin-top: 8px; margin-left: 4px">
+          <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
             <label>
               <input type="checkbox" id="use-randomize-ties">
               Randomize color ties
             </label>
           </div>
-          <div id="custom-stud-map-controls" style="margin-bottom: 20px">
+          <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
             <div style="margin-bottom: 20px">
               <small>
                 <b>Required Studs: <span id="required-studs"></span></b><br>

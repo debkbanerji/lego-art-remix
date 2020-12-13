@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.11";
+const VERSION_NUMBER = "v2020.12.12";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -104,6 +104,9 @@ function updateStudCountText() {
     document.getElementById("missing-studs").innerHTML = missingStuds;
 }
 
+let overridePixelArray = new Array(
+    targetResolution[0] * targetResolution[1] * 4
+).fill(null);
 document.getElementById("width-slider").addEventListener(
     "change",
     () => {
@@ -111,6 +114,9 @@ document.getElementById("width-slider").addEventListener(
             "width-text"
         ).innerHTML = document.getElementById("width-slider").value;
         targetResolution[0] = document.getElementById("width-slider").value;
+        overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
         runStep1();
     },
     false
@@ -123,10 +129,21 @@ document.getElementById("height-slider").addEventListener(
             "height-text"
         ).innerHTML = document.getElementById("height-slider").value;
         targetResolution[1] = document.getElementById("height-slider").value;
+        overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
         runStep1();
     },
     false
 );
+document
+    .getElementById("clear-overrides-button")
+    .addEventListener("click", () => {
+        overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
+        runStep1();
+    });
 
 const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
@@ -363,6 +380,9 @@ function getColorSelectorDropdown() {
     return container;
 }
 
+const paintbrushDropdown = getColorSelectorDropdown();
+document.getElementById("paintbrush-controls").appendChild(paintbrushDropdown);
+
 function getNewCustomStudRow() {
     const studRow = document.createElement("tr");
 
@@ -550,7 +570,10 @@ function runStep3() {
         fiteredPixelArray,
         document.getElementById("use-bleedthrough-check").checked
             ? getDarkenedStudMap(selectedStudMap)
-            : selectedStudMap
+            : selectedStudMap,
+        document.getElementById("use-bleedthrough-check").checked
+            ? getDarkenedImage(overridePixelArray)
+            : overridePixelArray
     );
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
@@ -562,7 +585,9 @@ function runStep3() {
             document.getElementById("use-bleedthrough-check").checked
                 ? revertDarkenedImage(
                       alignedPixelArray,
-                      getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                      getDarkenedStudsToStuds(
+                          ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                      )
                   )
                 : alignedPixelArray,
             targetResolution[0],
@@ -571,6 +596,54 @@ function runStep3() {
         );
     }, 1); // TODO: find better way to check that input is finished
 }
+
+function onPixelOverride(row, col, colorHex) {
+    const colorRGB = hexToRgb(colorHex);
+    const pixelIndex = 4 * (row * targetResolution[0] + col);
+    const isAlreadySet =
+        colorRGB[0] === overridePixelArray[pixelIndex] &&
+        colorRGB[1] === overridePixelArray[pixelIndex + 1] &&
+        colorRGB[2] === overridePixelArray[pixelIndex + 2];
+    if (isAlreadySet) {
+        for (var i = 0; i < 4; i++) {
+            overridePixelArray[pixelIndex + i] = null;
+        }
+    } else {
+        for (var i = 0; i < 3; i++) {
+            overridePixelArray[pixelIndex + i] = colorRGB[i];
+        }
+        overridePixelArray[pixelIndex + 3] = 255;
+    }
+    runStep1();
+}
+
+step3CanvasUpscaled.addEventListener(
+    "click",
+    function(event) {
+        const rawRow =
+            event.clientY - step3CanvasUpscaled.getBoundingClientRect().y; //- step3CanvasUpscaled.offsetTop;
+        const rawCol =
+            event.clientX - step3CanvasUpscaled.getBoundingClientRect().x; // - step3CanvasUpscaled.offsetLeft;
+        const row = Math.round(
+            (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
+        );
+        const col = Math.round(
+            (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
+        );
+        const rgb = document
+            .getElementById("paintbrush-controls")
+            .children[0].children[0].children[0].style.backgroundColor.replace(
+                "rgb(",
+                ""
+            )
+            .replace(")", "")
+            .split(/,\s*/)
+            .map(shade => parseInt(shade));
+        const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+        onPixelOverride(row, col, hex);
+    },
+    false
+);
 
 function runStep4(callback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
@@ -593,12 +666,16 @@ function runStep4(callback) {
             targetResolution[0] * SCALING_FACTOR,
             targetResolution[1] * SCALING_FACTOR
         );
+
         const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
             step3PixelArray,
             document.getElementById("use-bleedthrough-check").checked
                 ? getDarkenedStudMap(selectedStudMap)
                 : selectedStudMap,
             step2PixelArray,
+            document.getElementById("use-bleedthrough-check").checked
+                ? getDarkenedImage(overridePixelArray)
+                : overridePixelArray,
             document.getElementById("use-randomize-ties").checked
         );
 
@@ -610,7 +687,9 @@ function runStep4(callback) {
                 document.getElementById("use-bleedthrough-check").checked
                     ? revertDarkenedImage(
                           availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                          getDarkenedStudsToStuds(
+                              ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                          )
                       )
                     : availabilityCorrectedPixelArray,
                 bricklinkCacheCanvas
@@ -620,7 +699,9 @@ function runStep4(callback) {
                 document.getElementById("use-bleedthrough-check").checked
                     ? revertDarkenedImage(
                           availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                          getDarkenedStudsToStuds(
+                              ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                          )
                       )
                     : availabilityCorrectedPixelArray,
                 targetResolution[0],
@@ -666,7 +747,9 @@ function generateInstructions() {
             .checked
             ? revertDarkenedImage(
                   step4PixelArray,
-                  getDarkenedStudsToStuds(Object.keys(selectedStudMap))
+                  getDarkenedStudsToStuds(
+                      ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                  )
               )
             : step4PixelArray;
 
