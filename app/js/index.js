@@ -136,6 +136,14 @@ document.getElementById("height-slider").addEventListener(
     },
     false
 );
+document
+    .getElementById("clear-overrides-button")
+    .addEventListener("click", () => {
+        overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
+        runStep1();
+    });
 
 const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
