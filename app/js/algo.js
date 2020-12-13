@@ -160,6 +160,9 @@ function correctPixelsForAvailableStuds(
     studMapToSortedColorList(availableStudMap).forEach(color => {
         problematicPixelsMap[color] = [];
     });
+    studMapToSortedColorList(usedPixelStudMap).forEach(color => {
+        problematicPixelsMap[color] = [];
+    });
 
     for (let i = 0; i < anchorAlignedPixels.length; i += 4) {
         const alignedHex = rgbToHex(
@@ -197,7 +200,7 @@ function correctPixelsForAvailableStuds(
     // now truncate each of these arrays so that for each color, the number of pixels
     // left is equal to the number of extra studs we would need to fill in that color
     Object.keys(problematicPixelsMap).forEach(anchorPixel => {
-        let availableStuds = availableStudMap[anchorPixel];
+        let availableStuds = availableStudMap[anchorPixel] || 0;
         const pixelArray = problematicPixelsMap[anchorPixel];
         while (pixelArray.length > 0 && availableStuds > 0) {
             pixelArray.pop();
