@@ -372,6 +372,9 @@ function getColorSelectorDropdown() {
     return container;
 }
 
+const paintbrushDropdown = getColorSelectorDropdown();
+document.getElementById("paintbrush-controls").appendChild(paintbrushDropdown);
+
 function getNewCustomStudRow() {
     const studRow = document.createElement("tr");
 
@@ -619,7 +622,17 @@ step3CanvasUpscaled.addEventListener(
         const col = Math.round(
             (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
         );
-        onPixelOverride(row, col, "#42C0FB");
+        const rgb = document
+            .getElementById("paintbrush-controls")
+            .children[0].children[0].children[0].style.backgroundColor.replace(
+                "rgb(",
+                ""
+            )
+            .replace(")", "")
+            .split(/,\s*/)
+            .map(shade => parseInt(shade));
+        const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+        onPixelOverride(row, col, hex);
     },
     false
 );
