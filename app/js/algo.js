@@ -63,9 +63,9 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
     return sum;
 }
 
-// aligns each pixel in the input array to the closes pixel in the studMap
+// aligns each pixel in the input array to the closes pixel in the studMap, and adds in overrides
 // returns the resulting pixels
-function alignPixelsToStudMap(inputPixels, studMap) {
+function alignPixelsToStudMap(inputPixels, studMap, overridePixels) {
     const alignedPixels = [...inputPixels]; // initialize this way just so we keep 4th pixel values
     // note that 4th pixel values are ignored anyway because it's too much effort to use them
     const anchorPixels = studMapToSortedColorList(studMap).map(pixel =>
@@ -99,6 +99,11 @@ function alignPixelsToStudMap(inputPixels, studMap) {
         for (let j = 0; j < 3; j++) {
             alignedPixels[targetPixelIndex + j] =
                 anchorPixels[closestAnchorPixel][j];
+        }
+    }
+    for (let i = 0; i < alignedPixels.length; i++) {
+        if (overridePixels[i] != null) {
+            alignedPixels[i] = overridePixels[i];
         }
     }
     return alignedPixels;
@@ -141,6 +146,7 @@ function correctPixelsForAvailableStuds(
     originalPixels,
     randomizeTies
 ) {
+    availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
     const remainingStudMap = studMapDifference(
         availableStudMap,
@@ -322,6 +328,27 @@ function getDarkenedStudMap(studMap) {
             studMap[stud];
     });
     return result;
+}
+
+function getDarkenedImage(pixels) {
+    const outputPixels = [...pixels];
+    for (let i = 0; i < pixels.length; i += 4) {
+        if (
+            pixels[i] != null &&
+            pixels[i + 1] != null &&
+            pixels[i + 2] != null
+        ) {
+            const darkenedPixel = getDarkenedPixel([
+                pixels[i],
+                pixels[i + 1],
+                pixels[i + 2]
+            ]);
+            for (let j = 0; j < 3; j++) {
+                outputPixels[i + j] = darkenedPixel[j];
+            }
+        }
+    }
+    return outputPixels;
 }
 
 function revertDarkenedImage(pixels, darkenedStudsToStuds) {
