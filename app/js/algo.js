@@ -139,6 +139,7 @@ function studMapDifference(map1, map2) {
     return result;
 }
 
+const TIEBREAKER_RATIO = 0.000001;
 // corrects the input pixels to account for which studs are actually available
 function correctPixelsForAvailableStuds(
     anchorAlignedPixels,
@@ -193,7 +194,7 @@ function correctPixelsForAvailableStuds(
             alignedRGB,
             alignmentDistSquared:
                 RGBPixelDistanceSquared(originalRGB, alignedRGB) +
-                (randomizeTies ? Math.random() : 0)
+                (randomizeTies ? Math.random() * TIEBREAKER_RATIO : 0)
         });
     }
 
