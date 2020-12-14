@@ -201,6 +201,15 @@ function correctPixelsForAvailableStuds(
             tiebreakFactor *= (row + col) % 3;
         } else if (tieResolutionMethod === "mod4") {
             tiebreakFactor *= (row + col) % 4;
+        } else if (tieResolutionMethod === "noisymod2") {
+            tiebreakFactor *=
+                ((row + col) % 2) + Math.random() * TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "noisymod3") {
+            tiebreakFactor *=
+                ((row + col) % 3) + Math.random() * TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "noisymod4") {
+            tiebreakFactor *=
+                ((row + col) % 4) + Math.random() * TIEBREAKER_RATIO;
         }
         problematicPixelsMap[alignedHex].push({
             index: i,
