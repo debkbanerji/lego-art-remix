@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.13";
+const VERSION_NUMBER = "v2020.12.14";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -256,7 +256,8 @@ const TIEBREAK_TECHNIQUES = [
     {name: "Mod 4", value: "mod4"},
     {name: "Noisy Mod 2", value: "noisymod2"},
     {name: "Noisy Mod 3", value: "noisymod3"},
-    {name: "Noisy Mod 4", value: "noisymod4"}
+    {name: "Noisy Mod 4", value: "noisymod4"},
+    {name: "Cascading Mod", value: "cascadingmod"}
 ];
 TIEBREAK_TECHNIQUES.forEach(technique => {
     const option = document.createElement("a");
