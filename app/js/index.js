@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.14";
+const VERSION_NUMBER = "v2020.12.13";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -256,8 +256,7 @@ const TIEBREAK_TECHNIQUES = [
     {name: "Mod 4", value: "mod4"},
     {name: "Noisy Mod 2", value: "noisymod2"},
     {name: "Noisy Mod 3", value: "noisymod3"},
-    {name: "Noisy Mod 4", value: "noisymod4"},
-    {name: "Cascading Mod", value: "cascadingmod"}
+    {name: "Noisy Mod 4", value: "noisymod4"}
 ];
 TIEBREAK_TECHNIQUES.forEach(technique => {
     const option = document.createElement("a");
@@ -809,8 +808,7 @@ function generateInstructions() {
         );
 
         const totalPlates =
-            Math.ceil(targetResolution[0] / PLATE_WIDTH) *
-            Math.ceil(targetResolution[1] / PLATE_WIDTH);
+            resultImage.length / (4 * PLATE_WIDTH * PLATE_WIDTH);
         for (var i = 0; i < totalPlates; i++) {
             const instructionPageCanvas = document.createElement("canvas");
             instructionsCanvasContainer.appendChild(instructionPageCanvas);
@@ -821,14 +819,8 @@ function generateInstructions() {
                 targetResolution[0],
                 PLATE_WIDTH
             );
-            const horizontalOffset = (i * PLATE_WIDTH) % targetResolution[0];
-            const subPixelArrayWidth =
-                horizontalOffset % PLATE_WIDTH != 0
-                    ? horizontalOffset % PLATE_WIDTH
-                    : PLATE_WIDTH;
             generateInstructionPage(
                 subPixelArray,
-                subPixelArrayWidth,
                 PLATE_WIDTH,
                 selectedSortedStuds,
                 SCALING_FACTOR,
