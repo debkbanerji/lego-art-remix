@@ -940,7 +940,7 @@ function handleInputImage(e) {
             "Reselect Input Image";
         setTimeout(() => {
             runStep1();
-        }, 20); // TODO: find better way to check that input is finished
+        }, 200); // TODO: find better way to check that input is finished
 
         perfLoggingDatabase
             .ref("input-image-count/total")
