@@ -33,7 +33,8 @@ const interactionSelectors = [
     "bricklink-piece-button",
     "clear-overrides-button",
     "clear-custom-studs-button",
-    "export-stud-map-button"
+    "color-ties-resolution-button",
+    "resolution-limit-increase-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -146,6 +147,16 @@ document
             targetResolution[0] * targetResolution[1] * 4
         ).fill(null);
         runStep1();
+    });
+
+document
+    .getElementById("resolution-limit-increase-button")
+    .addEventListener("click", () => {
+        document.getElementById("height-slider").max = 256;
+        document.getElementById("width-slider").max = 256;
+        document.getElementById(
+            "resolution-limit-increase-button"
+        ).hidden = true;
     });
 
 const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";

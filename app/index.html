@@ -43,11 +43,11 @@
             <b>Target Resolution:</b>
             <div style="width: 100%">
               <div>Width: <span id="width-text">48</span></div>
-              <input type="range" id="width-slider" name="points" min="16" max="144" step="16" value="48" style="width: 100%">
+              <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
             </div>
             <div style="width: 100%">
               <div>Height: <span id="height-text">48</span></div>
-              <input type="range" id="height-slider" name="points" min="16" max="144" step="16" value="48" style="width: 100%">
+              <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
             </div>
           </div>
           <div style="margin-left: 4px; margin-top: 10px">
@@ -57,6 +57,19 @@
               <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
             </small>
           </div>
+          <hr />
+          <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+            Increase Resolution Limit
+          </button>
+          <small>
+            <div>
+              <b style="color: #ff4c00;">Important</b>
+              <p>
+                Be careful when increasing the resolution limit - this can cause performance issues on
+                less powerful machines, especially during pdf generation
+              </p>
+            </div>
+          </small>
         </div>
       </div>
 
@@ -155,9 +168,9 @@
               </button>
             </div>
             <div style="padding-bottom: 10px">
-              <a class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
+              <button class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
                 Export Selected Studs
-              </a>
+              </button>
             </div>
             <div class="btn-group">
               <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -204,9 +217,10 @@
           </div>
           <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
           <small style=" margin-left: 4px; margin-bottom: 4px"><b>Longer instructions may be split into multiple files</b></small>
-          <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
-          <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px">Copy Bricklink XML to Clipboard</button>
-          <div class="btn-group" style="padding-bottom: 10px">
+          <small style=" margin-left: 4px; margin-bottom: 2px"><b>Color names are Bricklink colors</b></small>
+          <hr />
+          <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
+          <div class="btn-group">
             <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Bricklink Pixel Piece
             </button>
@@ -219,8 +233,9 @@
               Bricklink Upload Page
             </a>
           </small>
+          <hr />
           <div id="instructions-canvas-container" hidden></div>
-          <div style="margin-left: 4px; margin-top: 10px">
+          <div style="margin-left: 4px">
             <small>
               <b style="color: #ff4c00">Important</b>
               <p>
@@ -229,7 +244,9 @@
                 some slowness on the page or may not work at all on lower powered devices, so I recommend starting at the default
                 and then going up.
               </p>
-            </small><small>
+            </small>
+            <hr />
+            <small>
               <b>Tip</b>
               <p>
                 If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
