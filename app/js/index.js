@@ -769,9 +769,6 @@ async function generateInstructions() {
     );
     instructionsCanvasContainer.innerHTML = "";
     disableInteraction();
-    document.getElementById("pdf-progress-bar").style.width = "0%";
-    document.getElementById("pdf-progress-container").hidden = false;
-    document.getElementById("download-instructions-button").hidden = true;
     runStep4(async () => {
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
@@ -814,6 +811,10 @@ async function generateInstructions() {
 
         document.getElementById("pdf-progress-bar").style.width = `${100 /
             (totalPlates + 1)}%`;
+
+        document.getElementById("pdf-progress-bar").style.width = "0%";
+        document.getElementById("pdf-progress-container").hidden = false;
+        document.getElementById("download-instructions-button").hidden = true;
 
         pdf.addImage(
             imgData,
