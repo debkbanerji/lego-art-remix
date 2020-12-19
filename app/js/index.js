@@ -252,15 +252,18 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
 
 let selectedTiebreakTechnique = "none";
 const TIEBREAK_TECHNIQUES = [
-    {name: "None", value: "none"},
+    {name: "No Color Tie Resolution", value: "none"},
     {name: "Random", value: "random"},
     {name: "Mod 2", value: "mod2"},
     {name: "Mod 3", value: "mod3"},
     {name: "Mod 4", value: "mod4"},
+    {name: "Mod 5", value: "mod5"},
     {name: "Noisy Mod 2", value: "noisymod2"},
     {name: "Noisy Mod 3", value: "noisymod3"},
     {name: "Noisy Mod 4", value: "noisymod4"},
-    {name: "Cascading Mod", value: "cascadingmod"}
+    {name: "Noisy Mod 5", value: "noisymod5"},
+    {name: "Cascading Mod", value: "cascadingmod"},
+    {name: "Cascading Noisy Mod", value: "cascadingnoisymod"}
 ];
 TIEBREAK_TECHNIQUES.forEach(technique => {
     const option = document.createElement("a");
@@ -269,7 +272,7 @@ TIEBREAK_TECHNIQUES.forEach(technique => {
     option.value = technique.value;
     option.addEventListener("click", () => {
         document.getElementById("color-ties-resolution-button").innerHTML =
-            "Color Tie Resolution: " + technique.name;
+            /*"Color Tie Resolution: " +*/ technique.name;
         selectedTiebreakTechnique = technique.value;
         runStep1();
     });

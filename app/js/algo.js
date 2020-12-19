@@ -201,6 +201,8 @@ function correctPixelsForAvailableStuds(
             tiebreakFactor *= (row + col) % 3;
         } else if (tieResolutionMethod === "mod4") {
             tiebreakFactor *= (row + col) % 4;
+        } else if (tieResolutionMethod === "mod5") {
+            tiebreakFactor *= (row + col) % 5;
         } else if (tieResolutionMethod === "noisymod2") {
             tiebreakFactor *=
                 ((row + col) % 2) + Math.random() * TIEBREAKER_RATIO;
@@ -210,6 +212,9 @@ function correctPixelsForAvailableStuds(
         } else if (tieResolutionMethod === "noisymod4") {
             tiebreakFactor *=
                 ((row + col) % 4) + Math.random() * TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "noisymod5") {
+            tiebreakFactor *=
+                ((row + col) % 5) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingmod") {
             tiebreakFactor *=
                 ((row + col) % 2) +
@@ -218,9 +223,13 @@ function correctPixelsForAvailableStuds(
                 ((row + col) % 5) *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO +
-                ((row + col) % 6) *
-                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "cascadingnoisymod") {
+            tiebreakFactor *=
+                ((row + col) % 2) +
+                ((row + col) % 3) * TIEBREAKER_RATIO +
+                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                Math.random() *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO;
