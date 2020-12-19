@@ -377,8 +377,8 @@ function getColorSquare(hex) {
 }
 
 function getColorSelectorDropdown() {
-    const DEFAULT_COLOR = "#a6ca55";
-    const DEFAULT_COLOR_NAME = "Lime";
+    const DEFAULT_COLOR = "#42c0fb";
+    const DEFAULT_COLOR_NAME = "Medium Azure";
 
     const container = document.createElement("a");
     const id = "color-selector" + uuidv4();
