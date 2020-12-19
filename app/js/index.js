@@ -654,6 +654,55 @@ function onPixelOverride(row, col, colorHex) {
     runStep1();
 }
 
+function onCherryPickColor(row, col) {
+    const existingRGB = document
+        .getElementById("paintbrush-controls")
+        .children[0].children[0].children[0].style.backgroundColor.replace(
+            "rgb(",
+            ""
+        )
+        .replace(")", "")
+        .split(/,\s*/)
+        .map(shade => parseInt(shade));
+    // const existingRGB = hexToRgb(existingHex);
+    const pixelIndex = 4 * (row * targetResolution[0] + col);
+    const isAlreadySet =
+        existingRGB[0] === overridePixelArray[pixelIndex] &&
+        existingRGB[1] === overridePixelArray[pixelIndex + 1] &&
+        existingRGB[2] === overridePixelArray[pixelIndex + 2];
+
+    const step3PixelArray = document.getElementById("use-bleedthrough-check")
+        .checked
+        ? revertDarkenedImage(
+              getPixelArrayFromCanvas(step3Canvas),
+              getDarkenedStudsToStuds(
+                  ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+              )
+          )
+        : getPixelArrayFromCanvas(step3Canvas);
+
+    const colorHex = isAlreadySet
+        ? rgbToHex(
+              overridePixelArray[pixelIndex],
+              overridePixelArray[pixelIndex + 1],
+              overridePixelArray[pixelIndex + 2]
+          )
+        : rgbToHex(
+              step3PixelArray[pixelIndex],
+              step3PixelArray[pixelIndex + 1],
+              step3PixelArray[pixelIndex + 2]
+          );
+    document.getElementById(
+        "paintbrush-controls"
+    ).children[0].children[0].children[0].style.backgroundColor = colorHex;
+    const hexName = ALL_BRICKLINK_SOLID_COLORS.find(
+        color => color.hex === colorHex
+    ).name;
+    document
+        .getElementById("paintbrush-controls")
+        .children[0].setAttribute("title", hexName);
+}
+
 step3CanvasUpscaled.addEventListener(
     "click",
     function(event) {
@@ -681,6 +730,21 @@ step3CanvasUpscaled.addEventListener(
     },
     false
 );
+
+step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+    const rawRow =
+        event.clientY - step3CanvasUpscaled.getBoundingClientRect().y; //- step3CanvasUpscaled.offsetTop;
+    const rawCol =
+        event.clientX - step3CanvasUpscaled.getBoundingClientRect().x; // - step3CanvasUpscaled.offsetLeft;
+    const row = Math.round(
+        (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
+    );
+    const col = Math.round(
+        (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
+    );
+    onCherryPickColor(row, col);
+});
 
 function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
