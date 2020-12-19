@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.14";
+const VERSION_NUMBER = "v2020.12.18";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -31,7 +31,9 @@ const interactionSelectors = [
     "export-stud-map-button",
     "import-stud-map-file-input",
     "bricklink-piece-button",
-    "clear-overrides-button"
+    "clear-overrides-button",
+    "clear-custom-studs-button",
+    "export-stud-map-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -666,7 +668,7 @@ step3CanvasUpscaled.addEventListener(
     false
 );
 
-function runStep4(callback) {
+function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
     step4Canvas.width = 0;
@@ -702,8 +704,7 @@ function runStep4(callback) {
         );
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
-        setTimeout(() => {
-            enableInteraction();
+        setTimeout(async () => {
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
                 document.getElementById("use-bleedthrough-check").checked
@@ -730,9 +731,10 @@ function runStep4(callback) {
                 SCALING_FACTOR,
                 step4CanvasUpscaled
             );
-            if (callback) {
-                callback();
+            if (asyncCallback) {
+                await asyncCallback();
             }
+            enableInteraction();
         }, 1); // TODO: find better way to check that input is finished
     } catch (_e) {
         enableInteraction();
@@ -757,13 +759,20 @@ function addWaterMark(pdf) {
     }
 }
 
-function generateInstructions() {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function generateInstructions() {
     const instructionsCanvasContainer = document.getElementById(
         "instructions-canvas-container"
     );
     instructionsCanvasContainer.innerHTML = "";
     disableInteraction();
-    runStep4(() => {
+    document.getElementById("pdf-progress-bar").style.width = "0%";
+    document.getElementById("pdf-progress-container").hidden = false;
+    document.getElementById("download-instructions-button").hidden = true;
+    runStep4(async () => {
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
             .checked
@@ -800,6 +809,12 @@ function generateInstructions() {
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
+        const totalPlates =
+            resultImage.length / (4 * PLATE_WIDTH * PLATE_WIDTH);
+
+        document.getElementById("pdf-progress-bar").style.width = `${100 /
+            (totalPlates + 1)}%`;
+
         pdf.addImage(
             imgData,
             "PNG",
@@ -809,9 +824,13 @@ function generateInstructions() {
             (pdfWidth * titlePageCanvas.height) / titlePageCanvas.width
         );
 
-        const totalPlates =
-            resultImage.length / (4 * PLATE_WIDTH * PLATE_WIDTH);
         for (var i = 0; i < totalPlates; i++) {
+            await sleep(50);
+            document.getElementById("pdf-progress-bar").style.width = `${((i +
+                2) *
+                100) /
+                (totalPlates + 1)}%`;
+
             const instructionPageCanvas = document.createElement("canvas");
             instructionsCanvasContainer.appendChild(instructionPageCanvas);
 
@@ -848,7 +867,16 @@ function generateInstructions() {
         }
 
         addWaterMark(pdf);
-        pdf.save("Lego-Art-Remix-Instructions.pdf");
+        try {
+            pdf.save("Lego-Art-Remix-Instructions.pdf");
+        } catch (_e) {
+            alert(
+                "Unable to save pdf - the process likely has insufficient memory. This is a browser " +
+                    "limitation so please try breaking your image into components"
+            );
+        }
+        document.getElementById("pdf-progress-container").hidden = true;
+        document.getElementById("download-instructions-button").hidden = false;
         enableInteraction();
 
         perfLoggingDatabase
@@ -899,8 +927,8 @@ document
 
 document
     .getElementById("download-instructions-button")
-    .addEventListener("click", () => {
-        generateInstructions();
+    .addEventListener("click", async () => {
+        await generateInstructions();
     });
 
 document
@@ -941,7 +969,7 @@ function handleInputImage(e) {
             "Reselect Input Image";
         setTimeout(() => {
             runStep1();
-        }, 200); // TODO: find better way to check that input is finished
+        }, 50); // TODO: find better way to check that input is finished
 
         perfLoggingDatabase
             .ref("input-image-count/total")
