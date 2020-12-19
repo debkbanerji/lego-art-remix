@@ -734,9 +734,13 @@ step3CanvasUpscaled.addEventListener(
     "click",
     function(event) {
         const rawRow =
-            event.clientY - step3CanvasUpscaled.getBoundingClientRect().y; //- step3CanvasUpscaled.offsetTop;
+            event.clientY -
+            step3CanvasUpscaled.getBoundingClientRect().y -
+            step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
         const rawCol =
-            event.clientX - step3CanvasUpscaled.getBoundingClientRect().x; // - step3CanvasUpscaled.offsetLeft;
+            event.clientX -
+            step3CanvasUpscaled.getBoundingClientRect().x -
+            step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
         const row = Math.round(
             (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
         );
@@ -761,9 +765,13 @@ step3CanvasUpscaled.addEventListener(
 step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
     event.preventDefault();
     const rawRow =
-        event.clientY - step3CanvasUpscaled.getBoundingClientRect().y; //- step3CanvasUpscaled.offsetTop;
+        event.clientY -
+        step3CanvasUpscaled.getBoundingClientRect().y -
+        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
     const rawCol =
-        event.clientX - step3CanvasUpscaled.getBoundingClientRect().x; // - step3CanvasUpscaled.offsetLeft;
+        event.clientX -
+        step3CanvasUpscaled.getBoundingClientRect().x -
+        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
     const row = Math.round(
         (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
     );
@@ -776,9 +784,13 @@ step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
 let step3CanvasHoveredPixel = null;
 step3CanvasUpscaled.addEventListener("mousemove", function(event) {
     const rawRow =
-        event.clientY - step3CanvasUpscaled.getBoundingClientRect().y; //- step3CanvasUpscaled.offsetTop;
+        event.clientY -
+        step3CanvasUpscaled.getBoundingClientRect().y -
+        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
     const rawCol =
-        event.clientX - step3CanvasUpscaled.getBoundingClientRect().x; // - step3CanvasUpscaled.offsetLeft;
+        event.clientX -
+        step3CanvasUpscaled.getBoundingClientRect().x -
+        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
     const pixelRow = Math.round(
         (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
     );
