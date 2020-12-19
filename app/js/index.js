@@ -799,7 +799,7 @@ async function generateInstructions() {
 
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
-        const pdf = new jsPDF({
+        let pdf = new jsPDF({
             orientation:
                 titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
             unit: "mm",
@@ -824,8 +824,25 @@ async function generateInstructions() {
             (pdfWidth * titlePageCanvas.height) / titlePageCanvas.width
         );
 
+        let numParts = 1;
         for (var i = 0; i < totalPlates; i++) {
             await sleep(50);
+            if ((i + 1) % 20 === 0) {
+                addWaterMark(pdf);
+                pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
+                numParts++;
+                pdf = new jsPDF({
+                    orientation:
+                        titlePageCanvas.width < titlePageCanvas.height
+                            ? "p"
+                            : "l",
+                    unit: "mm",
+                    format: [titlePageCanvas.width, titlePageCanvas.height]
+                });
+            } else {
+                pdf.addPage();
+            }
+
             document.getElementById("pdf-progress-bar").style.width = `${((i +
                 2) *
                 100) /
@@ -854,7 +871,6 @@ async function generateInstructions() {
                 i
             );
 
-            pdf.addPage();
             pdf.addImage(
                 imgData,
                 "PNG",
@@ -867,14 +883,11 @@ async function generateInstructions() {
         }
 
         addWaterMark(pdf);
-        try {
-            pdf.save("Lego-Art-Remix-Instructions.pdf");
-        } catch (_e) {
-            alert(
-                "Unable to save pdf - the process likely has insufficient memory. This is a browser " +
-                    "limitation so please try breaking your image into components"
-            );
-        }
+        pdf.save(
+            numParts > 1
+                ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
+                : "Lego-Art-Remix-Instructions.pdf"
+        );
         document.getElementById("pdf-progress-container").hidden = true;
         document.getElementById("download-instructions-button").hidden = false;
         enableInteraction();
