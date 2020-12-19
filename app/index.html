@@ -34,7 +34,7 @@
     </div>
 
     <div class="row" id="steps-row" hidden>
-      <div id="step-1" class="col-6 col-md-3">
+      <div id="step-1" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-1-canvas" hidden></canvas>
           <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
@@ -74,7 +74,7 @@
       </div>
 
 
-      <div id="step-2" class="col-6 col-md-3">
+      <div id="step-2" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-2-canvas" hidden></canvas>
           <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
@@ -116,19 +116,24 @@
           <small style="margin-top: 4px; margin-left: 4px">Right click a pixel to use its color for overrides</small>
           <small style="margin-top: 4px; margin-left: 4px">Make sure to also add your override color to the list
             of available colors below</small>
-          <hr />
-          <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-            <label>
-              <input type="checkbox" id="use-bleedthrough-check" checked>
-              Account for round stud bleedthrough
-            </label>
-          </div>
-          <hr />
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-              No Color Tie Resolution
-            </button>
-            <div class="dropdown-menu" id="color-ties-resolution-options">
+          <button style="margin-top: 4px; margin-left: 4px" class="btn" type="button" id="toggle-expansion-button">
+            Expand Picture
+          </button>
+          <div class="hide-on-step-3-expansion">
+            <hr />
+            <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+              <label>
+                <input type="checkbox" id="use-bleedthrough-check" checked>
+                Account for round stud bleedthrough
+              </label>
+            </div>
+            <hr />
+            <div class="btn-group">
+              <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                No Color Tie Resolution
+              </button>
+              <div class="dropdown-menu" id="color-ties-resolution-options">
+              </div>
             </div>
           </div>
           <hr />
@@ -208,7 +213,7 @@
       </div>
 
 
-      <div id="step-4" class="col-6 col-md-3">
+      <div id="step-4" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <canvas id="step-4-canvas" hidden></canvas>
           <canvas id="bricklink-cache-canvas" hidden></canvas>

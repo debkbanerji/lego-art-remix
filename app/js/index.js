@@ -616,7 +616,11 @@ function runStep3() {
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
     setTimeout(() => {
-        runStep4();
+        if (!isStep3ViewExpanded) {
+            runStep4();
+        } else {
+            enableInteraction();
+        }
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
             document.getElementById("use-bleedthrough-check").checked
@@ -633,6 +637,29 @@ function runStep3() {
         );
     }, 1); // TODO: find better way to check that input is finished
 }
+
+let isStep3ViewExpanded = false;
+
+document
+    .getElementById("toggle-expansion-button")
+    .addEventListener("click", () => {
+        isStep3ViewExpanded = !isStep3ViewExpanded;
+        const toToggleElements = Array.from(
+            document.getElementsByClassName("hide-on-step-3-expansion")
+        );
+        if (isStep3ViewExpanded) {
+            toToggleElements.forEach(element => (element.hidden = true));
+            document.getElementById("toggle-expansion-button").innerHTML =
+                "Collapse Picture";
+            document.getElementById("step-3").className = "col-12";
+        } else {
+            toToggleElements.forEach(element => (element.hidden = false));
+            document.getElementById("toggle-expansion-button").innerHTML =
+                "Expand Picture";
+            document.getElementById("step-3").className = "col-6 col-md-3";
+            runStep4();
+        }
+    });
 
 function onPixelOverride(row, col, colorHex) {
     const colorRGB = hexToRgb(colorHex);
