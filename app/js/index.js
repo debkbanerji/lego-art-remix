@@ -30,7 +30,8 @@ const interactionSelectors = [
     "export-to-bricklink-button",
     "export-stud-map-button",
     "import-stud-map-file-input",
-    "bricklink-piece-button"
+    "bricklink-piece-button",
+    "clear-overrides-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
