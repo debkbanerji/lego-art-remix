@@ -13,6 +13,9 @@ function incrementTransaction(count) {
     return (count || 0) + 1;
 }
 
+const LOW_DPI = 48;
+const HIGH_DPI = 96;
+
 const interactionSelectors = [
     "input-image-selector",
     "input-image-selector-hidden",
@@ -34,7 +37,8 @@ const interactionSelectors = [
     "clear-overrides-button",
     "clear-custom-studs-button",
     "color-ties-resolution-button",
-    "resolution-limit-increase-button"
+    "resolution-limit-increase-button",
+    "high-quality-insructions-check"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -976,6 +980,33 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function setDPI(canvas, dpi) {
+    // Set up CSS size.
+    canvas.style.width = canvas.style.width || canvas.width + "px";
+    canvas.style.height = canvas.style.height || canvas.height + "px";
+
+    // Get size information.
+    var scaleFactor = dpi / 96;
+    var width = parseFloat(canvas.style.width);
+    var height = parseFloat(canvas.style.height);
+
+    // Backup the canvas contents.
+    var oldScale = canvas.width / width;
+    var backupScale = scaleFactor / oldScale;
+    var backup = canvas.cloneNode(false);
+    backup.getContext("2d").drawImage(canvas, 0, 0);
+
+    // Resize the canvas.
+    var ctx = canvas.getContext("2d");
+    canvas.width = Math.ceil(width * scaleFactor);
+    canvas.height = Math.ceil(height * scaleFactor);
+
+    // Redraw the canvas image and scale future draws.
+    ctx.setTransform(backupScale, 0, 0, backupScale, 0, 0);
+    ctx.drawImage(backup, 0, 0);
+    ctx.setTransform(scaleFactor, 0, 0, scaleFactor, 0, 0);
+}
+
 async function generateInstructions() {
     const instructionsCanvasContainer = document.getElementById(
         "instructions-canvas-container"
@@ -983,6 +1014,9 @@ async function generateInstructions() {
     instructionsCanvasContainer.innerHTML = "";
     disableInteraction();
     runStep4(async () => {
+        const isHighQuality = document.getElementById(
+            "high-quality-insructions-check"
+        ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
             .checked
@@ -1003,9 +1037,10 @@ async function generateInstructions() {
             selectedSortedStuds,
             SCALING_FACTOR,
             step4CanvasUpscaled,
-            titlePageCanvas
-            // selectedFullSetName
+            titlePageCanvas,
+            isHighQuality
         );
+        setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
 
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
@@ -1041,7 +1076,7 @@ async function generateInstructions() {
         let numParts = 1;
         for (var i = 0; i < totalPlates; i++) {
             await sleep(50);
-            if ((i + 1) % 20 === 0) {
+            if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
                 addWaterMark(pdf);
                 pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
                 numParts++;
@@ -1077,9 +1112,11 @@ async function generateInstructions() {
                 selectedSortedStuds,
                 SCALING_FACTOR,
                 instructionPageCanvas,
-                i + 1
+                i + 1,
+                isHighQuality
             );
 
+            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
             const imgData = instructionPageCanvas.toDataURL(
                 `image${i + 1}/jpeg`,
                 i
