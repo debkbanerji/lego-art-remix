@@ -122,6 +122,14 @@ function updateStudCountText() {
 let overridePixelArray = new Array(
     targetResolution[0] * targetResolution[1] * 4
 ).fill(null);
+
+function handleResolutionChange() {
+    overridePixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    runStep1();
+}
+
 document.getElementById("width-slider").addEventListener(
     "change",
     () => {
@@ -129,10 +137,7 @@ document.getElementById("width-slider").addEventListener(
             "width-text"
         ).innerHTML = document.getElementById("width-slider").value;
         targetResolution[0] = document.getElementById("width-slider").value;
-        overridePixelArray = new Array(
-            targetResolution[0] * targetResolution[1] * 4
-        ).fill(null);
-        runStep1();
+        handleResolutionChange();
     },
     false
 );
@@ -144,10 +149,7 @@ document.getElementById("height-slider").addEventListener(
             "height-text"
         ).innerHTML = document.getElementById("height-slider").value;
         targetResolution[1] = document.getElementById("height-slider").value;
-        overridePixelArray = new Array(
-            targetResolution[0] * targetResolution[1] * 4
-        ).fill(null);
-        runStep1();
+        handleResolutionChange();
     },
     false
 );
