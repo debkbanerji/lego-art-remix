@@ -106,12 +106,18 @@ window.addEventListener("resize", () => {
     });
 });
 
-document.getElementById("enable-depth-button").addEventListener("click", () => {
+function enableDepth() {
     [...document.getElementsByClassName("3d-selector-tabs")].forEach(
         tabsList => (tabsList.hidden = false)
     );
     document.getElementById("enable-depth-button-container").hidden = true;
-});
+}
+document
+    .getElementById("enable-depth-button")
+    .addEventListener("click", enableDepth);
+if (window.location.href.includes("enable3d")) {
+    enableDepth();
+}
 
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
