@@ -48,6 +48,9 @@ function disableInteraction() {
     interactionSelectors.forEach(button => {
         button.disabled = true;
     });
+    [...document.getElementsByClassName("nav-link")].forEach(
+        link => (link.className = link.className + " disabled")
+    );
 }
 
 function enableInteraction() {
@@ -55,6 +58,9 @@ function enableInteraction() {
     interactionSelectors.forEach(button => {
         button.disabled = false;
     });
+    [...document.getElementsByClassName("nav-link")].forEach(
+        link => (link.className = link.className.replace(" disabled", ""))
+    );
 }
 
 let inputImage = null;
