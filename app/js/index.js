@@ -100,6 +100,13 @@ window.addEventListener("resize", () => {
     });
 });
 
+document.getElementById("enable-depth-button").addEventListener("click", () => {
+    [...document.getElementsByClassName("3d-selector-tabs")].forEach(
+        tabsList => (tabsList.hidden = false)
+    );
+    document.getElementById("enable-depth-button-container").hidden = true;
+});
+
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
     let availableStuds = 0;

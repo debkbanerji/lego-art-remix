@@ -36,40 +36,58 @@
     <div class="row" id="steps-row" hidden>
       <div id="step-1" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-1-canvas" hidden></canvas>
-          <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 1: Scale input image</h4>
-          <div>
-            <b>Target Resolution:</b>
-            <div style="width: 100%">
-              <div>Width: <span id="width-text">48</span></div>
-              <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-1-color-tab" data-toggle="tab" href="#step-1-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-1-depth-tab" data-toggle="tab" href="#step-1-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
+              <canvas id="step-1-canvas" hidden></canvas>
+              <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 1: Scale input image</h4>
+              <div>
+                <b>Target Resolution:</b>
+                <div style="width: 100%">
+                  <div>Width: <span id="width-text">48</span></div>
+                  <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                </div>
+                <div style="width: 100%">
+                  <div>Height: <span id="height-text">48</span></div>
+                  <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                </div>
+              </div>
+              <div style="margin-left: 4px; margin-top: 10px">
+                <small>
+                  <b>Tips</b>
+                  <p>Supported image formats are dependent on your browser's compatibility</p>
+                  <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+                </small>
+              </div>
+              <hr />
+              <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+                Increase Resolution Limit
+              </button>
+              <small>
+                <div>
+                  <b style="color: #ff4c00;">Important</b>
+                  <p>
+                    Be careful when using high resolutions - this can cause performance issues on
+                    less powerful machines, especially during pdf generation
+                  </p>
+                </div>
+              </small>
+              <div id="enable-depth-button-container">
+                <hr />
+                <button class="btn btn-info" type="button" id="enable-depth-button">
+                  Enable 3d mode
+                </button></div>
             </div>
-            <div style="width: 100%">
-              <div>Height: <span id="height-text">48</span></div>
-              <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
-            </div>
+            <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">(TODO: depth stuff here)</div>
           </div>
-          <div style="margin-left: 4px; margin-top: 10px">
-            <small>
-              <b>Tips</b>
-              <p>Supported image formats are dependent on your browser's compatibility</p>
-              <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
-            </small>
-          </div>
-          <hr />
-          <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
-            Increase Resolution Limit
-          </button>
-          <small>
-            <div>
-              <b style="color: #ff4c00;">Important</b>
-              <p>
-                Be careful when using high resolutions - this can cause performance issues on
-                less powerful machines, especially during pdf generation
-              </p>
-            </div>
-          </small>
         </div>
       </div>
 
