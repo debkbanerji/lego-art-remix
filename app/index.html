@@ -99,10 +99,29 @@
                 </button>
                 <hr />
                 <button class="btn btn-success" type="button" id="generate-depth-image">
-                  Compute Using CNN
+                  Compute Using DNN
                 </button>
-                <h5 style="margin-left: 4px; margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
-                <p>TODO: Add in description, citation</p>
+                <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
+                <div>
+                  <small>
+                    <b style="color: #ff4c00">Important</b>
+                    <br />
+                    <p>Computing the depth map can be computationally expensive. Be careful, and be prepared to wait a bit expecially if you have a lower powered device.
+                    </p>
+                    <b>How does this work?</b>
+                    <p>The depth map is computed using a DNN (deep neural network).
+                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">onnx.js</a>.
+                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>. More specifically, the small onnx version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                        target="_blank">here</a>.
+                    </p>
+                    <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
+                      <b>Citation for Model Used</b>
+                      <span>
+                        Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
+                          Analysis and Machine Intelligence</i></span>
+                    </div>
+                  </small>
+                </div>
               </div>
             </div>
           </div>
@@ -367,11 +386,21 @@
               The most computationally expensive part of the process is generating the instructions, since even pdf generation is
               done client side.
             </p>
-            <p>
+            <p style="margin-bottom: 5px">
               Since it runs almost entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>),
               no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously
               estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
+            <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run in the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">onnx.js</a>.
+              I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this</a> pull request, with a small additional change I made to support the resize operation in v10.
+              The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>. More specifically, the small onnx version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                target="_blank">here</a>.</p>
+            <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 4px">
+              <b>Citation for Model Used</b>
+              <span>
+                Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
+                  Analysis and Machine Intelligence</i></span>
+            </div>
             <p></p>
             <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
             <em style="margin-bottom: 5px">Direct any concerns or ideas for improvements <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em>
@@ -379,8 +408,7 @@
               As a result, there's probably a few bugs, so let me know if you find any.
             </p>
             <p style="margin-bottom: 5px">Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within
-              a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in
-              the work to add a server side computation option would allow for more complex approaches (such as constrained VAEs, etc.).
+              a reasonable degree would allow the algorithm to keep running on the client, which I really like.
             </p>
           </div>
         </div>
