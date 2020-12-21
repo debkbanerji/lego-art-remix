@@ -90,11 +90,16 @@
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1: Get Depth Map</h4>
-              <div>
+              <div id="depth-map-input-container">
                 <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
                 <button class="btn btn-success" type="button" id="input-depth-image-selector">
                   Select Depth Map Image
                 </button>
+                <h5 style="margin-left: 4px; margin-top: 4px">Or:</h5>
+                <button class="btn btn-success" type="button" id="generate-depth-image">
+                  Estimate Using Model
+                </button>
+                <p>TODO: Add in dscription, citation</p>
               </div>
             </div>
           </div>

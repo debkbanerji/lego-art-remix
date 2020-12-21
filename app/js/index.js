@@ -38,7 +38,8 @@ const interactionSelectors = [
     "clear-custom-studs-button",
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
-    "high-quality-insructions-check"
+    "high-quality-insructions-check",
+    "generate-depth-image"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -1267,6 +1268,14 @@ document
                 }
             );
     });
+
+function triggerDepthMapGeneration() {
+    alert("TODO: Implement");
+}
+
+document
+    .getElementById("generate-depth-image")
+    .addEventListener("click", triggerDepthMapGeneration);
 
 function handleInputImage(e) {
     const reader = new FileReader();
