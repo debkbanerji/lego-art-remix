@@ -87,6 +87,7 @@
                 </button></div>
             </div>
             <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
+              <canvas id="web-worker-input-canvas"></canvas>
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1: Get Depth Map</h4>
@@ -97,9 +98,9 @@
                 </button>
                 <h5 style="margin-left: 4px; margin-top: 4px">Or:</h5>
                 <button class="btn btn-success" type="button" id="generate-depth-image">
-                  Estimate Using Model
+                  Estimate With CNN
                 </button>
-                <p>TODO: Add in dscription, citation</p>
+                <p>TODO: Add in description, citation</p>
               </div>
             </div>
           </div>

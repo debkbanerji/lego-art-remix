@@ -64,12 +64,18 @@ function enableInteraction() {
     );
 }
 
+const CNN_INPUT_IMAGE_WIDTH = 256;
+const CNN_INPUT_IMAGE_HEIGHT = 256;
+
 let inputImage = null;
 
 const inputCanvas = document.getElementById("input-canvas");
 const inputCanvasContext = inputCanvas.getContext("2d");
 const inputDepthCanvas = document.getElementById("input-depth-canvas");
 const inputDepthCanvasContext = inputDepthCanvas.getContext("2d");
+
+const webWorkerInputCanvas = document.getElementById("web-worker-input-canvas");
+const webWorkerInputCanvasContext = webWorkerInputCanvas.getContext("2d");
 
 const step1Canvas = document.getElementById("step-1-canvas");
 const step1CanvasContext = step1Canvas.getContext("2d");
@@ -1270,7 +1276,21 @@ document
     });
 
 function triggerDepthMapGeneration() {
-    alert("TODO: Implement");
+    disableInteraction();
+    const worker = new Worker("js/depth-map-web-worker.js");
+
+    webWorkerInputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+    webWorkerInputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+    webWorkerInputCanvasContext.drawImage(inputImage, 0, 0);
+    setTimeout(() => {
+        const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
+        worker.postMessage({inputPixelArray});
+
+        worker.addEventListener("message", e => {
+            console.log("Worker said: ", e.data);
+        });
+        enableInteraction();
+    }, 50); // TODO: find better way to check that input is finished
 }
 
 document
