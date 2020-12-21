@@ -86,7 +86,11 @@
                   Enable 3d mode
                 </button></div>
             </div>
-            <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">(TODO: depth stuff here)</div>
+            <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
+              <canvas id="step-1-depth-canvas" hidden></canvas>
+              <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 1: Get Depth Map</h4>
+            </div>
           </div>
         </div>
       </div>
@@ -303,6 +307,7 @@
             </button>
           </div>
           <canvas id="input-canvas" hidden></canvas>
+          <canvas id="input-depth-canvas" hidden></canvas>
           <div style="margin-left: 4px; margin-top: 10px">
             <small>
               <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>

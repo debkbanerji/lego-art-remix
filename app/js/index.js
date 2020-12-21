@@ -67,12 +67,22 @@ let inputImage = null;
 
 const inputCanvas = document.getElementById("input-canvas");
 const inputCanvasContext = inputCanvas.getContext("2d");
+const inputDepthCanvas = document.getElementById("input-depth-canvas");
+const inputDepthCanvasContext = inputDepthCanvas.getContext("2d");
 
 const step1Canvas = document.getElementById("step-1-canvas");
 const step1CanvasContext = step1Canvas.getContext("2d");
 const step1CanvasUpscaled = document.getElementById("step-1-canvas-upscaled");
 const step1CanvasUpscaledContext = step1CanvasUpscaled.getContext("2d");
 step1CanvasContext.imageSmoothingQuality = "high";
+const step1DepthCanvas = document.getElementById("step-1-depth-canvas");
+const step1DepthCanvasContext = step1DepthCanvas.getContext("2d");
+const step1DepthCanvasUpscaled = document.getElementById(
+    "step-1-depth-canvas-upscaled"
+);
+const step1DepthCanvasUpscaledContext = step1DepthCanvasUpscaled.getContext(
+    "2d"
+);
 
 const step2Canvas = document.getElementById("step-2-canvas");
 const step2CanvasContext = step2Canvas.getContext("2d");
@@ -585,6 +595,15 @@ function runStep1() {
         targetResolution[0],
         targetResolution[1]
     );
+    step1DepthCanvas.width = targetResolution[0];
+    step1DepthCanvas.height = targetResolution[1];
+    step1DepthCanvasContext.drawImage(
+        inputDepthCanvas,
+        0,
+        0,
+        targetResolution[0],
+        targetResolution[1]
+    );
     setTimeout(() => {
         runStep2();
         step1CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
@@ -592,6 +611,16 @@ function runStep1() {
         step1CanvasUpscaledContext.imageSmoothingEnabled = false;
         step1CanvasUpscaledContext.drawImage(
             step1Canvas,
+            0,
+            0,
+            targetResolution[0] * SCALING_FACTOR,
+            targetResolution[1] * SCALING_FACTOR
+        );
+        step1DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step1DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        step1DepthCanvasUpscaledContext.imageSmoothingEnabled = false;
+        step1DepthCanvasUpscaledContext.drawImage(
+            step1DepthCanvas,
             0,
             0,
             targetResolution[0] * SCALING_FACTOR,
@@ -1247,6 +1276,9 @@ function handleInputImage(e) {
             inputCanvas.width = inputImage.width;
             inputCanvas.height = inputImage.height;
             inputCanvasContext.drawImage(inputImage, 0, 0);
+            inputDepthCanvas.width = inputImage.width;
+            inputDepthCanvas.height = inputImage.height;
+            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
         };
         inputImage.src = event.target.result;
         document.getElementById("steps-row").hidden = false;
