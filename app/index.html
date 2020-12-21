@@ -391,7 +391,8 @@
               no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously
               estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
-            <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run in the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">onnx.js</a>.
+            <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs"
+                target="_blank">onnx.js</a>.
               I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this</a> pull request, with a small additional change I made to support the resize operation in v10.
               The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>. More specifically, the small onnx version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
                 target="_blank">here</a>.</p>
