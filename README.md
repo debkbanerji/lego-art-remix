@@ -23,9 +23,15 @@ The most computationally expensive part of the process is generating the instruc
 
 Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously estimate usage, for the purposes for tracking performance in case the static deployment needs to be scaled up.
 
+Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of [onnx.js](https://github.com/microsoft/onnxjs). I've compiled a version of the library based on [this](https://github.com/microsoft/onnxjs/pull/228) pull request, with a small additional change I made to support the resize operation in v10. The model used is [MiDaS](https://github.com/intel-isl/MiDaS). More specifically, the small onnx version which can be found [here](https://github.com/intel-isl/MiDaS/releases/tag/v2_1).
+
+### Citation for model used
+
+Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). *IEEE Transactions on Pattern Analysis and Machine Intelligence*
+
 ## Bugs, Feature Requests, and Algorithm Improvements
 *Direct any concerns or ideas for improvements to the [issues tab](https://github.com/debkbanerji/lego-art-remix/issues)*
 
 As of the time of writing, I don't have all of the sets, and I haven't had much time to test. As a result, there's probably a few bugs, so let me know if you find any.
 
-Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in the work to add a server side computation option would allow for more complex approaches (such as constrained VAEs, etc.).
+Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within a reasonable degree would allow the algorithm to keep running on the client, which I really like.
