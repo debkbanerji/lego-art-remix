@@ -106,12 +106,12 @@
                   <small>
                     <b style="color: #ff4c00">Important</b>
                     <br />
-                    <p>Computing the depth map can be computationally expensive. Be careful, and be prepared to wait a bit expecially if you have a lower powered device.
+                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a lower powered device.
                     </p>
                     <b>How does this work?</b>
                     <p>The depth map is computed using a DNN (deep neural network).
-                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">onnx.js</a>.
-                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>. More specifically, the small onnx version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
+                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
                         target="_blank">here</a>.
                     </p>
                     <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
@@ -392,10 +392,10 @@
               estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
             <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs"
-                target="_blank">onnx.js</a>.
+                target="_blank">ONNX.js</a>.
               I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this</a> pull request, with a small additional change I made to support the resize operation in v10.
-              The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>. More specifically, the small onnx version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
-                target="_blank">here</a>.</p>
+              The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                target="_blank">here</a>. It's incredible that ONNX.js allows us to use amazing work such as this within a web browser.</p>
             <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 4px">
               <b>Citation for Model Used</b>
               <span>
