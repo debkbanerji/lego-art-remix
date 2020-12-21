@@ -1278,7 +1278,13 @@ function handleInputImage(e) {
             inputCanvasContext.drawImage(inputImage, 0, 0);
             inputDepthCanvas.width = inputImage.width;
             inputDepthCanvas.height = inputImage.height;
-            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
+            inputDepthCanvasContext.fillStyle = "black";
+            inputDepthCanvasContext.fillRect(
+                0,
+                0,
+                inputDepthCanvas.width,
+                inputDepthCanvas.height
+            );
         };
         inputImage.src = event.target.result;
         document.getElementById("steps-row").hidden = false;
