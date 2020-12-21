@@ -255,7 +255,7 @@ availablePickABrickStudHexes.forEach(hex => {
     pickABricStudkHexToCount[hex] = 99999;
 });
 STUD_MAPS["pick_a_brick"] = {
-    name: "Pick a Brick",
+    name: "All Pick a Brick Colors",
     officialName: "Lego.com Pick a Brick",
     sortedStuds: availablePickABrickStudHexes,
     studMap: pickABricStudkHexToCount
