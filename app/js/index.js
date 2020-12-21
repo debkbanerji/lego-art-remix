@@ -1307,6 +1307,25 @@ function handleInputImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
+function handleInputDepthMapImage(e) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        inputImage = new Image();
+        inputImage.onload = function() {
+            inputDepthCanvas.width = inputImage.width;
+            inputDepthCanvas.height = inputImage.height;
+            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
+        };
+        inputImage.src = event.target.result;
+        setTimeout(() => {
+            runStep1();
+        }, 50); // TODO: find better way to check that input is finished
+
+        // TODO: log for perf estimation?
+    };
+    reader.readAsDataURL(e.target.files[0]);
+}
+
 const imageSelectorHidden = document.getElementById(
     "input-image-selector-hidden"
 );
@@ -1315,4 +1334,18 @@ document
     .getElementById("input-image-selector")
     .addEventListener("click", () => {
         imageSelectorHidden.click();
+    });
+
+const depthImageSelectorHidden = document.getElementById(
+    "input-depth-image-selector-hidden"
+);
+depthImageSelectorHidden.addEventListener(
+    "change",
+    handleInputDepthMapImage,
+    false
+);
+document
+    .getElementById("input-depth-image-selector")
+    .addEventListener("click", () => {
+        depthImageSelectorHidden.click();
     });
