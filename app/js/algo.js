@@ -487,7 +487,8 @@ function drawStudCountForContext(
     scalingFactor,
     ctx,
     horizontalOffset,
-    verticalOffset
+    verticalOffset,
+    showColorName
 ) {
     const radius = scalingFactor / 2;
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -514,11 +515,13 @@ function drawStudCountForContext(
             y + scalingFactor / 8
         );
         ctx.font = `${scalingFactor / 4}px Arial`;
-        ctx.fillText(
-            HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
-            x + radius * 1.5,
-            y + scalingFactor / 2.5
-        );
+        if (showColorName) {
+            ctx.fillText(
+                HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
+                x + radius * 1.5,
+                y + scalingFactor / 2.5
+            );
+        }
         ctx.font = `${scalingFactor / 2}px Arial`;
     });
 
@@ -541,7 +544,8 @@ function generateInstructionTitlePage(
     availableStudHexList,
     scalingFactor,
     finalImageCanvas,
-    canvas
+    canvas,
+    showColorName
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -564,7 +568,8 @@ function generateInstructionTitlePage(
         scalingFactor,
         ctx,
         pictureWidth * 0.25,
-        pictureHeight * 0.2 - radius
+        pictureHeight * 0.2 - radius,
+        showColorName
     );
 
     ctx.fillStyle = "#000000";
@@ -625,7 +630,8 @@ function generateInstructionPage(
     availableStudHexList,
     scalingFactor,
     canvas,
-    plateNumber
+    plateNumber,
+    showColorName
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -713,7 +719,8 @@ function generateInstructionPage(
         scalingFactor,
         ctx,
         pictureWidth * 0.25,
-        pictureHeight * 0.2 - radius
+        pictureHeight * 0.2 - radius,
+        showColorName
     );
 }
 

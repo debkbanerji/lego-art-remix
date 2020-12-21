@@ -225,7 +225,13 @@
             <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
           </div>
           <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
-          <small style=" margin-left: 4px; margin-bottom: 4px; margin-top: 2px">Longer instructions may be split into multiple files</small>
+          <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+            <label>
+              <input type="checkbox" id="high-quality-insructions-check">
+              Generate high quality pdf
+            </label>
+          </div>
+          <small style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</small>
           <small style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</small>
           <hr />
           <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
@@ -249,9 +255,9 @@
               <b style="color: #ff4c00">Important</b>
               <p>
                 Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                Be prepared to wait if you're generating instructions for larger resolutions. Larger resolutions may also cause
-                some slowness on the page or may not work at all on lower powered devices, so I recommend starting at the default
-                and then going up.
+                Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                Larger resolutions may also cause some slowness on the page or may not work at all on lower powered devices,
+                so I recommend starting at the default and then going up.
               </p>
             </small>
             <hr />
