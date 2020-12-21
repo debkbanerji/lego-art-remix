@@ -47,9 +47,10 @@ const customStudTableBody = document.getElementById("custom-stud-table-body");
 
 function disableInteraction() {
     customStudTableBody.hidden = true;
-    interactionSelectors.forEach(button => {
-        button.disabled = true;
-    });
+    interactionSelectors.forEach(button => (button.disabled = true));
+    [...document.getElementsByClassName("btn")].forEach(
+        button => (button.disabled = true)
+    );
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className + " disabled")
     );
@@ -57,9 +58,10 @@ function disableInteraction() {
 
 function enableInteraction() {
     customStudTableBody.hidden = false;
-    interactionSelectors.forEach(button => {
-        button.disabled = false;
-    });
+    interactionSelectors.forEach(button => (button.disabled = false));
+    [...document.getElementsByClassName("btn")].forEach(
+        button => (button.disabled = false)
+    );
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(" disabled", ""))
     );
@@ -1284,6 +1286,11 @@ function triggerDepthMapGeneration() {
     disableInteraction();
     const worker = new Worker("js/depth-map-web-worker.js");
 
+    const loadingMessageComponent = document.getElementById(
+        "web-worker-loading-message"
+    );
+    loadingMessageComponent.hidden = false;
+
     webWorkerInputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
     webWorkerInputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
     webWorkerInputCanvasContext.drawImage(
@@ -1302,7 +1309,7 @@ function triggerDepthMapGeneration() {
         worker.postMessage({inputPixelArray});
 
         worker.addEventListener("message", e => {
-            const {result} = e.data;
+            const {result, loadingMessage} = e.data;
             if (result != null) {
                 webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
                 webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
@@ -1322,10 +1329,13 @@ function triggerDepthMapGeneration() {
                         CNN_INPUT_IMAGE_HEIGHT
                     );
                     setTimeout(() => {
+                        loadingMessageComponent.hidden = true;
                         enableInteraction();
                         runStep1();
                     }, 50); // TODO: find better way to check that input is finished
                 }, 50); // TODO: find better way to check that input is finished
+            } else if (loadingMessage != null) {
+                loadingMessageComponent.innerHTML = loadingMessage;
             } else {
                 console.log("Message from web worker: ", e.data);
             }

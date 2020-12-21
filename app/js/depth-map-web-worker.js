@@ -48,7 +48,7 @@ self.addEventListener(
     "message",
     async function(e) {
         const {inputPixelArray} = e.data;
-        self.postMessage("retrieved input");
+        self.postMessage({loadingMessage: "Preparing Input..."});
         const preprocessedData = preprocess(
             inputPixelArray,
             CNN_INPUT_IMAGE_WIDTH,
@@ -62,21 +62,19 @@ self.addEventListener(
             CNN_INPUT_IMAGE_HEIGHT
         ]);
 
-        self.postMessage("retrieving model");
-
         const session = new onnx.InferenceSession({backendHint: "cpu"});
+        self.postMessage({loadingMessage: "Loading Model..."});
+
         await session.loadModel("models/model-small.onnx");
 
-        self.postMessage("retrieved model");
-
-        self.postMessage("running model on cpu");
-
         // Run model with Tensor inputs and get the result.
+        self.postMessage({loadingMessage: "Running Inference..."});
+
         const outputMap = await session.run([inputTensor]);
-        self.postMessage("finished running model");
+
+        self.postMessage({loadingMessage: "Processing Model Output..."});
 
         const outputData = outputMap.values().next().value.data;
-        self.postMessage("processing output data");
 
         let maxHeight = outputData[0];
         outputData.forEach(val => {
@@ -98,10 +96,10 @@ self.addEventListener(
             }
             result.push(255);
         }
-        self.postMessage("returning result");
+
+        self.postMessage({loadingMessage: "Done!"});
 
         self.postMessage({result});
-        self.postMessage("done!");
     },
     false
 );
