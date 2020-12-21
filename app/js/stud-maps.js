@@ -223,6 +223,18 @@ STUD_MAPS["all_tile_colors"] = {
     studMap: tileHexToCount
 };
 
+const availableSolidHexes = ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex);
+const solidHexToCount = {};
+availableSolidHexes.forEach(hex => {
+    solidHexToCount[hex] = 99999;
+});
+STUD_MAPS["all_solid_colors"] = {
+    name: "All Supported Colors",
+    officialName: "All Supported",
+    sortedStuds: availableSolidHexes,
+    studMap: solidHexToCount
+};
+
 const availablePickABrickStudHexes = [
     "#ff7e14",
     "#0057a6",
