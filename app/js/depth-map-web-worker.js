@@ -65,7 +65,7 @@ self.addEventListener(
         const session = new onnx.InferenceSession({backendHint: "cpu"});
         self.postMessage({loadingMessage: "Loading Model..."});
 
-        await session.loadModel("models/model-small.onnx");
+        await session.loadModel("../models/model-small.onnx");
 
         // Run model with Tensor inputs and get the result.
         self.postMessage({loadingMessage: "Running Inference..."});
