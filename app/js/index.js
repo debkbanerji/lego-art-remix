@@ -39,6 +39,7 @@ const interactionSelectors = [
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
     "high-quality-insructions-check",
+    "input-depth-image-selector",
     "generate-depth-image"
 ].map(id => document.getElementById(id));
 
@@ -76,6 +77,10 @@ const inputDepthCanvasContext = inputDepthCanvas.getContext("2d");
 
 const webWorkerInputCanvas = document.getElementById("web-worker-input-canvas");
 const webWorkerInputCanvasContext = webWorkerInputCanvas.getContext("2d");
+const webWorkerOutputCanvas = document.getElementById(
+    "web-worker-output-canvas"
+);
+const webWorkerOutputCanvasContext = webWorkerOutputCanvas.getContext("2d");
 
 const step1Canvas = document.getElementById("step-1-canvas");
 const step1CanvasContext = step1Canvas.getContext("2d");
@@ -1281,15 +1286,50 @@ function triggerDepthMapGeneration() {
 
     webWorkerInputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
     webWorkerInputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
-    webWorkerInputCanvasContext.drawImage(inputImage, 0, 0);
+    webWorkerInputCanvasContext.drawImage(
+        inputImage,
+        0,
+        0,
+        inputImage.width,
+        inputImage.height,
+        0,
+        0,
+        CNN_INPUT_IMAGE_WIDTH,
+        CNN_INPUT_IMAGE_HEIGHT
+    );
     setTimeout(() => {
         const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
         worker.postMessage({inputPixelArray});
 
         worker.addEventListener("message", e => {
-            console.log("Worker said: ", e.data);
+            const {result} = e.data;
+            if (result != null) {
+                webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+                webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                drawPixelsOnCanvas(result, webWorkerOutputCanvas);
+                setTimeout(() => {
+                    inputDepthCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+                    inputDepthCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                    inputDepthCanvasContext.drawImage(
+                        webWorkerOutputCanvas,
+                        0,
+                        0,
+                        CNN_INPUT_IMAGE_WIDTH,
+                        CNN_INPUT_IMAGE_HEIGHT,
+                        0,
+                        0,
+                        CNN_INPUT_IMAGE_WIDTH,
+                        CNN_INPUT_IMAGE_HEIGHT
+                    );
+                    setTimeout(() => {
+                        enableInteraction();
+                        runStep1();
+                    }, 50); // TODO: find better way to check that input is finished
+                }, 50); // TODO: find better way to check that input is finished
+            } else {
+                console.log("Message from web worker: ", e.data);
+            }
         });
-        enableInteraction();
     }, 50); // TODO: find better way to check that input is finished
 }
 

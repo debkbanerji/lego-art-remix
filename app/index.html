@@ -80,14 +80,15 @@
                   </p>
                 </div>
               </small>
-              <div id="enable-depth-button-container">
+              <div id="enable-depth-button-container" hidden>
                 <hr />
                 <button class="btn btn-info" type="button" id="enable-depth-button">
                   Enable 3d mode
                 </button></div>
             </div>
             <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
-              <canvas id="web-worker-input-canvas"></canvas>
+              <canvas id="web-worker-input-canvas" hidden></canvas>
+              <canvas id="web-worker-output-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1: Get Depth Map</h4>
@@ -100,7 +101,7 @@
                 <button class="btn btn-success" type="button" id="generate-depth-image">
                   Estimate With CNN
                 </button>
-                <p>TODO: Add in description, citation</p>
+                <p>TODO: Add in description, citation, loading info</p>
               </div>
             </div>
           </div>

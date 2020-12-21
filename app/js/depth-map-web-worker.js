@@ -2,6 +2,7 @@
 window = {};
 importScripts("ndarray-browser-min.js");
 importScripts("onnx.min.js");
+onnx = window.onnx;
 
 const CNN_INPUT_IMAGE_WIDTH = 256;
 const CNN_INPUT_IMAGE_HEIGHT = 256;
@@ -45,9 +46,62 @@ function preprocess(data, width, height) {
 
 self.addEventListener(
     "message",
-    function(e) {
+    async function(e) {
         const {inputPixelArray} = e.data;
-        self.postMessage({inputPixelArray});
+        self.postMessage("retrieved input");
+        const preprocessedData = preprocess(
+            inputPixelArray,
+            CNN_INPUT_IMAGE_WIDTH,
+            CNN_INPUT_IMAGE_HEIGHT
+        );
+        window = undefined;
+        const inputTensor = new onnx.Tensor(preprocessedData, "float32", [
+            1,
+            3,
+            CNN_INPUT_IMAGE_WIDTH,
+            CNN_INPUT_IMAGE_HEIGHT
+        ]);
+
+        self.postMessage("retrieving model");
+
+        const session = new onnx.InferenceSession({backendHint: "cpu"});
+        await session.loadModel("models/model-small.onnx");
+
+        self.postMessage("retrieved model");
+
+        self.postMessage("running model on cpu");
+
+        // Run model with Tensor inputs and get the result.
+        const outputMap = await session.run([inputTensor]);
+        self.postMessage("finished running model");
+
+        const outputData = outputMap.values().next().value.data;
+        self.postMessage("processing output data");
+
+        let maxHeight = outputData[0];
+        outputData.forEach(val => {
+            maxHeight = Math.max(maxHeight, val);
+        });
+
+        const normalizedOutputData = outputData.map(val =>
+            Math.floor((255 * val) / maxHeight)
+        );
+
+        const result = [];
+        for (
+            let i = 0;
+            i < CNN_INPUT_IMAGE_WIDTH * CNN_INPUT_IMAGE_HEIGHT;
+            i += 1
+        ) {
+            for (let j = 0; j < 3; j++) {
+                result.push(normalizedOutputData[i]);
+            }
+            result.push(255);
+        }
+        self.postMessage("returning result");
+
+        self.postMessage({result});
+        self.postMessage("done!");
     },
     false
 );
