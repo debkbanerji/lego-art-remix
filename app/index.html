@@ -164,12 +164,17 @@
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2: Make depth discrete</h4>
+              <div style="padding-bottom: 8px">
+                <small>If the discretized depth map is completely blank, make sure you have selected or computed a depth map in step 1,
+                  and adjust the threshold<span class="threshold-plural-s" hidden>s</span></small>
+              </div>
               <div style="width: 100%">
                 <div>Number of depth levels: <span id="num-depth-levels-text">2</span></div>
                 <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="5" style="width: 100%" value="2">
+                <!-- index.js will add slider here -->
               </div>
               <div style="width: 100%">
-                <div>Depth thresholds:</div>
+                <div>Depth threshold<span class="threshold-plural-s" hidden>s</span>:</div>
                 <div id="depth-threshold-sliders-containers">
                   <input type="range" min="0" max="255" style="width: 100%" value="128">
                 </div>

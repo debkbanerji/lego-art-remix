@@ -63,13 +63,46 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
     return sum;
 }
 
+function getDiscreteDepthPixels(pixels, thresholds) {
+    const result = [];
+    for (let i = 0; i < pixels.length; i++) {
+        if (i % 4 === 3) {
+            result.push(255); // doesn't really matter
+        } else {
+            let pixelLevel = 0;
+            for (let j = 0; j < thresholds.length; j++) {
+                if (pixels[i] > thresholds[j]) {
+                    pixelLevel = j + 1;
+                }
+            }
+            result.push(pixelLevel);
+        }
+    }
+
+    // make grayscale
+    for (let i = 0; i < result.length; i += 4) {
+        let val = 0;
+        for (let j = 0; j < 3; j++) {
+            val += result[i + j];
+        }
+        val = Math.floor(val / 3);
+        for (let j = 0; j < 3; j++) {
+            result[i + j] = val;
+        }
+    }
+
+    return result;
+}
+
 function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
     const result = [];
-    for (let i = 0; i < result.length; i++) {
-        if (i % 4 === 0) {
-            return 255;
+    for (let i = 0; i < pixels.length; i++) {
+        if (i % 4 === 3) {
+            result.push(255);
         } else {
-            return Math.min((255 * (result[i] + 1)) / numLevels, 255);
+            result.push(
+                Math.round(Math.min((255 * (pixels[i] + 1)) / numLevels, 255))
+            );
         }
     }
     return result;

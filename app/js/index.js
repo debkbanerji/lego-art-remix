@@ -561,41 +561,47 @@ document.getElementById("value-slider").addEventListener(
     false
 );
 
-document.getElementById("num-depth-levels-slider").addEventListener(
-    "change",
-    () => {
-        const numLevels = document.getElementById("num-depth-levels-slider")
-            .value;
-        document.getElementById("num-depth-levels-text").innerHTML = numLevels;
-        const inputs = [];
-        const inputsContainer = document.getElementById(
-            "depth-threshold-sliders-containers"
-        );
-        inputsContainer.innerHTML = "";
-        for (let i = 0; i < numLevels - 1; i++) {
-            const input = document.createElement("input");
-            input.type = "range";
-            input.min = 0;
-            input.max = 255;
-            input.value = Math.floor(255 * ((i + 1) / numLevels));
-            input.style = "width: 100%";
-            input.addEventListener("change", () => {
-                for (let j = 0; j < i; j++) {
-                    inputs[j].value = Math.min(inputs[j].value, input.value);
-                }
-                for (let j = i + 1; j < numLevels; j++) {
-                    inputs[j].value = Math.max(inputs[j].value, input.value);
-                }
-                runStep1();
-            });
-            inputs.push(input);
-            inputsContainer.appendChild(input);
-        }
+function onDepthMapCountChange() {
+    const numLevels = Number(
+        document.getElementById("num-depth-levels-slider").value
+    );
+    document.getElementById("num-depth-levels-text").innerHTML = numLevels;
+    const inputs = [];
+    const inputsContainer = document.getElementById(
+        "depth-threshold-sliders-containers"
+    );
+    inputsContainer.innerHTML = "";
+    for (let i = 0; i < numLevels - 1; i++) {
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = 0;
+        input.max = 255;
+        input.value = Math.floor(255 * ((i + 1) / numLevels));
+        input.style = "width: 100%";
+        input.addEventListener("change", () => {
+            for (let j = 0; j < i; j++) {
+                inputs[j].value = Math.min(inputs[j].value, input.value);
+            }
+            for (let j = i + 1; j < numLevels - 1; j++) {
+                inputs[j].value = Math.max(inputs[j].value, input.value);
+            }
+            runStep1();
+        });
+        inputs.push(input);
+        inputsContainer.appendChild(input);
+    }
 
-        runStep1();
-    },
-    false
-);
+    [...document.getElementsByClassName("threshold-plural-s")].forEach(
+        s => (s.hidden = numLevels < 3)
+    );
+
+    runStep1();
+}
+
+document
+    .getElementById("num-depth-levels-slider")
+    .addEventListener("change", onDepthMapCountChange, false);
+onDepthMapCountChange();
 
 document.getElementById("reset-colors-button").addEventListener(
     "click",
@@ -623,7 +629,6 @@ document.getElementById("use-bleedthrough-check").addEventListener(
 );
 
 function runStep1() {
-    console.log("running step 1");
     disableInteraction();
     updateStudCountText();
 
@@ -700,6 +705,19 @@ function runStep2() {
     step2Canvas.width = targetResolution[0];
     step2Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(filteredPixelArray, step2Canvas);
+
+    step2DepthCanvas.width = targetResolution[0];
+    step2DepthCanvas.height = targetResolution[1];
+    const inputDepthPixelArray = getPixelArrayFromCanvas(step1DepthCanvas);
+    const discreteDepthPixels = getDiscreteDepthPixels(
+        inputDepthPixelArray,
+        [
+            ...document.getElementById("depth-threshold-sliders-containers")
+                .children
+        ].map(slider => Number(slider.value))
+    );
+    drawPixelsOnCanvas(discreteDepthPixels, step2DepthCanvas);
+
     setTimeout(() => {
         runStep3();
         step2CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
@@ -711,6 +729,17 @@ function runStep2() {
             0,
             targetResolution[0] * SCALING_FACTOR,
             targetResolution[1] * SCALING_FACTOR
+        );
+        step2DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step2DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        drawStudImageOnCanvas(
+            scaleUpDiscreteDepthPixelsForDisplay(
+                discreteDepthPixels,
+                document.getElementById("num-depth-levels-slider").value
+            ),
+            targetResolution[0],
+            SCALING_FACTOR,
+            step2DepthCanvasUpscaled
         );
     }, 1); // TODO: find better way to check that input is finished
 }
