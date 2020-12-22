@@ -572,7 +572,7 @@ document.getElementById("num-depth-levels-slider").addEventListener(
             "depth-threshold-sliders-containers"
         );
         inputsContainer.innerHTML = "";
-        for (let i = 0; i < numLevels; i++) {
+        for (let i = 0; i < numLevels - 1; i++) {
             const input = document.createElement("input");
             input.type = "range";
             input.min = 0;
