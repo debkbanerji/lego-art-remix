@@ -131,24 +131,51 @@
 
       <div id="step-2" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-2-canvas" hidden></canvas>
-          <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 2: Adjust colors</h4>
-          <div style="width: 100%">
-            <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
-            <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-2-color-tab" data-toggle="tab" href="#step-2-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-2-depth-tab" data-toggle="tab" href="#step-2-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-2-color-tab-content" role="tabpanel" aria-labelledby="step-2-color-tab">
+              <canvas id="step-2-canvas" hidden></canvas>
+              <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 2: Adjust colors</h4>
+              <div style="width: 100%">
+                <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
+                <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+              </div>
+              <div style="width: 100%">
+                <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
+                <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
+              </div>
+              <div style="width: 100%">
+                <div>Value adjustment: <span id="value-text">0%</span></div>
+                <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
+              </div>
+              <button class="btn btn-info" type="button" id="reset-colors-button">
+                Reset Colors
+              </button>
+            </div>
+            <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
+              <canvas id="step-2-depth-canvas" hidden></canvas>
+              <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 2: Make depth discrete</h4>
+              <div style="width: 100%">
+                <div>Number of depth levels: <span id="num-depth-levels-text">2</span></div>
+                <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="5" style="width: 100%" value="2">
+              </div>
+              <div style="width: 100%">
+                <div>Depth thresholds:</div>
+                <div id="depth-threshold-sliders-containers">
+                  <input type="range" min="0" max="255" style="width: 100%" value="128">
+                </div>
+              </div>
+            </div>
           </div>
-          <div style="width: 100%">
-            <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
-            <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
-          </div>
-          <div style="width: 100%">
-            <div>Value adjustment: <span id="value-text">0%</span></div>
-            <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
-          </div>
-          <button class="btn btn-info" type="button" id="reset-colors-button">
-            Reset Colors
-          </button>
         </div>
       </div>
 

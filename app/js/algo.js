@@ -63,6 +63,18 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
     return sum;
 }
 
+function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
+    const result = [];
+    for (let i = 0; i < result.length; i++) {
+        if (i % 4 === 0) {
+            return 255;
+        } else {
+            return Math.min((255 * (result[i] + 1)) / numLevels, 255);
+        }
+    }
+    return result;
+}
+
 // aligns each pixel in the input array to the closes pixel in the studMap, and adds in overrides
 // returns the resulting pixels
 function alignPixelsToStudMap(inputPixels, studMap, overridePixels) {

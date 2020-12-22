@@ -40,7 +40,8 @@ const interactionSelectors = [
     "resolution-limit-increase-button",
     "high-quality-insructions-check",
     "input-depth-image-selector",
-    "generate-depth-image"
+    "generate-depth-image",
+    "num-depth-levels-slider"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -102,6 +103,14 @@ const step2Canvas = document.getElementById("step-2-canvas");
 const step2CanvasContext = step2Canvas.getContext("2d");
 const step2CanvasUpscaled = document.getElementById("step-2-canvas-upscaled");
 const step2CanvasUpscaledContext = step2CanvasUpscaled.getContext("2d");
+const step2DepthCanvas = document.getElementById("step-2-depth-canvas");
+const step2DepthCanvasContext = step2DepthCanvas.getContext("2d");
+const step2DepthCanvasUpscaled = document.getElementById(
+    "step-2-depth-canvas-upscaled"
+);
+const step2DepthCanvasUpscaledContext = step2DepthCanvasUpscaled.getContext(
+    "2d"
+);
 
 const step3Canvas = document.getElementById("step-3-canvas");
 const step3CanvasContext = step3Canvas.getContext("2d");
@@ -552,6 +561,42 @@ document.getElementById("value-slider").addEventListener(
     false
 );
 
+document.getElementById("num-depth-levels-slider").addEventListener(
+    "change",
+    () => {
+        const numLevels = document.getElementById("num-depth-levels-slider")
+            .value;
+        document.getElementById("num-depth-levels-text").innerHTML = numLevels;
+        const inputs = [];
+        const inputsContainer = document.getElementById(
+            "depth-threshold-sliders-containers"
+        );
+        inputsContainer.innerHTML = "";
+        for (let i = 0; i < numLevels; i++) {
+            const input = document.createElement("input");
+            input.type = "range";
+            input.min = 0;
+            input.max = 255;
+            input.value = Math.floor(255 * ((i + 1) / numLevels));
+            input.style = "width: 100%";
+            input.addEventListener("change", () => {
+                for (let j = 0; j < i; j++) {
+                    inputs[j].value = Math.min(inputs[j].value, input.value);
+                }
+                for (let j = i + 1; j < numLevels; j++) {
+                    inputs[j].value = Math.max(inputs[j].value, input.value);
+                }
+                runStep1();
+            });
+            inputs.push(input);
+            inputsContainer.appendChild(input);
+        }
+
+        runStep1();
+    },
+    false
+);
+
 document.getElementById("reset-colors-button").addEventListener(
     "click",
     () => {
@@ -578,6 +623,7 @@ document.getElementById("use-bleedthrough-check").addEventListener(
 );
 
 function runStep1() {
+    console.log("running step 1");
     disableInteraction();
     updateStudCountText();
 
