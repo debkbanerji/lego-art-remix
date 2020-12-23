@@ -16,6 +16,12 @@
   <meta property="og:title" content="Lego Art Remix" />
   <meta property="og:description" content="Easily remix Lego Art sets into custom pictures using computer vision" />
   <meta property="og:image" content="https://lego-art-remix.debkbanerji.com/favicon.png" />
+
+  <style>
+    a {
+      text-decoration: none !important
+    }
+  </style>
 </head>
 
 <body>
@@ -36,180 +42,295 @@
     <div class="row" id="steps-row" hidden>
       <div id="step-1" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-1-canvas" hidden></canvas>
-          <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 1: Scale input image</h4>
-          <div>
-            <b>Target Resolution:</b>
-            <div style="width: 100%">
-              <div>Width: <span id="width-text">48</span></div>
-              <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-1-color-tab" data-toggle="tab" href="#step-1-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-1-depth-tab" data-toggle="tab" href="#step-1-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
+              <canvas id="step-1-canvas" hidden></canvas>
+              <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 1: Scale input image</h4>
+              <div>
+                <b>Target Resolution:</b>
+                <div style="width: 100%">
+                  <div>Width: <span id="width-text">48</span></div>
+                  <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                </div>
+                <div style="width: 100%">
+                  <div>Height: <span id="height-text">48</span></div>
+                  <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                </div>
+              </div>
+              <div style="margin-left: 4px; margin-top: 10px">
+                <small>
+                  <b>Tips</b>
+                  <p>Supported image formats are dependent on your browser's compatibility</p>
+                  <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+                </small>
+              </div>
+              <hr />
+              <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+                Increase Resolution Limit
+              </button>
+              <small>
+                <div>
+                  <b style="color: #ff4c00;">Important</b>
+                  <p>
+                    Be careful when using high resolutions - this can cause performance issues on
+                    less powerful machines, especially during pdf generation and for 3D previews
+                  </p>
+                </div>
+              </small>
+              <div id="enable-depth-button-container">
+                <hr />
+                <button class="btn btn-info" type="button" id="enable-depth-button">
+                  Enable 3D (Experimental)
+                </button></div>
             </div>
-            <div style="width: 100%">
-              <div>Height: <span id="height-text">48</span></div>
-              <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+            <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
+              <canvas id="web-worker-input-canvas" hidden></canvas>
+              <canvas id="web-worker-output-canvas" hidden></canvas>
+              <canvas id="step-1-depth-canvas" hidden></canvas>
+              <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 1: Get depth map</h4>
+              <div id="depth-map-input-container">
+                <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
+                <button class="btn btn-success" type="button" id="input-depth-image-selector">
+                  Select Depth Map Image
+                </button>
+                <hr />
+                <button class="btn btn-success" type="button" id="generate-depth-image">
+                  Compute Using DNN
+                </button>
+                <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
+                <div>
+                  <small>
+                    <b style="color: #ff4c00">Important</b>
+                    <br />
+                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
+                    </p>
+                    <b>How does this work?</b>
+                    <p>The depth map is computed using a DNN (deep neural network).
+                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
+                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                        target="_blank">here</a>.
+                    </p>
+                    <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
+                      <b>Citation for Model Used</b>
+                      <span>
+                        Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
+                          Analysis and Machine Intelligence</i></span>
+                    </div>
+                  </small>
+                </div>
+              </div>
             </div>
           </div>
-          <div style="margin-left: 4px; margin-top: 10px">
-            <small>
-              <b>Tips</b>
-              <p>Supported image formats are dependent on your browser's compatibility</p>
-              <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
-            </small>
-          </div>
-          <hr />
-          <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
-            Increase Resolution Limit
-          </button>
-          <small>
-            <div>
-              <b style="color: #ff4c00;">Important</b>
-              <p>
-                Be careful when using high resolutions - this can cause performance issues on
-                less powerful machines, especially during pdf generation
-              </p>
-            </div>
-          </small>
         </div>
       </div>
 
 
       <div id="step-2" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-2-canvas" hidden></canvas>
-          <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 2: Adjust colors</h4>
-          <div style="width: 100%">
-            <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
-            <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-2-color-tab" data-toggle="tab" href="#step-2-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-2-depth-tab" data-toggle="tab" href="#step-2-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-2-color-tab-content" role="tabpanel" aria-labelledby="step-2-color-tab">
+              <canvas id="step-2-canvas" hidden></canvas>
+              <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 2: Adjust colors</h4>
+              <div style="width: 100%">
+                <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
+                <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+              </div>
+              <div style="width: 100%">
+                <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
+                <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
+              </div>
+              <div style="width: 100%">
+                <div>Value adjustment: <span id="value-text">0%</span></div>
+                <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
+              </div>
+              <button class="btn btn-info" type="button" id="reset-colors-button">
+                Reset Colors
+              </button>
+            </div>
+            <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
+              <canvas id="step-2-depth-canvas" hidden></canvas>
+              <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 2: Make depth discrete</h4>
+              <div style="padding-bottom: 8px">
+                <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
+                  and adjust the threshold<span class="threshold-plural-s" hidden>s</span></small>
+              </div>
+              <div style="width: 100%">
+                <div>Number of depth levels: <span id="num-depth-levels-text">2</span></div>
+                <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="4" style="width: 100%" value="2">
+                <!-- index.js will add slider here -->
+              </div>
+              <div style="width: 100%">
+                <div>Depth threshold<span class="threshold-plural-s" hidden>s</span>:</div>
+                <div id="depth-threshold-sliders-containers">
+                  <input type="range" min="0" max="255" style="width: 100%" value="128">
+                </div>
+              </div>
+            </div>
           </div>
-          <div style="width: 100%">
-            <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
-            <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
-          </div>
-          <div style="width: 100%">
-            <div>Value adjustment: <span id="value-text">0%</span></div>
-            <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
-          </div>
-          <button class="btn btn-info" type="button" id="reset-colors-button">
-            Reset Colors
-          </button>
         </div>
       </div>
 
 
       <div id="step-3" class="col-6 col-md-3">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-3-canvas" hidden></canvas>
-          <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 3: Align to closest pixel from available colors</h4>
-          <hr />
-          <div style="margin-left: 4px">
-            Override color:
-            <span id="paintbrush-controls">
-            </span>
-            <button class="btn btn-warning" type="button" id="clear-overrides-button">
-              Clear Overrides
-            </button>
-          </div>
-          <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to override its color</small>
-          <small style="margin-top: 4px; margin-left: 4px">&#9679; Click an overridden pixel to restore it</small>
-          <small style="margin-top: 4px; margin-left: 4px">&#9679; Right click a pixel to use its color for overrides</small>
-          <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure to also add your override color to the list
-            of available colors below for it to show up in step 4</small>
-          <button style="margin-top: 8px; margin-left: 4px" class="btn" type="button" id="toggle-expansion-button">
-            Expand Picture
-          </button>
-          <div class="hide-on-step-3-expansion">
-            <hr />
-            <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-              <label>
-                <input type="checkbox" id="use-bleedthrough-check" checked>
-                Account for round stud bleedthrough
-              </label>
-            </div>
-            <hr />
-            <div class="btn-group">
-              <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-                No Color Tie Resolution
-              </button>
-              <div class="dropdown-menu" id="color-ties-resolution-options">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-3-color-tab" data-toggle="tab" href="#step-3-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-3-depth-tab" data-toggle="tab" href="#step-3-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-3-color-tab-content" role="tabpanel" aria-labelledby="step-3-color-tab">
+              <canvas id="step-3-canvas" hidden></canvas>
+              <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 3: Align to closest pixel from available colors</h4>
+              <hr />
+              <div style="margin-left: 4px">
+                Override color:
+                <span id="paintbrush-controls">
+                </span>
+                <button class="btn btn-warning" type="button" id="clear-overrides-button">
+                  Clear Overrides
+                </button>
               </div>
-            </div>
-          </div>
-          <hr />
-          <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
-            <h4>Available Studs</h4>
-            <div style="margin-bottom: 20px">
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to override its color</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click an overridden pixel to restore it</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Right click a pixel to use its color for overrides</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure to also add your override color to the list
+                of available colors below for it to show up in step 4</small><br />
+              <button style="margin-top: 8px; margin-left: 4px" class="btn" type="button" id="toggle-expansion-button">
+                Expand Picture
+              </button>
+              <div class="hide-on-step-3-expansion">
+                <hr />
+                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                  <label>
+                    <input type="checkbox" id="use-bleedthrough-check" checked>
+                    Account for round stud bleedthrough
+                  </label>
+                </div>
+                <hr />
+                <div class="btn-group">
+                  <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                    No Color Tie Resolution
+                  </button>
+                  <div class="dropdown-menu" id="color-ties-resolution-options">
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
+                <h4>Available Studs</h4>
+                <div style="margin-bottom: 20px">
+                  <small>
+                    <b>Required Studs: <span id="required-studs"></span></b><br>
+                    <b>Available Studs: <span id="available-studs"></span></b><br>
+                    <b>Missing Studs: <span id="missing-studs"></span></b><br>
+                    <em>Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
+                    </em>
+                  </small>
+                </div>
+                <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Color</th>
+                      <th scope="col">Number Available</th>
+                    </tr>
+                  </thead>
+                  <tbody id="custom-stud-table-body">
+                  </tbody>
+                </table>
+                <div style="padding-bottom: 10px">
+                  <button class="btn btn-success" id="add-custom-stud-button">
+                    <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
+                </div>
+                <div class="btn-group" style="padding-bottom: 10px" hidden>
+                  <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Input Set
+                  </button>
+                  <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+                  </div>
+                </div>
+                <div style="padding-bottom: 10px">
+                  <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
+                    Clear Existing Studs
+                  </button>
+                </div>
+                <div style="padding-bottom: 10px">
+                  <button class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
+                    Export Selected Studs
+                  </button>
+                </div>
+                <div class="btn-group">
+                  <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Mix in Studs From Existing Set
+                  </button>
+                  <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
+                  </div>
+                  <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
+                </div>
+                <br>
+                <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
+              </div>
               <small>
-                <b>Required Studs: <span id="required-studs"></span></b><br>
-                <b>Available Studs: <span id="available-studs"></span></b><br>
-                <b>Missing Studs: <span id="missing-studs"></span></b><br>
-                <em>Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
-                </em>
+                <b style="color: #ff4c00">Important</b>
+                <p>
+                  Some sets use 1x1 tiles, while others use 1x1 studs. Make sure you double check before continuing if you want consistent pixels in your result.
+                </p>
               </small>
-            </div>
-            <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">Color</th>
-                  <th scope="col">Number Available</th>
-                </tr>
-              </thead>
-              <tbody id="custom-stud-table-body">
-              </tbody>
-            </table>
-            <div style="padding-bottom: 10px">
-              <button class="btn btn-success" id="add-custom-stud-button">
-                <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
-            </div>
-            <div class="btn-group" style="padding-bottom: 10px" hidden>
-              <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Input Set
-              </button>
-              <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+              <div style="margin-left: 4px">
+                <small>
+                  <b>Tip</b>
+                  <p>
+                    Depending on the input set of studs, many images don't easily translate to the available color palette.
+                    Try to use an image with similar colors to those of the set of studs you have available.
+                  </p>
+                  <p>
+                    In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
+                    For more robust color adjustments, I recommend making the changes in another tool before remixing the image.
+                  </p>
+                </small>
               </div>
             </div>
-            <div style="padding-bottom: 10px">
-              <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
-                Clear Existing Studs
-              </button>
-            </div>
-            <div style="padding-bottom: 10px">
-              <button class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
-                Export Selected Studs
-              </button>
-            </div>
-            <div class="btn-group">
-              <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Mix in Studs From Existing Set
-              </button>
-              <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
+            <div class="tab-pane fade" id="step-3-depth-tab-content" role="tabpanel" aria-labelledby="step-3-depth-tab-content">
+              <canvas id="step-3-depth-canvas" hidden></canvas>
+              <canvas id="step-3-depth-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 3: Adjust Depth Map</h4>
+              <hr />
+              <div style="margin-left: 4px">
+                <button class="btn btn-warning" type="button" id="clear-depth-overrides-button">
+                  Clear Overrides
+                </button>
               </div>
-              <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to increase its depth</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to decrease its depth</small><br />
+              <button style="margin-top: 8px; margin-left: 4px" class="btn" type="button" id="toggle-depth-expansion-button">
+                Expand Picture
+              </button>
             </div>
-            <br>
-            <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
-          </div>
-          <small>
-            <b style="color: #ff4c00">Important</b>
-            <p>
-              Some sets use 1x1 tiles, while others use 1x1 studs. Make sure you double check before continuing if you want consistent pixels in your result.
-            </p>
-          </small>
-          <div style="margin-left: 4px">
-            <small>
-              <b>Tip</b>
-              <p>
-                Depending on the input set of studs, many images don't easily translate to the available color palette.
-                Try to use an image with similar colors to those of the set of studs you have available.
-              </p>
-              <p>
-                In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
-                For more robust color adjustments, I recommend making the changes in another tool before remixing the image.
-              </p>
-            </small>
           </div>
         </div>
       </div>
@@ -217,58 +338,116 @@
 
       <div id="step-4" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-4-canvas" hidden></canvas>
-          <canvas id="bricklink-cache-canvas" hidden></canvas>
-          <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 4: Correct for actually available studs</h4>
-          <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
-            <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
-          </div>
-          <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
-          <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-            <label>
-              <input type="checkbox" id="high-quality-insructions-check">
-              Generate high quality pdf
-            </label>
-          </div>
-          <small style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</small>
-          <small style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</small>
-          <hr />
-          <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Bricklink Pixel Piece
-            </button>
-            <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-4-color-tab" data-toggle="tab" href="#step-4-color-tab-content" role="tab" aria-controls="step-4-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-4-depth-tab" data-toggle="tab" href="#step-4-depth-tab-content" role="tab" aria-controls="step-4-depth-tab-content" aria-selected="true">Depth</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-4-color-tab-content" role="tabpanel" aria-labelledby="step-4-color-tab">
+              <canvas id="step-4-canvas" hidden></canvas>
+              <canvas id="bricklink-cache-canvas" hidden></canvas>
+              <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 4: Correct for actually available studs</h4>
+              <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
+                <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
+              </div>
+              <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+              <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                <label>
+                  <input type="checkbox" id="high-quality-insructions-check">
+                  Generate high quality pdf
+                </label>
+              </div>
+              <small>
+                <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                <p style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</p>
+              </small>
+              <hr />
+              <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
+              <div class="btn-group">
+                <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Bricklink Pixel Piece
+                </button>
+                <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+                </div>
+              </div>
+              <br />
+              <small>
+                <p style=" margin-left: 4px">Frame elements are not exported</p>
+                <p style=" margin-left: 4px">
+                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                    Bricklink Upload Page
+                  </a>
+                </p>
+              </small>
+              <hr />
+              <div id="instructions-canvas-container" hidden></div>
+              <div style="margin-left: 4px">
+                <small>
+                  <b style="color: #ff4c00">Important</b>
+                  <p>
+                    Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                    Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                    Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
+                    so I recommend starting at the default and then going up.
+                  </p>
+                </small>
+                <hr />
+                <small>
+                  <b>Tip</b>
+                  <p>
+                    If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
+                    If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
+                    help by reducing the number of studs required.
+                  </p>
+                </small>
+              </div>
             </div>
-          </div>
-          <small style=" margin-left: 4px">Frame elements are not exported</small>
-          <small style=" margin-left: 4px">
-            <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-              Bricklink Upload Page
-            </a>
-          </small>
-          <hr />
-          <div id="instructions-canvas-container" hidden></div>
-          <div style="margin-left: 4px">
-            <small>
-              <b style="color: #ff4c00">Important</b>
-              <p>
-                Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                Larger resolutions may also cause some slowness on the page or may not work at all on lower powered devices,
-                so I recommend starting at the default and then going up.
-              </p>
-            </small>
-            <hr />
-            <small>
-              <b>Tip</b>
-              <p>
-                If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
-                If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
-                help by reducing the number of studs required.
-              </p>
-            </small>
+            <div class="tab-pane fade show" id="step-4-depth-tab-content" role="tabpanel" aria-labelledby="step-4-depth-tab">
+              <div id="step-4-canvas-3d-upscaled" style="width: 100%">
+              </div>
+              <h4>3D Preview</h4>
+              <div> <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                  and may not be 100% representative of what the physical art piece would look like.</small>
+              </div>
+              <hr />
+              <div>
+                <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
+                  Generate Depth Instructions PDF
+                </button>
+                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                  <label>
+                    <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
+                    Generate high quality pdf
+                  </label>
+                </div>
+                <small>
+                  <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                  <p style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</p>
+                </small>
+              </div>
+              <hr />
+              <div>
+                <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
+                  Copy Bricklink XML to Clipboard
+                </button>
+                <br />
+                <!-- <small style=" margin-left: 4px">
+                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                    Bricklink Upload Page
+                  </a>
+                </small> -->
+              </div>
+              <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
+            </div>
           </div>
         </div>
       </div>
@@ -285,6 +464,7 @@
             </button>
           </div>
           <canvas id="input-canvas" hidden></canvas>
+          <canvas id="input-depth-canvas" hidden></canvas>
           <div style="margin-left: 4px; margin-top: 10px">
             <small>
               <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
@@ -301,11 +481,37 @@
     <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px">
       <div class="row">
         <div class="col-sm">
-          <h4>
+          <h5>
+            <a data-toggle="collapse" href="#articles" aria-expanded="false" aria-controls="articles">
+              Media
+            </a>
+          </h5>
+          <div class="collapse" id="articles">
+            <small>
+              <p style="margin-bottom: 4px">These are some articles and videos featuring Lego Art Remix</p>
+              <p style="margin-bottom: 4px">Some are quite interesting even outside the context of this tool in particular, since they
+                go into the history of Lego mosaics</p>
+              <p style="margin-bottom: 4px">Note that some were made when the tool was older</p>
+            </small>
+            <ul>
+              <li><a href="https://www.instagram.com/explore/tags/legoartremix/" target="_blank">#LegoArtRemix on Instagram</a></li>
+              <li><a href="https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app" target="_blank">Global News Morning Segment</a></li>
+              <li><a href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/" target="_blank">Brothers Brick Article</a></li>
+              <li><a href="http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/" target="_blank">theBrickBlogger.com Article</a></li>
+              <li><a href="https://www.youtube.com/watch?v=RY4OJnD99VQ" target="_blank">DuckBricks Video</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px">
+      <div class="row">
+        <div class="col-sm">
+          <h5>
             <a data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="about">
               About
             </a>
-          </h4>
+          </h5>
           <div class="collapse" id="about">
             <div style="margin-bottom: 15px;">
               <small>
@@ -330,11 +536,22 @@
               The most computationally expensive part of the process is generating the instructions, since even pdf generation is
               done client side.
             </p>
-            <p>
+            <p style="margin-bottom: 5px">
               Since it runs almost entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>),
               no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously
               estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up.
             </p>
+            <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs"
+                target="_blank">ONNX.js</a>.
+              I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this pull request</a>, with a small additional change I made to support the resize operation in v10.
+              The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                target="_blank">here</a>. It's incredible that ONNX.js allows us to use amazing work such as this within a web browser.</p>
+            <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 4px">
+              <b>Citation for Model Used</b>
+              <span>
+                Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
+                  Analysis and Machine Intelligence</i></span>
+            </div>
             <p></p>
             <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
             <em style="margin-bottom: 5px">Direct any concerns or ideas for improvements <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em>
@@ -342,14 +559,12 @@
               As a result, there's probably a few bugs, so let me know if you find any.
             </p>
             <p style="margin-bottom: 5px">Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within
-              a reasonable degree would allow the algorithm to keep running on the client, which I really like. That being said, putting in
-              the work to add a server side computation option would allow for more complex approaches (such as constrained VAEs, etc.).
+              a reasonable degree would allow the algorithm to keep running on the client, which I really like.
             </p>
           </div>
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Add firebase to log performance -->
@@ -368,6 +583,7 @@
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+  <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
   <script src="js/stud-maps.js"></script>
   <script src="js/algo.js"></script>

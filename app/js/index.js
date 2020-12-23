@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.19";
+const VERSION_NUMBER = "v2020.12.22";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -38,50 +38,107 @@ const interactionSelectors = [
     "clear-custom-studs-button",
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
-    "high-quality-insructions-check"
+    "high-quality-insructions-check",
+    "input-depth-image-selector",
+    "generate-depth-image",
+    "num-depth-levels-slider"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
 
 function disableInteraction() {
     customStudTableBody.hidden = true;
-    interactionSelectors.forEach(button => {
-        button.disabled = true;
-    });
+    interactionSelectors.forEach(button => (button.disabled = true));
+    [...document.getElementsByClassName("btn")].forEach(
+        button => (button.disabled = true)
+    );
+    [...document.getElementsByClassName("nav-link")].forEach(
+        link => (link.className = link.className + " disabled")
+    );
 }
 
 function enableInteraction() {
     customStudTableBody.hidden = false;
-    interactionSelectors.forEach(button => {
-        button.disabled = false;
-    });
+    interactionSelectors.forEach(button => (button.disabled = false));
+    [...document.getElementsByClassName("btn")]
+        .filter(
+            e =>
+                ![
+                    "download-depth-instructions-button",
+                    "high-quality-depth-insructions-check",
+                    "export-depth-to-bricklink-button"
+                ].includes(e.id)
+        )
+        .forEach(button => (button.disabled = false));
+    [...document.getElementsByClassName("nav-link")].forEach(
+        link => (link.className = link.className.replace(" disabled", ""))
+    );
 }
+
+const CNN_INPUT_IMAGE_WIDTH = 256;
+const CNN_INPUT_IMAGE_HEIGHT = 256;
 
 let inputImage = null;
 
 const inputCanvas = document.getElementById("input-canvas");
 const inputCanvasContext = inputCanvas.getContext("2d");
+const inputDepthCanvas = document.getElementById("input-depth-canvas");
+const inputDepthCanvasContext = inputDepthCanvas.getContext("2d");
+
+const webWorkerInputCanvas = document.getElementById("web-worker-input-canvas");
+const webWorkerInputCanvasContext = webWorkerInputCanvas.getContext("2d");
+const webWorkerOutputCanvas = document.getElementById(
+    "web-worker-output-canvas"
+);
+const webWorkerOutputCanvasContext = webWorkerOutputCanvas.getContext("2d");
 
 const step1Canvas = document.getElementById("step-1-canvas");
 const step1CanvasContext = step1Canvas.getContext("2d");
 const step1CanvasUpscaled = document.getElementById("step-1-canvas-upscaled");
 const step1CanvasUpscaledContext = step1CanvasUpscaled.getContext("2d");
 step1CanvasContext.imageSmoothingQuality = "high";
+const step1DepthCanvas = document.getElementById("step-1-depth-canvas");
+const step1DepthCanvasContext = step1DepthCanvas.getContext("2d");
+const step1DepthCanvasUpscaled = document.getElementById(
+    "step-1-depth-canvas-upscaled"
+);
+const step1DepthCanvasUpscaledContext = step1DepthCanvasUpscaled.getContext(
+    "2d"
+);
 
 const step2Canvas = document.getElementById("step-2-canvas");
 const step2CanvasContext = step2Canvas.getContext("2d");
 const step2CanvasUpscaled = document.getElementById("step-2-canvas-upscaled");
 const step2CanvasUpscaledContext = step2CanvasUpscaled.getContext("2d");
+const step2DepthCanvas = document.getElementById("step-2-depth-canvas");
+const step2DepthCanvasContext = step2DepthCanvas.getContext("2d");
+const step2DepthCanvasUpscaled = document.getElementById(
+    "step-2-depth-canvas-upscaled"
+);
+const step2DepthCanvasUpscaledContext = step2DepthCanvasUpscaled.getContext(
+    "2d"
+);
 
 const step3Canvas = document.getElementById("step-3-canvas");
 const step3CanvasContext = step3Canvas.getContext("2d");
 const step3CanvasUpscaled = document.getElementById("step-3-canvas-upscaled");
 const step3CanvasUpscaledContext = step3CanvasUpscaled.getContext("2d");
+const step3DepthCanvas = document.getElementById("step-3-depth-canvas");
+const step3DepthCanvasContext = step3DepthCanvas.getContext("3d");
+const step3DepthCanvasUpscaled = document.getElementById(
+    "step-3-depth-canvas-upscaled"
+);
+const step3DepthCanvasUpscaledContext = step3DepthCanvasUpscaled.getContext(
+    "3d"
+);
 
 const step4Canvas = document.getElementById("step-4-canvas");
 const step4CanvasContext = step4Canvas.getContext("2d");
 const step4CanvasUpscaled = document.getElementById("step-4-canvas-upscaled");
 const step4CanvasUpscaledContext = step4CanvasUpscaled.getContext("2d");
+const step4Canvas3dUpscaled = document.getElementById(
+    "step-4-canvas-3d-upscaled"
+);
 
 const bricklinkCacheCanvas = document.getElementById("bricklink-cache-canvas");
 
@@ -100,6 +157,29 @@ window.addEventListener("resize", () => {
     });
 });
 
+let depthEnabled = false;
+function enableDepth() {
+    [...document.getElementsByClassName("3d-selector-tabs")].forEach(
+        tabsList => (tabsList.hidden = false)
+    );
+    document.getElementById("enable-depth-button-container").hidden = true;
+
+    document.getElementById("download-instructions-button").innerHTML =
+        "Generate Color Instructions PDF";
+
+    document.getElementById("export-to-bricklink-button").innerHTML =
+        "Copy Pixels Bricklink XML to Clipboard";
+
+    create3dPreview();
+    depthEnabled = true;
+}
+document
+    .getElementById("enable-depth-button")
+    .addEventListener("click", enableDepth);
+if (window.location.href.includes("enable3d")) {
+    enableDepth();
+}
+
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
     let availableStuds = 0;
@@ -115,6 +195,20 @@ function updateStudCountText() {
 let overridePixelArray = new Array(
     targetResolution[0] * targetResolution[1] * 4
 ).fill(null);
+let overrideDepthPixelArray = new Array(
+    targetResolution[0] * targetResolution[1] * 4
+).fill(null);
+
+function handleResolutionChange() {
+    overridePixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    overrideDepthPixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    runStep1();
+}
+
 document.getElementById("width-slider").addEventListener(
     "change",
     () => {
@@ -122,10 +216,7 @@ document.getElementById("width-slider").addEventListener(
             "width-text"
         ).innerHTML = document.getElementById("width-slider").value;
         targetResolution[0] = document.getElementById("width-slider").value;
-        overridePixelArray = new Array(
-            targetResolution[0] * targetResolution[1] * 4
-        ).fill(null);
-        runStep1();
+        handleResolutionChange();
     },
     false
 );
@@ -137,10 +228,7 @@ document.getElementById("height-slider").addEventListener(
             "height-text"
         ).innerHTML = document.getElementById("height-slider").value;
         targetResolution[1] = document.getElementById("height-slider").value;
-        overridePixelArray = new Array(
-            targetResolution[0] * targetResolution[1] * 4
-        ).fill(null);
-        runStep1();
+        handleResolutionChange();
     },
     false
 );
@@ -148,6 +236,14 @@ document
     .getElementById("clear-overrides-button")
     .addEventListener("click", () => {
         overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
+        runStep1();
+    });
+document
+    .getElementById("clear-depth-overrides-button")
+    .addEventListener("click", () => {
+        overrideDepthPixelArray = new Array(
             targetResolution[0] * targetResolution[1] * 4
         ).fill(null);
         runStep1();
@@ -507,6 +603,51 @@ document.getElementById("value-slider").addEventListener(
     false
 );
 
+function onDepthMapCountChange() {
+    const numLevels = Number(
+        document.getElementById("num-depth-levels-slider").value
+    );
+    overrideDepthPixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    document.getElementById("num-depth-levels-text").innerHTML = numLevels;
+    const inputs = [];
+    const inputsContainer = document.getElementById(
+        "depth-threshold-sliders-containers"
+    );
+    inputsContainer.innerHTML = "";
+    for (let i = 0; i < numLevels - 1; i++) {
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = 0;
+        input.max = 255;
+        input.value = Math.floor(255 * ((i + 1) / numLevels));
+        input.style = "width: 100%";
+        input.addEventListener("change", () => {
+            for (let j = 0; j < i; j++) {
+                inputs[j].value = Math.min(inputs[j].value, input.value);
+            }
+            for (let j = i + 1; j < numLevels - 1; j++) {
+                inputs[j].value = Math.max(inputs[j].value, input.value);
+            }
+            runStep1();
+        });
+        inputs.push(input);
+        inputsContainer.appendChild(input);
+    }
+
+    [...document.getElementsByClassName("threshold-plural-s")].forEach(
+        s => (s.hidden = numLevels < 3)
+    );
+
+    runStep1();
+}
+
+document
+    .getElementById("num-depth-levels-slider")
+    .addEventListener("change", onDepthMapCountChange, false);
+onDepthMapCountChange();
+
 document.getElementById("reset-colors-button").addEventListener(
     "click",
     () => {
@@ -564,6 +705,15 @@ function runStep1() {
         targetResolution[0],
         targetResolution[1]
     );
+    step1DepthCanvas.width = targetResolution[0];
+    step1DepthCanvas.height = targetResolution[1];
+    step1DepthCanvasContext.drawImage(
+        inputDepthCanvas,
+        0,
+        0,
+        targetResolution[0],
+        targetResolution[1]
+    );
     setTimeout(() => {
         runStep2();
         step1CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
@@ -571,6 +721,16 @@ function runStep1() {
         step1CanvasUpscaledContext.imageSmoothingEnabled = false;
         step1CanvasUpscaledContext.drawImage(
             step1Canvas,
+            0,
+            0,
+            targetResolution[0] * SCALING_FACTOR,
+            targetResolution[1] * SCALING_FACTOR
+        );
+        step1DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step1DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        step1DepthCanvasUpscaledContext.imageSmoothingEnabled = false;
+        step1DepthCanvasUpscaledContext.drawImage(
+            step1DepthCanvas,
             0,
             0,
             targetResolution[0] * SCALING_FACTOR,
@@ -590,6 +750,19 @@ function runStep2() {
     step2Canvas.width = targetResolution[0];
     step2Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(filteredPixelArray, step2Canvas);
+
+    step2DepthCanvas.width = targetResolution[0];
+    step2DepthCanvas.height = targetResolution[1];
+    const inputDepthPixelArray = getPixelArrayFromCanvas(step1DepthCanvas);
+    const discreteDepthPixels = getDiscreteDepthPixels(
+        inputDepthPixelArray,
+        [
+            ...document.getElementById("depth-threshold-sliders-containers")
+                .children
+        ].map(slider => Number(slider.value))
+    );
+    drawPixelsOnCanvas(discreteDepthPixels, step2DepthCanvas);
+
     setTimeout(() => {
         runStep3();
         step2CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
@@ -601,6 +774,17 @@ function runStep2() {
             0,
             targetResolution[0] * SCALING_FACTOR,
             targetResolution[1] * SCALING_FACTOR
+        );
+        step2DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step2DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        drawStudImageOnCanvas(
+            scaleUpDiscreteDepthPixelsForDisplay(
+                discreteDepthPixels,
+                document.getElementById("num-depth-levels-slider").value
+            ),
+            targetResolution[0],
+            SCALING_FACTOR,
+            step2DepthCanvasUpscaled
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -619,6 +803,18 @@ function runStep3() {
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
+
+    step3DepthCanvas.width = targetResolution[0];
+    step3DepthCanvas.height = targetResolution[1];
+    const inputDepthPixelArray = getPixelArrayFromCanvas(step2DepthCanvas);
+
+    const adjustedDepthPixelArray = getArrayWithOverridesApplied(
+        inputDepthPixelArray,
+        overrideDepthPixelArray
+    );
+
+    drawPixelsOnCanvas(adjustedDepthPixelArray, step3DepthCanvas);
+
     setTimeout(() => {
         if (!isStep3ViewExpanded) {
             runStep4();
@@ -639,14 +835,27 @@ function runStep3() {
             SCALING_FACTOR,
             step3CanvasUpscaled
         );
+        step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        drawStudImageOnCanvas(
+            scaleUpDiscreteDepthPixelsForDisplay(
+                adjustedDepthPixelArray,
+                document.getElementById("num-depth-levels-slider").value
+            ),
+            targetResolution[0],
+            SCALING_FACTOR,
+            step3DepthCanvasUpscaled
+        );
     }, 1); // TODO: find better way to check that input is finished
 }
 
 let isStep3ViewExpanded = false;
 
-document
-    .getElementById("toggle-expansion-button")
-    .addEventListener("click", () => {
+[
+    document.getElementById("toggle-expansion-button"),
+    document.getElementById("toggle-depth-expansion-button")
+].forEach(button =>
+    button.addEventListener("click", () => {
         isStep3ViewExpanded = !isStep3ViewExpanded;
         const toToggleElements = Array.from(
             document.getElementsByClassName("hide-on-step-3-expansion")
@@ -663,7 +872,8 @@ document
             document.getElementById("step-3").className = "col-6 col-md-3";
             runStep4();
         }
-    });
+    })
+);
 
 function onPixelOverride(row, col, colorHex) {
     const colorRGB = hexToRgb(colorHex);
@@ -685,6 +895,41 @@ function onPixelOverride(row, col, colorHex) {
     runStep1();
 }
 
+function onDepthOverrideDecrease(row, col) {
+    onDepthOverrideChange(row, col, false);
+}
+function onDepthOverrideIncrease(row, col) {
+    onDepthOverrideChange(row, col, true);
+}
+
+function onDepthOverrideChange(row, col, isIncrease) {
+    const pixelIndex = 4 * (row * targetResolution[0] + col);
+    const step2DepthImagePixels = getPixelArrayFromCanvas(step2DepthCanvas);
+    const currentVal =
+        overrideDepthPixelArray[pixelIndex] != null
+            ? overrideDepthPixelArray[pixelIndex]
+            : step2DepthImagePixels[pixelIndex];
+
+    let newVal = currentVal;
+    if (isIncrease) {
+        newVal = Math.min(
+            newVal + 1,
+            Number(document.getElementById("num-depth-levels-slider").value)
+        );
+    } else {
+        newVal = Math.max(newVal - 1, 0);
+    }
+
+    if (newVal === step2DepthImagePixels[pixelIndex]) {
+        newVal = null;
+    }
+    for (var i = 0; i < 3; i++) {
+        overrideDepthPixelArray[pixelIndex + i] = newVal;
+    }
+
+    runStep1();
+}
+
 function onCherryPickColor(row, col) {
     const existingRGB = document
         .getElementById("paintbrush-controls")
@@ -695,7 +940,6 @@ function onCherryPickColor(row, col) {
         .replace(")", "")
         .split(/,\s*/)
         .map(shade => parseInt(shade));
-    // const existingRGB = hexToRgb(existingHex);
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const isAlreadySet =
         existingRGB[0] === overridePixelArray[pixelIndex] &&
@@ -785,50 +1029,140 @@ step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
     onCherryPickColor(row, col);
 });
 
+step3DepthCanvasUpscaled.addEventListener(
+    "contextmenu",
+    function(event) {
+        event.preventDefault();
+        const rawRow =
+            event.clientY -
+            step3DepthCanvasUpscaled.getBoundingClientRect().y -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            step3DepthCanvasUpscaled.getBoundingClientRect().x -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const row = Math.round(
+            (rawRow * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        const col = Math.round(
+            (rawCol * targetResolution[1]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        onDepthOverrideIncrease(row, col);
+    },
+    false
+);
+
+step3DepthCanvasUpscaled.addEventListener(
+    "click",
+    function(event) {
+        const rawRow =
+            event.clientY -
+            step3DepthCanvasUpscaled.getBoundingClientRect().y -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            step3DepthCanvasUpscaled.getBoundingClientRect().x -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const row = Math.round(
+            (rawRow * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        const col = Math.round(
+            (rawCol * targetResolution[1]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        onDepthOverrideDecrease(row, col);
+    },
+    false
+);
+
 let step3CanvasHoveredPixel = null;
-step3CanvasUpscaled.addEventListener("mousemove", function(event) {
-    const rawRow =
-        event.clientY -
-        step3CanvasUpscaled.getBoundingClientRect().y -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
-    const rawCol =
-        event.clientX -
-        step3CanvasUpscaled.getBoundingClientRect().x -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
-    const pixelRow = Math.round(
-        (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
-    );
-    const pixelCol = Math.round(
-        (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
-    );
-    const circleCircumferance = SCALING_FACTOR;
-    const highlightCircleRadius = 0.1 * circleCircumferance;
+[step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
+    toHoverCanvas.addEventListener("mousemove", function(event) {
+        const rawRow =
+            event.clientY -
+            toHoverCanvas.getBoundingClientRect().y -
+            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            toHoverCanvas.getBoundingClientRect().x -
+            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+        const pixelRow = Math.round(
+            (rawRow * targetResolution[0]) / toHoverCanvas.offsetHeight
+        );
+        const pixelCol = Math.round(
+            (rawCol * targetResolution[1]) / toHoverCanvas.offsetHeight
+        );
+        const circleCircumferance = SCALING_FACTOR;
+        const highlightCircleRadius = 0.1 * circleCircumferance;
 
-    if (
-        step3CanvasHoveredPixel == null ||
-        step3CanvasHoveredPixel[0] != pixelRow ||
-        step3CanvasHoveredPixel[1] != pixelCol
-    ) {
-        const ctx = step3CanvasUpscaled.getContext("2d");
+        if (
+            step3CanvasHoveredPixel == null ||
+            step3CanvasHoveredPixel[0] != pixelRow ||
+            step3CanvasHoveredPixel[1] != pixelCol
+        ) {
+            const ctx = toHoverCanvas.getContext("2d");
 
-        [
-            pixelRow * SCALING_FACTOR + highlightCircleRadius,
-            pixelRow * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-        ].forEach(row => {
             [
-                pixelCol * SCALING_FACTOR + highlightCircleRadius,
-                pixelCol * SCALING_FACTOR +
+                pixelRow * SCALING_FACTOR + highlightCircleRadius,
+                pixelRow * SCALING_FACTOR +
                     circleCircumferance -
                     highlightCircleRadius
-            ].forEach(col => {
-                ctx.beginPath();
-                ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = "#FFFFFF";
-                ctx.fill();
+            ].forEach(row => {
+                [
+                    pixelCol * SCALING_FACTOR + highlightCircleRadius,
+                    pixelCol * SCALING_FACTOR +
+                        circleCircumferance -
+                        highlightCircleRadius
+                ].forEach(col => {
+                    ctx.beginPath();
+                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle =
+                        toHoverCanvas == step3CanvasUpscaled
+                            ? "#FFFFFF"
+                            : "#E83E8C";
+                    ctx.fill();
+                });
             });
-        });
+
+            if (step3CanvasHoveredPixel != null) {
+                [
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
+                        highlightCircleRadius,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
+                        circleCircumferance -
+                        highlightCircleRadius
+                ].forEach(row => {
+                    [
+                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
+                            highlightCircleRadius,
+                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
+                            circleCircumferance -
+                            highlightCircleRadius
+                    ].forEach(col => {
+                        ctx.beginPath();
+                        ctx.arc(
+                            col,
+                            row,
+                            highlightCircleRadius,
+                            0,
+                            2 * Math.PI
+                        );
+                        ctx.fillStyle = "#000000";
+                        ctx.fill();
+                    });
+                });
+            }
+            step3CanvasHoveredPixel = [pixelRow, pixelCol];
+        }
+    });
+
+    toHoverCanvas.addEventListener("mouseleave", function(event) {
+        const ctx = toHoverCanvas.getContext("2d");
+        const circleCircumferance = SCALING_FACTOR;
+        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (step3CanvasHoveredPixel != null) {
             [
@@ -852,37 +1186,101 @@ step3CanvasUpscaled.addEventListener("mousemove", function(event) {
                 });
             });
         }
-        step3CanvasHoveredPixel = [pixelRow, pixelCol];
-    }
+        step3CanvasHoveredPixel = null;
+    });
 });
 
-step3CanvasUpscaled.addEventListener("mouseleave", function(event) {
-    const ctx = step3CanvasUpscaled.getContext("2d");
-    const circleCircumferance = SCALING_FACTOR;
-    const highlightCircleRadius = 0.1 * circleCircumferance;
+window.depthPreviewOptions = {};
+function create3dPreview() {
+    const app = new PIXI.Application({
+        resizeTo: step4Canvas3dUpscaled,
+        autoResize: true,
+        resizeThrottle: 100
+    });
 
-    if (step3CanvasHoveredPixel != null) {
-        [
-            step3CanvasHoveredPixel[0] * SCALING_FACTOR + highlightCircleRadius,
-            step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-        ].forEach(row => {
-            [
-                step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-            ].forEach(col => {
-                ctx.beginPath();
-                ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = "#000000";
-                ctx.fill();
-            });
-        });
+    step4Canvas3dUpscaled.innerHTML = "";
+    step4Canvas3dUpscaled.appendChild(app.view);
+
+    const img = new PIXI.Sprite.from(
+        step4CanvasUpscaled.toDataURL("image/png", 1.0)
+    );
+
+    img.width = Number(
+        window.getComputedStyle(step4Canvas3dUpscaled).width.replace("px", "")
+    );
+    img.height = (img.width * targetResolution[1]) / targetResolution[0];
+    app.stage.addChild(img);
+
+    const depthMap = new PIXI.Sprite.from(
+        step3DepthCanvasUpscaled.toDataURL("image/png", 1.0)
+    );
+    app.stage.addChild(depthMap);
+
+    const displacementFilter = new PIXI.filters.DisplacementFilter(depthMap);
+    app.stage.filters = [displacementFilter];
+    displacementFilter.scale.x = 0;
+    displacementFilter.scale.y = 0;
+
+    window.depthPreviewOptions = {
+        app,
+        img,
+        depthMap,
+        displacementFilter
+    };
+    setTimeout(depthPreviewResize, 5);
+}
+
+document.getElementById("step-4-depth-tab").addEventListener("click", () => {
+    const targetWidth = step4CanvasUpscaled.clientWidth;
+    step4Canvas3dUpscaled.clientWidth = targetWidth;
+    setTimeout(create3dPreview, 5);
+});
+
+function depthPreviewResize() {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {app, img, depthMap} = window.depthPreviewOptions;
+        const targetWidth = step4Canvas3dUpscaled.clientWidth;
+        const targetHeight =
+            (targetWidth * targetResolution[1]) / targetResolution[0];
+        step4Canvas3dUpscaled.style.height = targetHeight + "px";
+        app.renderer.resize(targetWidth, targetHeight);
+        img.width = targetWidth;
+        img.height = targetHeight;
+        depthMap.width = targetWidth;
+        depthMap.height = targetHeight;
     }
-    step3CanvasHoveredPixel = null;
+}
+
+window.addEventListener("resize", depthPreviewResize);
+
+step4Canvas3dUpscaled.addEventListener("mousemove", function(e) {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {img, displacementFilter} = window.depthPreviewOptions;
+        const displacementScale = 1 / 120;
+        const rawX =
+            event.clientX - step4Canvas3dUpscaled.getBoundingClientRect().x;
+        const rawY =
+            event.clientY - step4Canvas3dUpscaled.getBoundingClientRect().y;
+        displacementFilter.scale.x = (img.width / 2 - rawX) * displacementScale;
+        displacementFilter.scale.y =
+            (img.height / 2 - rawY) * displacementScale;
+    }
+});
+step4Canvas3dUpscaled.addEventListener("mouseleave", function(e) {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {displacementFilter} = window.depthPreviewOptions;
+        displacementFilter.scale.x = 0;
+        displacementFilter.scale.y = 0;
+    }
 });
 
 function runStep4(asyncCallback) {
@@ -948,6 +1346,13 @@ function runStep4(asyncCallback) {
                 SCALING_FACTOR,
                 step4CanvasUpscaled
             );
+            if (
+                document
+                    .getElementById("step-4-depth-tab")
+                    .className.includes("active")
+            ) {
+                setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
+            }
             if (asyncCallback) {
                 await asyncCallback();
             }
@@ -1218,6 +1623,74 @@ document
             );
     });
 
+function triggerDepthMapGeneration() {
+    disableInteraction();
+    const worker = new Worker("js/depth-map-web-worker.js");
+
+    const loadingMessageComponent = document.getElementById(
+        "web-worker-loading-message"
+    );
+    loadingMessageComponent.hidden = false;
+
+    webWorkerInputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+    webWorkerInputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+    webWorkerInputCanvasContext.drawImage(
+        inputImage,
+        0,
+        0,
+        inputImage.width,
+        inputImage.height,
+        0,
+        0,
+        CNN_INPUT_IMAGE_WIDTH,
+        CNN_INPUT_IMAGE_HEIGHT
+    );
+    setTimeout(() => {
+        const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
+        worker.postMessage({inputPixelArray});
+
+        worker.addEventListener("message", e => {
+            const {result, loadingMessage} = e.data;
+            if (result != null) {
+                webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+                webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                drawPixelsOnCanvas(result, webWorkerOutputCanvas);
+                setTimeout(() => {
+                    inputDepthCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+                    inputDepthCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                    inputDepthCanvasContext.drawImage(
+                        webWorkerOutputCanvas,
+                        0,
+                        0,
+                        CNN_INPUT_IMAGE_WIDTH,
+                        CNN_INPUT_IMAGE_HEIGHT,
+                        0,
+                        0,
+                        CNN_INPUT_IMAGE_WIDTH,
+                        CNN_INPUT_IMAGE_HEIGHT
+                    );
+                    setTimeout(() => {
+                        loadingMessageComponent.hidden = true;
+                        enableInteraction();
+                        overrideDepthPixelArray = new Array(
+                            targetResolution[0] * targetResolution[1] * 4
+                        ).fill(null);
+                        runStep1();
+                    }, 50); // TODO: find better way to check that input is finished
+                }, 50); // TODO: find better way to check that input is finished
+            } else if (loadingMessage != null) {
+                loadingMessageComponent.innerHTML = loadingMessage;
+            } else {
+                console.log("Message from web worker: ", e.data);
+            }
+        });
+    }, 50); // TODO: find better way to check that input is finished
+}
+
+document
+    .getElementById("generate-depth-image")
+    .addEventListener("click", triggerDepthMapGeneration);
+
 function handleInputImage(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -1226,6 +1699,15 @@ function handleInputImage(e) {
             inputCanvas.width = inputImage.width;
             inputCanvas.height = inputImage.height;
             inputCanvasContext.drawImage(inputImage, 0, 0);
+            inputDepthCanvas.width = inputImage.width;
+            inputDepthCanvas.height = inputImage.height;
+            inputDepthCanvasContext.fillStyle = "black";
+            inputDepthCanvasContext.fillRect(
+                0,
+                0,
+                inputDepthCanvas.width,
+                inputDepthCanvas.height
+            );
         };
         inputImage.src = event.target.result;
         document.getElementById("steps-row").hidden = false;
@@ -1248,6 +1730,28 @@ function handleInputImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
+function handleInputDepthMapImage(e) {
+    const reader = new FileReader();
+    overrideDepthPixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    reader.onload = function(event) {
+        inputImage = new Image();
+        inputImage.onload = function() {
+            inputDepthCanvas.width = inputImage.width;
+            inputDepthCanvas.height = inputImage.height;
+            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
+        };
+        inputImage.src = event.target.result;
+        setTimeout(() => {
+            runStep1();
+        }, 50); // TODO: find better way to check that input is finished
+
+        // TODO: log for perf estimation?
+    };
+    reader.readAsDataURL(e.target.files[0]);
+}
+
 const imageSelectorHidden = document.getElementById(
     "input-image-selector-hidden"
 );
@@ -1256,4 +1760,18 @@ document
     .getElementById("input-image-selector")
     .addEventListener("click", () => {
         imageSelectorHidden.click();
+    });
+
+const depthImageSelectorHidden = document.getElementById(
+    "input-depth-image-selector-hidden"
+);
+depthImageSelectorHidden.addEventListener(
+    "change",
+    handleInputDepthMapImage,
+    false
+);
+document
+    .getElementById("input-depth-image-selector")
+    .addEventListener("click", () => {
+        depthImageSelectorHidden.click();
     });
