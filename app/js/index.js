@@ -60,9 +60,16 @@ function disableInteraction() {
 function enableInteraction() {
     customStudTableBody.hidden = false;
     interactionSelectors.forEach(button => (button.disabled = false));
-    [...document.getElementsByClassName("btn")].forEach(
-        button => (button.disabled = false)
-    );
+    [...document.getElementsByClassName("btn")]
+        .filter(
+            e =>
+                ![
+                    "download-depth-instructions-button",
+                    "high-quality-depth-insructions-check",
+                    "export-depth-to-bricklink-button"
+                ].includes(e.id)
+        )
+        .forEach(button => (button.disabled = false));
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(" disabled", ""))
     );

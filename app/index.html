@@ -400,12 +400,40 @@
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
               <h4>3D Preview</h4>
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
-                and may not be 100% representative of what the physical art piece would look like.</small><br />
+              <div> <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
+                <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                  and may not be 100% representative of what the physical art piece would look like.</small>
+              </div>
+              <hr />
+              <div>
+                <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
+                  Generate Depth Instructions PDF
+                </button>
+                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                  <label>
+                    <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
+                    Generate high quality pdf
+                  </label>
+                </div>
+                <small style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</small>
+                <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
+              </div>
+              <hr />
+              <div>
+                <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
+                  Copy Bricklink XML to Clipboard
+                </button>
+                <br />
+                <small style=" margin-left: 4px">
+                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                    Bricklink Upload Page
+                  </a>
+                </small>
+              </div>
+              <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
             </div>
           </div>
         </div>
