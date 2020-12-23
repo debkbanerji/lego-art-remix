@@ -76,7 +76,7 @@
                   <b style="color: #ff4c00;">Important</b>
                   <p>
                     Be careful when using high resolutions - this can cause performance issues on
-                    less powerful machines, especially during pdf generation
+                    less powerful machines, especially during pdf generation and for 3D previews
                   </p>
                 </div>
               </small>
@@ -106,7 +106,7 @@
                   <small>
                     <b style="color: #ff4c00">Important</b>
                     <br />
-                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a lower powered device.
+                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
                     </p>
                     <b>How does this work?</b>
                     <p>The depth map is computed using a DNN (deep neural network).
@@ -332,14 +332,16 @@
 
       <div id="step-4" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <!-- Padding for where tabs would be in 3d for other steps -->
           <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
             <li class="nav-item">
-              <a class="nav-link active" id="step-4-only-tab" data-toggle="tab" href="#step-4-only-tab-content" role="tab" aria-controls="step-4-only-tab-content" aria-selected="true">Preview</a>
+              <a class="nav-link active" id="step-4-color-tab" data-toggle="tab" href="#step-4-color-tab-content" role="tab" aria-controls="step-4-color-tab-content" aria-selected="true">Color</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="step-4-depth-tab" data-toggle="tab" href="#step-4-depth-tab-content" role="tab" aria-controls="step-4-depth-tab-content" aria-selected="true">Depth</a>
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="step-4-only-tab-content" role="tabpanel" aria-labelledby="step-4-only-tab">
+            <div class="tab-pane fade show active" id="step-4-color-tab-content" role="tabpanel" aria-labelledby="step-4-color-tab">
               <canvas id="step-4-canvas" hidden></canvas>
               <canvas id="bricklink-cache-canvas" hidden></canvas>
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
@@ -379,7 +381,7 @@
                   <p>
                     Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
                     Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                    Larger resolutions may also cause some slowness on the page or may not work at all on lower powered devices,
+                    Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
                     so I recommend starting at the default and then going up.
                   </p>
                 </small>
@@ -393,6 +395,17 @@
                   </p>
                 </small>
               </div>
+            </div>
+            <div class="tab-pane fade show active" id="step-4-depth-tab-content" role="tabpanel" aria-labelledby="step-4-depth-tab">
+              <div id="step-4-canvas-3d-upscaled" style="width: 100%">
+              </div>
+              <h4>3D Preview</h4>
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
+              <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                and may not be 100% representative of what the physical art piece would look like.</small><br />
             </div>
           </div>
         </div>
@@ -485,7 +498,6 @@
         </div>
       </div>
     </div>
-
   </div>
 
   <!-- Add firebase to log performance -->
@@ -504,6 +516,7 @@
   </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+  <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
   <script src="js/stud-maps.js"></script>
   <script src="js/algo.js"></script>

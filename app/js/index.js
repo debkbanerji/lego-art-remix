@@ -129,6 +129,9 @@ const step4Canvas = document.getElementById("step-4-canvas");
 const step4CanvasContext = step4Canvas.getContext("2d");
 const step4CanvasUpscaled = document.getElementById("step-4-canvas-upscaled");
 const step4CanvasUpscaledContext = step4CanvasUpscaled.getContext("2d");
+const step4Canvas3dUpscaled = document.getElementById(
+    "step-4-canvas-3d-upscaled"
+);
 
 const bricklinkCacheCanvas = document.getElementById("bricklink-cache-canvas");
 
@@ -147,6 +150,7 @@ window.addEventListener("resize", () => {
     });
 });
 
+let depthEnabled = false;
 function enableDepth() {
     [...document.getElementsByClassName("3d-selector-tabs")].forEach(
         tabsList => (tabsList.hidden = false)
@@ -158,6 +162,9 @@ function enableDepth() {
 
     document.getElementById("export-to-bricklink-button").innerHTML =
         "Copy Pixels Bricklink XML to Clipboard";
+
+    create3dPreview();
+    depthEnabled = true;
 }
 document
     .getElementById("enable-depth-button")
@@ -1176,6 +1183,99 @@ let step3CanvasHoveredPixel = null;
     });
 });
 
+window.depthPreviewOptions = {};
+function create3dPreview() {
+    const app = new PIXI.Application({
+        resizeTo: step4Canvas3dUpscaled,
+        autoResize: true,
+        resizeThrottle: 100
+    });
+
+    step4Canvas3dUpscaled.innerHTML = "";
+    step4Canvas3dUpscaled.appendChild(app.view);
+
+    const img = new PIXI.Sprite.from(
+        step4CanvasUpscaled.toDataURL("image/png", 1.0)
+    );
+
+    img.width = Number(
+        window.getComputedStyle(step4Canvas3dUpscaled).width.replace("px", "")
+    );
+    img.height = (img.width * targetResolution[1]) / targetResolution[0];
+    app.stage.addChild(img);
+
+    const depthMap = new PIXI.Sprite.from(
+        step3DepthCanvasUpscaled.toDataURL("image/png", 1.0)
+    );
+    app.stage.addChild(depthMap);
+
+    const displacementFilter = new PIXI.filters.DisplacementFilter(depthMap);
+    app.stage.filters = [displacementFilter];
+    displacementFilter.scale.x = 0;
+    displacementFilter.scale.y = 0;
+
+    window.depthPreviewOptions = {
+        app,
+        img,
+        depthMap,
+        displacementFilter
+    };
+    setTimeout(depthPreviewResize, 5);
+}
+
+document.getElementById("step-4-depth-tab").addEventListener("click", () => {
+    const targetWidth = step4CanvasUpscaled.clientWidth;
+    step4Canvas3dUpscaled.clientWidth = targetWidth;
+    setTimeout(create3dPreview, 5);
+});
+
+function depthPreviewResize() {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {app, img, depthMap} = window.depthPreviewOptions;
+        const targetWidth = step4Canvas3dUpscaled.clientWidth;
+        const targetHeight =
+            (targetWidth * targetResolution[1]) / targetResolution[0];
+        step4Canvas3dUpscaled.style.height = targetHeight + "px";
+        app.renderer.resize(targetWidth, targetHeight);
+        img.width = targetWidth;
+        img.height = targetHeight;
+        depthMap.width = targetWidth;
+        depthMap.height = targetHeight;
+    }
+}
+
+window.addEventListener("resize", depthPreviewResize);
+
+step4Canvas3dUpscaled.addEventListener("mousemove", function(e) {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {img, displacementFilter} = window.depthPreviewOptions;
+        const displacementScale = 1 / 120;
+        const rawX =
+            event.clientX - step4Canvas3dUpscaled.getBoundingClientRect().x;
+        const rawY =
+            event.clientY - step4Canvas3dUpscaled.getBoundingClientRect().y;
+        displacementFilter.scale.x = (img.width / 2 - rawX) * displacementScale;
+        displacementFilter.scale.y =
+            (img.height / 2 - rawY) * displacementScale;
+    }
+});
+step4Canvas3dUpscaled.addEventListener("mouseleave", function(e) {
+    if (
+        // for perf
+        document.getElementById("step-4-depth-tab").className.includes("active")
+    ) {
+        const {displacementFilter} = window.depthPreviewOptions;
+        displacementFilter.scale.x = 0;
+        displacementFilter.scale.y = 0;
+    }
+});
+
 function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
@@ -1239,6 +1339,13 @@ function runStep4(asyncCallback) {
                 SCALING_FACTOR,
                 step4CanvasUpscaled
             );
+            if (
+                document
+                    .getElementById("step-4-depth-tab")
+                    .className.includes("active")
+            ) {
+                setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
+            }
             if (asyncCallback) {
                 await asyncCallback();
             }
