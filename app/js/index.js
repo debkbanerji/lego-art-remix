@@ -152,6 +152,12 @@ function enableDepth() {
         tabsList => (tabsList.hidden = false)
     );
     document.getElementById("enable-depth-button-container").hidden = true;
+
+    document.getElementById("download-instructions-button").innerHTML =
+        "Generate Color Instructions PDF";
+
+    document.getElementById("export-to-bricklink-button").innerHTML =
+        "Copy Pixels Bricklink XML to Clipboard";
 }
 document
     .getElementById("enable-depth-button")
@@ -920,7 +926,6 @@ function onCherryPickColor(row, col) {
         .replace(")", "")
         .split(/,\s*/)
         .map(shade => parseInt(shade));
-    // const existingRGB = hexToRgb(existingHex);
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const isAlreadySet =
         existingRGB[0] === overridePixelArray[pixelIndex] &&
