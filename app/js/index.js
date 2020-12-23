@@ -831,9 +831,11 @@ function runStep3() {
 
 let isStep3ViewExpanded = false;
 
-document
-    .getElementById("toggle-expansion-button")
-    .addEventListener("click", () => {
+[
+    document.getElementById("toggle-expansion-button"),
+    document.getElementById("toggle-depth-expansion-button")
+].forEach(button =>
+    button.addEventListener("click", () => {
         isStep3ViewExpanded = !isStep3ViewExpanded;
         const toToggleElements = Array.from(
             document.getElementsByClassName("hide-on-step-3-expansion")
@@ -850,7 +852,8 @@ document
             document.getElementById("step-3").className = "col-6 col-md-3";
             runStep4();
         }
-    });
+    })
+);
 
 function onPixelOverride(row, col, colorHex) {
     const colorRGB = hexToRgb(colorHex);
