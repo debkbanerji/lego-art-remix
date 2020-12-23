@@ -5,6 +5,17 @@ You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego
 
 Made with ♥ by Deb
 
+### Media
+
+These are some articles and videos featuring Lego Art Remix. Note that some were published when the tool was older.
+
+ - [#LegoArtRemix on Instagram](https://www.instagram.com/explore/tags/legoartremix/)
+ - [Global News Morning Segment](https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app)
+ - [Brothers Brick Article](https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/)
+ - [TheBrickBlogger Article](http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/)
+ - [DuckBricks Video](https://www.youtube.com/watch?v=RY4OJnD99VQ)
+
+
 ![Lego Art Meta Picture](https://raw.githubusercontent.com/debkbanerji/lego-art-remix/master/app/favicon.png)
 
 ## What is it?
