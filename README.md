@@ -3,8 +3,6 @@ Easily remix Lego Art sets into custom pictures using computer vision
 
 You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego-art-remix.debkbanerji.com/)
 
-If you want to read more about the tool, there was [an article](https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/) about it on brothers-brick.com
-
 Made with ♥ by Deb
 
 ![Lego Art Meta Picture](https://raw.githubusercontent.com/debkbanerji/lego-art-remix/master/app/favicon.png)

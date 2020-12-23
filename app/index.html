@@ -16,6 +16,12 @@
   <meta property="og:title" content="Lego Art Remix" />
   <meta property="og:description" content="Easily remix Lego Art sets into custom pictures using computer vision" />
   <meta property="og:image" content="https://lego-art-remix.debkbanerji.com/favicon.png" />
+
+  <style>
+    a {
+      text-decoration: none !important
+    }
+  </style>
 </head>
 
 <body>
@@ -475,11 +481,37 @@
     <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px">
       <div class="row">
         <div class="col-sm">
-          <h4>
+          <h5>
+            <a data-toggle="collapse" href="#articles" aria-expanded="false" aria-controls="articles">
+              Media
+            </a>
+          </h5>
+          <div class="collapse" id="articles">
+            <small>
+              <p style="margin-bottom: 4px">These are some articles and videos featuring Lego Art Remix</p>
+              <p style="margin-bottom: 4px">Some are quite interesting even outside the context of this tool in particular, since they
+                go into the history of Lego mosaics</p>
+              <p style="margin-bottom: 4px">Keep in mind that some were made when the tool was older</p>
+            </small>
+            <ul>
+              <li><a href="https://www.instagram.com/explore/tags/legoartremix/" target="_blank">#LegoArtRemix on Instagram</a></li>
+              <li><a href="https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app" target="_blank">Global News Morning Segment</a></li>
+              <li><a href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/" target="_blank">Brothers Brick Article</a></li>
+              <li><a href="http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/" target="_blank">theBrickBlogger.com Article</a></li>
+              <li><a href="https://www.youtube.com/watch?v=RY4OJnD99VQ" target="_blank">DuckBricks Video</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px">
+      <div class="row">
+        <div class="col-sm">
+          <h5>
             <a data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="about">
               About
             </a>
-          </h4>
+          </h5>
           <div class="collapse" id="about">
             <div style="margin-bottom: 15px;">
               <small>
@@ -511,7 +543,7 @@
             </p>
             <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs"
                 target="_blank">ONNX.js</a>.
-              I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this</a> pull request, with a small additional change I made to support the resize operation in v10.
+              I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this pull request</a>, with a small additional change I made to support the resize operation in v10.
               The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
                 target="_blank">here</a>. It's incredible that ONNX.js allows us to use amazing work such as this within a web browser.</p>
             <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 4px">
