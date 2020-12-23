@@ -1027,7 +1027,7 @@ step3DepthCanvasUpscaled.addEventListener(
             (rawCol * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
-        onDepthOverrideDecrease(row, col);
+        onDepthOverrideIncrease(row, col);
     },
     false
 );
@@ -1051,55 +1051,96 @@ step3DepthCanvasUpscaled.addEventListener(
             (rawCol * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
-        onDepthOverrideIncrease(row, col);
+        onDepthOverrideDecrease(row, col);
     },
     false
 );
 
 let step3CanvasHoveredPixel = null;
-step3CanvasUpscaled.addEventListener("mousemove", function(event) {
-    const rawRow =
-        event.clientY -
-        step3CanvasUpscaled.getBoundingClientRect().y -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
-    const rawCol =
-        event.clientX -
-        step3CanvasUpscaled.getBoundingClientRect().x -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
-    const pixelRow = Math.round(
-        (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
-    );
-    const pixelCol = Math.round(
-        (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
-    );
-    const circleCircumferance = SCALING_FACTOR;
-    const highlightCircleRadius = 0.1 * circleCircumferance;
+[step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
+    toHoverCanvas.addEventListener("mousemove", function(event) {
+        const rawRow =
+            event.clientY -
+            toHoverCanvas.getBoundingClientRect().y -
+            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            toHoverCanvas.getBoundingClientRect().x -
+            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+        const pixelRow = Math.round(
+            (rawRow * targetResolution[0]) / toHoverCanvas.offsetHeight
+        );
+        const pixelCol = Math.round(
+            (rawCol * targetResolution[1]) / toHoverCanvas.offsetHeight
+        );
+        const circleCircumferance = SCALING_FACTOR;
+        const highlightCircleRadius = 0.1 * circleCircumferance;
 
-    if (
-        step3CanvasHoveredPixel == null ||
-        step3CanvasHoveredPixel[0] != pixelRow ||
-        step3CanvasHoveredPixel[1] != pixelCol
-    ) {
-        const ctx = step3CanvasUpscaled.getContext("2d");
+        if (
+            step3CanvasHoveredPixel == null ||
+            step3CanvasHoveredPixel[0] != pixelRow ||
+            step3CanvasHoveredPixel[1] != pixelCol
+        ) {
+            const ctx = toHoverCanvas.getContext("2d");
 
-        [
-            pixelRow * SCALING_FACTOR + highlightCircleRadius,
-            pixelRow * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-        ].forEach(row => {
             [
-                pixelCol * SCALING_FACTOR + highlightCircleRadius,
-                pixelCol * SCALING_FACTOR +
+                pixelRow * SCALING_FACTOR + highlightCircleRadius,
+                pixelRow * SCALING_FACTOR +
                     circleCircumferance -
                     highlightCircleRadius
-            ].forEach(col => {
-                ctx.beginPath();
-                ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = "#FFFFFF";
-                ctx.fill();
+            ].forEach(row => {
+                [
+                    pixelCol * SCALING_FACTOR + highlightCircleRadius,
+                    pixelCol * SCALING_FACTOR +
+                        circleCircumferance -
+                        highlightCircleRadius
+                ].forEach(col => {
+                    ctx.beginPath();
+                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
+                    ctx.fillStyle =
+                        toHoverCanvas == step3CanvasUpscaled
+                            ? "#FFFFFF"
+                            : "#E83E8C";
+                    ctx.fill();
+                });
             });
-        });
+
+            if (step3CanvasHoveredPixel != null) {
+                [
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
+                        highlightCircleRadius,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
+                        circleCircumferance -
+                        highlightCircleRadius
+                ].forEach(row => {
+                    [
+                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
+                            highlightCircleRadius,
+                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
+                            circleCircumferance -
+                            highlightCircleRadius
+                    ].forEach(col => {
+                        ctx.beginPath();
+                        ctx.arc(
+                            col,
+                            row,
+                            highlightCircleRadius,
+                            0,
+                            2 * Math.PI
+                        );
+                        ctx.fillStyle = "#000000";
+                        ctx.fill();
+                    });
+                });
+            }
+            step3CanvasHoveredPixel = [pixelRow, pixelCol];
+        }
+    });
+
+    toHoverCanvas.addEventListener("mouseleave", function(event) {
+        const ctx = toHoverCanvas.getContext("2d");
+        const circleCircumferance = SCALING_FACTOR;
+        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (step3CanvasHoveredPixel != null) {
             [
@@ -1123,37 +1164,8 @@ step3CanvasUpscaled.addEventListener("mousemove", function(event) {
                 });
             });
         }
-        step3CanvasHoveredPixel = [pixelRow, pixelCol];
-    }
-});
-
-step3CanvasUpscaled.addEventListener("mouseleave", function(event) {
-    const ctx = step3CanvasUpscaled.getContext("2d");
-    const circleCircumferance = SCALING_FACTOR;
-    const highlightCircleRadius = 0.1 * circleCircumferance;
-
-    if (step3CanvasHoveredPixel != null) {
-        [
-            step3CanvasHoveredPixel[0] * SCALING_FACTOR + highlightCircleRadius,
-            step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-        ].forEach(row => {
-            [
-                step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-            ].forEach(col => {
-                ctx.beginPath();
-                ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = "#000000";
-                ctx.fill();
-            });
-        });
-    }
-    step3CanvasHoveredPixel = null;
+        step3CanvasHoveredPixel = null;
+    });
 });
 
 function runStep4(asyncCallback) {
