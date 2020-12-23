@@ -332,58 +332,68 @@
 
       <div id="step-4" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
-          <canvas id="step-4-canvas" hidden></canvas>
-          <canvas id="bricklink-cache-canvas" hidden></canvas>
-          <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
-          <h4>Step 4: Correct for actually available studs</h4>
-          <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
-            <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
-          </div>
-          <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
-          <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-            <label>
-              <input type="checkbox" id="high-quality-insructions-check">
-              Generate high quality pdf
-            </label>
-          </div>
-          <small style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</small>
-          <small style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</small>
-          <hr />
-          <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
-          <div class="btn-group">
-            <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Bricklink Pixel Piece
-            </button>
-            <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+          <!-- Padding for where tabs would be in 3d for other steps -->
+          <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
+            <li class="nav-item">
+              <a class="nav-link active" id="step-4-only-tab" data-toggle="tab" href="#step-4-only-tab-content" role="tab" aria-controls="step-4-only-tab-content" aria-selected="true">Preview</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="step-4-only-tab-content" role="tabpanel" aria-labelledby="step-4-only-tab">
+              <canvas id="step-4-canvas" hidden></canvas>
+              <canvas id="bricklink-cache-canvas" hidden></canvas>
+              <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
+              <h4>Step 4: Correct for actually available studs</h4>
+              <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
+                <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
+              </div>
+              <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+              <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                <label>
+                  <input type="checkbox" id="high-quality-insructions-check">
+                  Generate high quality pdf
+                </label>
+              </div>
+              <small style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</small>
+              <small style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</small>
+              <hr />
+              <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
+              <div class="btn-group">
+                <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Bricklink Pixel Piece
+                </button>
+                <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+                </div>
+              </div>
+              <small style=" margin-left: 4px">Frame elements are not exported</small>
+              <small style=" margin-left: 4px">
+                <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                  Bricklink Upload Page
+                </a>
+              </small>
+              <hr />
+              <div id="instructions-canvas-container" hidden></div>
+              <div style="margin-left: 4px">
+                <small>
+                  <b style="color: #ff4c00">Important</b>
+                  <p>
+                    Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                    Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                    Larger resolutions may also cause some slowness on the page or may not work at all on lower powered devices,
+                    so I recommend starting at the default and then going up.
+                  </p>
+                </small>
+                <hr />
+                <small>
+                  <b>Tip</b>
+                  <p>
+                    If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
+                    If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
+                    help by reducing the number of studs required.
+                  </p>
+                </small>
+              </div>
             </div>
-          </div>
-          <small style=" margin-left: 4px">Frame elements are not exported</small>
-          <small style=" margin-left: 4px">
-            <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-              Bricklink Upload Page
-            </a>
-          </small>
-          <hr />
-          <div id="instructions-canvas-container" hidden></div>
-          <div style="margin-left: 4px">
-            <small>
-              <b style="color: #ff4c00">Important</b>
-              <p>
-                Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                Larger resolutions may also cause some slowness on the page or may not work at all on lower powered devices,
-                so I recommend starting at the default and then going up.
-              </p>
-            </small>
-            <hr />
-            <small>
-              <b>Tip</b>
-              <p>
-                If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
-                If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
-                help by reducing the number of studs required.
-              </p>
-            </small>
           </div>
         </div>
       </div>
