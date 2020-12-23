@@ -154,6 +154,18 @@ function alignPixelsToStudMap(inputPixels, studMap, overridePixels) {
     return alignedPixels;
 }
 
+function getArrayWithOverridesApplied(inputPixels, overridePixels) {
+    const resultPixels = [];
+    for (let i = 0; i < inputPixels.length; i++) {
+        if (overridePixels[i] != null) {
+            resultPixels.push(overridePixels[i]);
+        } else {
+            resultPixels.push(inputPixels[i]);
+        }
+    }
+    return resultPixels;
+}
+
 function getUsedPixelsStudMap(inputPixels) {
     let result = {};
     for (let i = 0; i < inputPixels.length / 4; i++) {

@@ -116,6 +116,14 @@ const step3Canvas = document.getElementById("step-3-canvas");
 const step3CanvasContext = step3Canvas.getContext("2d");
 const step3CanvasUpscaled = document.getElementById("step-3-canvas-upscaled");
 const step3CanvasUpscaledContext = step3CanvasUpscaled.getContext("2d");
+const step3DepthCanvas = document.getElementById("step-3-depth-canvas");
+const step3DepthCanvasContext = step3DepthCanvas.getContext("3d");
+const step3DepthCanvasUpscaled = document.getElementById(
+    "step-3-depth-canvas-upscaled"
+);
+const step3DepthCanvasUpscaledContext = step3DepthCanvasUpscaled.getContext(
+    "3d"
+);
 
 const step4Canvas = document.getElementById("step-4-canvas");
 const step4CanvasContext = step4Canvas.getContext("2d");
@@ -167,9 +175,15 @@ function updateStudCountText() {
 let overridePixelArray = new Array(
     targetResolution[0] * targetResolution[1] * 4
 ).fill(null);
+let overrideDepthPixelArray = new Array(
+    targetResolution[0] * targetResolution[1] * 4
+).fill(null);
 
 function handleResolutionChange() {
     overridePixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
+    overrideDepthPixelArray = new Array(
         targetResolution[0] * targetResolution[1] * 4
     ).fill(null);
     runStep1();
@@ -202,6 +216,14 @@ document
     .getElementById("clear-overrides-button")
     .addEventListener("click", () => {
         overridePixelArray = new Array(
+            targetResolution[0] * targetResolution[1] * 4
+        ).fill(null);
+        runStep1();
+    });
+document
+    .getElementById("clear-depth-overrides-button")
+    .addEventListener("click", () => {
+        overrideDepthPixelArray = new Array(
             targetResolution[0] * targetResolution[1] * 4
         ).fill(null);
         runStep1();
@@ -565,6 +587,9 @@ function onDepthMapCountChange() {
     const numLevels = Number(
         document.getElementById("num-depth-levels-slider").value
     );
+    overrideDepthPixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
     document.getElementById("num-depth-levels-text").innerHTML = numLevels;
     const inputs = [];
     const inputsContainer = document.getElementById(
@@ -758,6 +783,18 @@ function runStep3() {
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
+
+    step3DepthCanvas.width = targetResolution[0];
+    step3DepthCanvas.height = targetResolution[1];
+    const inputDepthPixelArray = getPixelArrayFromCanvas(step2DepthCanvas);
+
+    const adjustedDepthPixelArray = getArrayWithOverridesApplied(
+        inputDepthPixelArray,
+        overrideDepthPixelArray
+    );
+
+    drawPixelsOnCanvas(adjustedDepthPixelArray, step3DepthCanvas);
+
     setTimeout(() => {
         if (!isStep3ViewExpanded) {
             runStep4();
@@ -777,6 +814,17 @@ function runStep3() {
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled
+        );
+        step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+        step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+        drawStudImageOnCanvas(
+            scaleUpDiscreteDepthPixelsForDisplay(
+                adjustedDepthPixelArray,
+                document.getElementById("num-depth-levels-slider").value
+            ),
+            targetResolution[0],
+            SCALING_FACTOR,
+            step3DepthCanvasUpscaled
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -821,6 +869,41 @@ function onPixelOverride(row, col, colorHex) {
         }
         overridePixelArray[pixelIndex + 3] = 255;
     }
+    runStep1();
+}
+
+function onDepthOverrideDecrease(row, col) {
+    onDepthOverrideChange(row, col, false);
+}
+function onDepthOverrideIncrease(row, col) {
+    onDepthOverrideChange(row, col, true);
+}
+
+function onDepthOverrideChange(row, col, isIncrease) {
+    const pixelIndex = 4 * (row * targetResolution[0] + col);
+    const step2DepthImagePixels = getPixelArrayFromCanvas(step2DepthCanvas);
+    const currentVal =
+        overrideDepthPixelArray[pixelIndex] != null
+            ? overrideDepthPixelArray[pixelIndex]
+            : step2DepthImagePixels[pixelIndex];
+
+    let newVal = currentVal;
+    if (isIncrease) {
+        newVal = Math.min(
+            newVal + 1,
+            Number(document.getElementById("num-depth-levels-slider").value)
+        );
+    } else {
+        newVal = Math.max(newVal - 1, 0);
+    }
+
+    if (newVal === step2DepthImagePixels[pixelIndex]) {
+        newVal = null;
+    }
+    for (var i = 0; i < 3; i++) {
+        overrideDepthPixelArray[pixelIndex + i] = newVal;
+    }
+
     runStep1();
 }
 
@@ -923,6 +1006,55 @@ step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
     );
     onCherryPickColor(row, col);
 });
+
+step3DepthCanvasUpscaled.addEventListener(
+    "contextmenu",
+    function(event) {
+        event.preventDefault();
+        const rawRow =
+            event.clientY -
+            step3DepthCanvasUpscaled.getBoundingClientRect().y -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            step3DepthCanvasUpscaled.getBoundingClientRect().x -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const row = Math.round(
+            (rawRow * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        const col = Math.round(
+            (rawCol * targetResolution[1]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        onDepthOverrideDecrease(row, col);
+    },
+    false
+);
+
+step3DepthCanvasUpscaled.addEventListener(
+    "click",
+    function(event) {
+        const rawRow =
+            event.clientY -
+            step3DepthCanvasUpscaled.getBoundingClientRect().y -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const rawCol =
+            event.clientX -
+            step3DepthCanvasUpscaled.getBoundingClientRect().x -
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        const row = Math.round(
+            (rawRow * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        const col = Math.round(
+            (rawCol * targetResolution[1]) /
+                step3DepthCanvasUpscaled.offsetHeight
+        );
+        onDepthOverrideIncrease(row, col);
+    },
+    false
+);
 
 let step3CanvasHoveredPixel = null;
 step3CanvasUpscaled.addEventListener("mousemove", function(event) {
@@ -1406,6 +1538,9 @@ function triggerDepthMapGeneration() {
                     setTimeout(() => {
                         loadingMessageComponent.hidden = true;
                         enableInteraction();
+                        overrideDepthPixelArray = new Array(
+                            targetResolution[0] * targetResolution[1] * 4
+                        ).fill(null);
                         runStep1();
                     }, 50); // TODO: find better way to check that input is finished
                 }, 50); // TODO: find better way to check that input is finished
@@ -1463,6 +1598,9 @@ function handleInputImage(e) {
 
 function handleInputDepthMapImage(e) {
     const reader = new FileReader();
+    overrideDepthPixelArray = new Array(
+        targetResolution[0] * targetResolution[1] * 4
+    ).fill(null);
     reader.onload = function(event) {
         inputImage = new Image();
         inputImage.onload = function() {
