@@ -890,6 +890,11 @@ let isStep3ViewExpanded = false;
 );
 
 function onPixelOverride(row, col, colorHex) {
+    if (
+        !document.getElementById("step-3-1-collapse").className.includes("show")
+    ) {
+        return; // only override if the refine image section is expanded
+    }
     const colorRGB = hexToRgb(colorHex);
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const isAlreadySet =
@@ -947,6 +952,13 @@ function onDepthOverrideIncrease(row, col) {
 }
 
 function onDepthOverrideChange(row, col, isIncrease) {
+    if (
+        !document
+            .getElementById("step-3-depth-1-collapse")
+            .className.includes("show")
+    ) {
+        return; // only override if the refine depth section is expanded
+    }
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const step2DepthImagePixels = getPixelArrayFromCanvas(step2DepthCanvas);
     const currentVal =
@@ -1159,6 +1171,18 @@ step3DepthCanvasUpscaled.addEventListener(
 let step3CanvasHoveredPixel = null;
 [step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
     toHoverCanvas.addEventListener("mousemove", function(event) {
+        if (
+            toHoverCanvas == step3CanvasUpscaled
+                ? !document
+                      .getElementById("step-3-1-collapse")
+                      .className.includes("show")
+                : !document
+                      .getElementById("step-3-depth-1-collapse")
+                      .className.includes("show")
+        ) {
+            return; // only highlight if the refine section is expanded
+        }
+
         const rawRow =
             event.clientY -
             toHoverCanvas.getBoundingClientRect().y -
