@@ -402,10 +402,12 @@
                           Clear Overrides
                         </button>
                       </div>
-                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to override its color</small><br />
-                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Click an overridden pixel to restore it</small><br />
-                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Right click a pixel to use its color for overrides</small><br />
-                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure to add your override color to 'Available Studs' below for it to show up in step 4</small><br />
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a pixel to override its color</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click an overridden pixel to restore it</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color for overrides</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your override color to 'Available Studs' below for it to show up in step 4</p>
+                      </small>
                       <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
                         Expand Picture
                       </button>
@@ -655,13 +657,23 @@
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
               <h4>3D Preview</h4>
-              <div> <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
+
+              <small>
+                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
+                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Hover your mouse over the image to vary the perspective</p>
+                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure your depth map is not blank</p>
+                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically</p>
+                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                  and may not be 100% representative of what the physical art piece would look like</p>
+              </small>
+              <!-- <div>
+                 <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
                 <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
                 <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
                 <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
                 <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
                   and may not be 100% representative of what the physical art piece would look like.</small>
-              </div>
+              </div> -->
               <hr />
               <div>
                 <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
