@@ -39,6 +39,15 @@
     .accordion-card-body {
       padding: 4px;
     }
+
+    h4 {
+      line-height: 20px;
+      margin-bottom: 0;
+    }
+
+    step-header-subtitle {
+      margin-left: 2px;
+    }
   </style>
 </head>
 
@@ -72,8 +81,8 @@
             <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
               <canvas id="step-1-canvas" hidden></canvas>
               <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 1: Scale input image</h4>
-
+              <h4>Step 1</h4>
+              <small className="step-header-subtitle">Scale input image</small>
               <div id="step-1-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-1-heading">
@@ -173,7 +182,8 @@
               <canvas id="web-worker-output-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 1: Get depth map</h4>
+              <h4>Step 1</h4>
+              <small className="step-header-subtitle">Get depth map</small>
               <div id="step-1-depth-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-depth-1-heading">
@@ -258,9 +268,9 @@
             <div class="tab-pane fade show active" id="step-2-color-tab-content" role="tabpanel" aria-labelledby="step-2-color-tab">
               <canvas id="step-2-canvas" hidden></canvas>
               <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 2: Adjust colors</h4>
+              <h4>Step 2</h4>
+              <small className="step-header-subtitle">Adjust colors</small>
               <div id="step-2-accordion">
-
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-1-heading">
                     <h5 class="mb-0">
@@ -295,7 +305,8 @@
             <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 2: Make depth discrete</h4>
+              <h4>Step 2</h4>
+              <small className="step-header-subtitle">Make depth discrete</small>
               <div id="step-2-depth-accordion">
 
                 <div class="card accordion-card">
@@ -381,7 +392,8 @@
             <div class="tab-pane fade show active" id="step-3-color-tab-content" role="tabpanel" aria-labelledby="step-3-color-tab">
               <canvas id="step-3-canvas" hidden></canvas>
               <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 3: Align to closest pixel from available colors</h4>
+              <h4>Step 3</h4>
+              <small className="step-header-subtitle">Align to closest pixel from available colors</small>
               <div id="step-3-accordion">
 
                 <div class="card accordion-card">
@@ -542,7 +554,8 @@
             <div class="tab-pane fade" id="step-3-depth-tab-content" role="tabpanel" aria-labelledby="step-3-depth-tab-content">
               <canvas id="step-3-depth-canvas" hidden></canvas>
               <canvas id="step-3-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 3: Adjust Depth Map</h4>
+              <h4>Step 3</h4>
+              <small className="step-header-subtitle">Adjust Depth Map</small>
               <div id="step-3-depth-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-3-depth-1-heading">
@@ -589,7 +602,8 @@
               <canvas id="step-4-canvas" hidden></canvas>
               <canvas id="bricklink-cache-canvas" hidden></canvas>
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 4: Correct for actually available studs</h4>
+              <h4>Step 4</h4>
+              <small className="step-header-subtitle">Correct for actually available studs</small>
 
               <div id="step-4-accordion">
 
@@ -717,7 +731,7 @@
             <div class="tab-pane fade show" id="step-4-depth-tab-content" role="tabpanel" aria-labelledby="step-4-depth-tab">
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
-              <h4 style="margin-top: 4px;">3D Preview</h4>
+              <h4 style="margin-top: 4px; padding-bottom: 4px;">3D Preview</h4>
               <div id="step-4-depth-accordion">
 
                 <div class="card accordion-card">
