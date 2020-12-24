@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.22";
+const VERSION_NUMBER = "v2020.12.23";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -124,12 +124,12 @@ const step3CanvasContext = step3Canvas.getContext("2d");
 const step3CanvasUpscaled = document.getElementById("step-3-canvas-upscaled");
 const step3CanvasUpscaledContext = step3CanvasUpscaled.getContext("2d");
 const step3DepthCanvas = document.getElementById("step-3-depth-canvas");
-const step3DepthCanvasContext = step3DepthCanvas.getContext("3d");
+const step3DepthCanvasContext = step3DepthCanvas.getContext("2d");
 const step3DepthCanvasUpscaled = document.getElementById(
     "step-3-depth-canvas-upscaled"
 );
 const step3DepthCanvasUpscaledContext = step3DepthCanvasUpscaled.getContext(
-    "3d"
+    "2d"
 );
 
 const step4Canvas = document.getElementById("step-4-canvas");
@@ -864,13 +864,17 @@ let isStep3ViewExpanded = false;
             toToggleElements.forEach(element => (element.hidden = true));
             document.getElementById("toggle-expansion-button").innerHTML =
                 "Collapse Picture";
+            document.getElementById("toggle-depth-expansion-button").innerHTML =
+                "Collapse Picture";
             document.getElementById("step-3").className = "col-12";
         } else {
             toToggleElements.forEach(element => (element.hidden = false));
             document.getElementById("toggle-expansion-button").innerHTML =
                 "Expand Picture";
+            document.getElementById("toggle-depth-expansion-button").innerHTML =
+                "Expand Picture";
             document.getElementById("step-3").className = "col-6 col-md-3";
-            runStep4();
+            runStep1();
         }
     })
 );
@@ -892,7 +896,37 @@ function onPixelOverride(row, col, colorHex) {
         }
         overridePixelArray[pixelIndex + 3] = 255;
     }
-    runStep1();
+    if (isStep3ViewExpanded) {
+        // do stuff directly on the canvas for perf
+        const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
+        const pixelHex = isAlreadySet
+            ? rgbToHex(
+                  step3PixelArray[pixelIndex],
+                  step3PixelArray[pixelIndex + 1],
+                  step3PixelArray[pixelIndex + 2]
+              )
+            : rgbToHex(
+                  overridePixelArray[pixelIndex],
+                  overridePixelArray[pixelIndex + 1],
+                  overridePixelArray[pixelIndex + 2]
+              );
+        const radius = SCALING_FACTOR / 2;
+        const i = pixelIndex / 4;
+        const ctx = step3CanvasUpscaledContext;
+        const width = targetResolution[0];
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius,
+            0,
+            2 * Math.PI
+        );
+        ctx.fillStyle = pixelHex;
+        ctx.fill();
+    } else {
+        runStep3();
+    }
 }
 
 function onDepthOverrideDecrease(row, col) {
@@ -914,12 +948,13 @@ function onDepthOverrideChange(row, col, isIncrease) {
     if (isIncrease) {
         newVal = Math.min(
             newVal + 1,
-            Number(document.getElementById("num-depth-levels-slider").value)
+            Number(document.getElementById("num-depth-levels-slider").value - 1)
         );
     } else {
         newVal = Math.max(newVal - 1, 0);
     }
 
+    const pixelDisplayVal = newVal;
     if (newVal === step2DepthImagePixels[pixelIndex]) {
         newVal = null;
     }
@@ -927,7 +962,38 @@ function onDepthOverrideChange(row, col, isIncrease) {
         overrideDepthPixelArray[pixelIndex + i] = newVal;
     }
 
-    runStep1();
+    if (isStep3ViewExpanded) {
+        // do stuff directly on the canvas for perf
+        const upscaledPixelDisplayVal = Math.round(
+            Math.min(
+                (255 * (pixelDisplayVal + 1)) /
+                    Number(
+                        document.getElementById("num-depth-levels-slider").value
+                    ),
+                255
+            )
+        );
+        const radius = SCALING_FACTOR / 2;
+        const i = pixelIndex / 4;
+        const ctx = step3DepthCanvasUpscaledContext;
+        const width = targetResolution[0];
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius,
+            0,
+            2 * Math.PI
+        );
+        ctx.fillStyle = rgbToHex(
+            upscaledPixelDisplayVal,
+            upscaledPixelDisplayVal,
+            upscaledPixelDisplayVal
+        );
+        ctx.fill();
+    } else {
+        runStep3();
+    }
 }
 
 function onCherryPickColor(row, col) {
@@ -941,10 +1007,10 @@ function onCherryPickColor(row, col) {
         .split(/,\s*/)
         .map(shade => parseInt(shade));
     const pixelIndex = 4 * (row * targetResolution[0] + col);
-    const isAlreadySet =
-        existingRGB[0] === overridePixelArray[pixelIndex] &&
-        existingRGB[1] === overridePixelArray[pixelIndex + 1] &&
-        existingRGB[2] === overridePixelArray[pixelIndex + 2];
+    const isOverridden =
+        overridePixelArray[pixelIndex] !== null &&
+        overridePixelArray[pixelIndex + 1] !== null &&
+        overridePixelArray[pixelIndex + 2] !== null;
 
     const step3PixelArray = document.getElementById("use-bleedthrough-check")
         .checked
@@ -956,7 +1022,7 @@ function onCherryPickColor(row, col) {
           )
         : getPixelArrayFromCanvas(step3Canvas);
 
-    const colorHex = isAlreadySet
+    const colorHex = isOverridden
         ? rgbToHex(
               overridePixelArray[pixelIndex],
               overridePixelArray[pixelIndex + 1],
@@ -1026,6 +1092,8 @@ step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
     const col = Math.round(
         (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
     );
+    // IMPORTANT!!!!!!!! TODO: Fix for nonexistant colors, don't draw dark colors
+
     onCherryPickColor(row, col);
 });
 
@@ -1049,7 +1117,7 @@ step3DepthCanvasUpscaled.addEventListener(
             (rawCol * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
-        onDepthOverrideIncrease(row, col);
+        onDepthOverrideDecrease(row, col);
     },
     false
 );
@@ -1073,7 +1141,7 @@ step3DepthCanvasUpscaled.addEventListener(
             (rawCol * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
-        onDepthOverrideDecrease(row, col);
+        onDepthOverrideIncrease(row, col);
     },
     false
 );
