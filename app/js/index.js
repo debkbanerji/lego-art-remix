@@ -373,7 +373,7 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
 
 let selectedTiebreakTechnique = "none";
 const TIEBREAK_TECHNIQUES = [
-    {name: "No Color Tie Resolution", value: "none"},
+    {name: "None", value: "none"},
     {name: "Random", value: "random"},
     {name: "Mod 2", value: "mod2"},
     {name: "Mod 3", value: "mod3"},
