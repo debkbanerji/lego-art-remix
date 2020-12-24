@@ -19,7 +19,34 @@
 
   <style>
     a {
-      text-decoration: none !important
+      text-decoration: none !important;
+    }
+
+    .btn-link {
+      text-decoration: none !important;
+      width: 100%;
+      border-width: 0
+    }
+
+    .card-header {
+      padding: 0;
+    }
+
+    .accordion-card {
+      margin-bottom: 4px;
+    }
+
+    .accordion-card-body {
+      padding: 4px;
+    }
+
+    h4 {
+      line-height: 20px;
+      margin-bottom: 0;
+    }
+
+    step-header-subtitle {
+      margin-left: 2px;
     }
   </style>
 </head>
@@ -54,79 +81,171 @@
             <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
               <canvas id="step-1-canvas" hidden></canvas>
               <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 1: Scale input image</h4>
-              <div>
-                <b>Target Resolution:</b>
-                <div style="width: 100%">
-                  <div>Width: <span id="width-text">48</span></div>
-                  <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+              <h4>Step 1</h4>
+              <small className="step-header-subtitle">Scale input image</small>
+              <div id="step-1-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-1-collapse" aria-expanded="false" aria-controls="step-1-1-collapse">
+                        Resolution
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-1-collapse" class="collapse" aria-labelledby="step-1-1-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <b>Target Resolution:</b>
+                      <div style="width: 100%">
+                        <div>Width: <span id="width-text">48</span></div>
+                        <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                      </div>
+                      <div style="width: 100%">
+                        <div>Height: <span id="height-text">48</span></div>
+                        <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div style="width: 100%">
-                  <div>Height: <span id="height-text">48</span></div>
-                  <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+
+                <div class="card accordion-card" id="enable-depth-button-container">
+                  <div class="card-header" id="step-1-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-2-collapse" aria-expanded="false" aria-controls="step-1-2-collapse">
+                        3D
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-2-collapse" class="collapse" aria-labelledby="step-1-2-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-info" type="button" id="enable-depth-button">
+                        Enable 3D (Experimental)
+                      </button>
+                      <small>
+                        <div>
+                          <p style="margin-top: 4px; margin-left: 4px">
+                            Enabling 3D mode allows for designing pictures with multiple layers, where some pixels protrude further out than others
+                          </p>
+                        </div>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-3-collapse" aria-expanded="false" aria-controls="step-1-3-collapse">
+                        Input Image
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-3-collapse" class="collapse" aria-labelledby="step-1-3-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div id="image-input-new"></div>
+                      <small>
+                        <p style="margin-left: 4px; margin-top: 4px;">Supported image formats are dependent on your browser's compatibility</p>
+                        <p style="margin-bottom: 0; margin-left: 4px;">Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-4-collapse" aria-expanded="false" aria-controls="step-1-4-collapse">
+                        Increase Limit
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-4-collapse" class="collapse" aria-labelledby="step-1-4-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+                        Increase Resolution Limit
+                      </button>
+                      <small>
+                        <div>
+                          <b style="color: #ff4c00;">Important</b>
+                          <p>
+                            Be careful when using high resolutions - this can cause performance issues on
+                            less powerful machines, especially during pdf generation and for 3D previews
+                          </p>
+                        </div>
+                      </small>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div style="margin-left: 4px; margin-top: 10px">
-                <small>
-                  <b>Tips</b>
-                  <p>Supported image formats are dependent on your browser's compatibility</p>
-                  <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
-                </small>
-              </div>
-              <hr />
-              <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
-                Increase Resolution Limit
-              </button>
-              <small>
-                <div>
-                  <b style="color: #ff4c00;">Important</b>
-                  <p>
-                    Be careful when using high resolutions - this can cause performance issues on
-                    less powerful machines, especially during pdf generation and for 3D previews
-                  </p>
-                </div>
-              </small>
-              <div id="enable-depth-button-container">
-                <hr />
-                <button class="btn btn-info" type="button" id="enable-depth-button">
-                  Enable 3D (Experimental)
-                </button></div>
             </div>
             <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
               <canvas id="web-worker-input-canvas" hidden></canvas>
               <canvas id="web-worker-output-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 1: Get depth map</h4>
-              <div id="depth-map-input-container">
-                <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
-                <button class="btn btn-success" type="button" id="input-depth-image-selector">
-                  Select Depth Map Image
-                </button>
-                <hr />
-                <button class="btn btn-success" type="button" id="generate-depth-image">
-                  Compute Using DNN
-                </button>
-                <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
-                <div>
-                  <small>
-                    <b style="color: #ff4c00">Important</b>
-                    <br />
-                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
-                    </p>
-                    <b>How does this work?</b>
-                    <p>The depth map is computed using a DNN (deep neural network).
-                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
-                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
-                        target="_blank">here</a>.
-                    </p>
-                    <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
-                      <b>Citation for Model Used</b>
-                      <span>
-                        Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
-                          Analysis and Machine Intelligence</i></span>
+              <h4>Step 1</h4>
+              <small className="step-header-subtitle">Get depth map</small>
+              <div id="step-1-depth-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-1-collapse" aria-expanded="false" aria-controls="step-1-depth-1-collapse">
+                        Select
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-depth-1-collapse" class="collapse" aria-labelledby="step-1-depth-1-heading" data-parent="#step-1-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
+                      <button class="btn btn-success" type="button" id="input-depth-image-selector">
+                        Select Depth Map Image
+                      </button>
+                      <small>If you have a depth map corresponding to your image you can select it here. If you don't,
+                        you can generate an approximation in the 'generate' section.
+                      </small>
                     </div>
-                  </small>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-depth-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-2-collapse" aria-expanded="false" aria-controls="step-1-depth-2-collapse">
+                        Generate
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-depth-2-collapse" class="collapse" aria-labelledby="step-1-depth-2-heading" data-parent="#step-1-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-success" type="button" id="generate-depth-image">
+                        Compute Using DNN
+                      </button>
+                      <br />
+                      <small>This will compute an approximation of the depth map if you do not have one
+                      </small>
+                      <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
+                      <div>
+                        <small>
+                          <b style="color: #ff4c00">Important</b>
+                          <br />
+                          <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
+                          </p>
+                          <b>How does this work?</b>
+                          <p>The depth map is computed using a DNN (deep neural network).
+                            For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
+                            The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                              target="_blank">here</a>.
+                          </p>
+                          <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
+                            <b>Citation for Model Used</b>
+                            <span>
+                              Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on
+                                Pattern
+                                Analysis and Machine Intelligence</i></span>
+                          </div>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -149,40 +268,108 @@
             <div class="tab-pane fade show active" id="step-2-color-tab-content" role="tabpanel" aria-labelledby="step-2-color-tab">
               <canvas id="step-2-canvas" hidden></canvas>
               <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 2: Adjust colors</h4>
-              <div style="width: 100%">
-                <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
-                <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+              <h4>Step 2</h4>
+              <small className="step-header-subtitle">Adjust colors</small>
+              <div id="step-2-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-1-collapse" aria-expanded="false" aria-controls="step-2-1-collapse">
+                        Adjust HSV
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-1-collapse" class="collapse" aria-labelledby="step-2-1-heading" data-parent="#step-2-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
+                        <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
+                      </div>
+                      <div style="width: 100%">
+                        <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
+                        <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
+                      </div>
+                      <div style="width: 100%">
+                        <div>Value adjustment: <span id="value-text">0%</span></div>
+                        <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
+                      </div>
+                      <button class="btn btn-info" type="button" id="reset-colors-button">
+                        Reset Colors
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              <div style="width: 100%">
-                <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
-                <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
-              </div>
-              <div style="width: 100%">
-                <div>Value adjustment: <span id="value-text">0%</span></div>
-                <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
-              </div>
-              <button class="btn btn-info" type="button" id="reset-colors-button">
-                Reset Colors
-              </button>
             </div>
             <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 2: Make depth discrete</h4>
-              <div style="padding-bottom: 8px">
-                <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
-                  and adjust the threshold<span class="threshold-plural-s" hidden>s</span></small>
-              </div>
-              <div style="width: 100%">
-                <div>Number of depth levels: <span id="num-depth-levels-text">3</span></div>
-                <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="4" style="width: 100%" value="3">
-                <!-- index.js will add slider here -->
-              </div>
-              <div style="width: 100%">
-                <div>Depth threshold<span class="threshold-plural-s" hidden>s</span>:</div>
-                <div id="depth-threshold-sliders-containers">
-                  <input type="range" min="0" max="255" style="width: 100%" value="128">
+              <h4>Step 2</h4>
+              <small className="step-header-subtitle">Make depth discrete</small>
+              <div id="step-2-depth-accordion">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-1-collapse" aria-expanded="false" aria-controls="step-2-depth-1-collapse">
+                        Level Count
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-depth-1-collapse" class="collapse" aria-labelledby="step-2-depth-1-heading" data-parent="#step-2-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div><b>Number of depth levels: <span id="num-depth-levels-text">3</span></b></div>
+                        <div>
+                          <small>Determines how many discrete levels of depth you want the pixels of the image to have, where
+                            each level is one Lego plate deep</small>
+                        </div>
+                        <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="4" style="width: 100%" value="3">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-depth-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-2-collapse" aria-expanded="false" aria-controls="step-2-depth-2-collapse">
+                        Thresholds
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-depth-2-collapse" class="collapse" aria-labelledby="step-2-depth-2-heading" data-parent="#step-2-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div><b>Depth threshold<span class="threshold-plural-s" hidden>s</span></b></div>
+                        <div>
+                          <small>Adjusts the threshold<span class="threshold-plural-s" hidden>s</span>
+                            for separating the discrete depth levels</small>
+                        </div>
+                        <div id="depth-threshold-sliders-containers">
+                          <input type="range" min="0" max="255" style="width: 100%" value="128">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-depth-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-3-collapse" aria-expanded="false" aria-controls="step-2-depth-3-collapse">
+                        Troubleshooting
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-depth-3-collapse" class="collapse" aria-labelledby="step-2-depth-3-heading" data-parent="#step-2-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
+                        and adjust the threshold<span class="threshold-plural-s" hidden>s</span> so that they are between the sections
+                        of the image you want to separate</small>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -205,131 +392,195 @@
             <div class="tab-pane fade show active" id="step-3-color-tab-content" role="tabpanel" aria-labelledby="step-3-color-tab">
               <canvas id="step-3-canvas" hidden></canvas>
               <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 3: Align to closest pixel from available colors</h4>
-              <hr />
-              <div style="margin-left: 4px">
-                Override color:
-                <span id="paintbrush-controls">
-                </span>
-                <button class="btn btn-warning" type="button" id="clear-overrides-button">
-                  Clear Overrides
-                </button>
-              </div>
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to override its color</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click an overridden pixel to restore it</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Right click a pixel to use its color for overrides</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure to also add your override color to the list
-                of available colors below for it to show up in step 4</small><br />
-              <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
-                Expand Picture
-              </button>
-              <div class="hide-on-step-3-expansion">
-                <hr />
-                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                  <label>
-                    <input type="checkbox" id="use-bleedthrough-check" checked>
-                    Account for round stud bleedthrough
-                  </label>
-                </div>
-                <hr />
-                <div class="btn-group">
-                  <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-                    No Color Tie Resolution
-                  </button>
-                  <div class="dropdown-menu" id="color-ties-resolution-options">
+              <h4>Step 3</h4>
+              <small className="step-header-subtitle">Align to closest pixel from available colors</small>
+              <div id="step-3-accordion">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-3-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-1-collapse" aria-expanded="false" aria-controls="step-3-1-collapse">
+                        Refine Image
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="margin-left: 4px">
+                        Override color:
+                        <span id="paintbrush-controls">
+                        </span>
+                        <button class="btn btn-warning" type="button" id="clear-overrides-button">
+                          Clear Overrides
+                        </button>
+                      </div>
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a pixel to override its color</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click an overridden pixel to restore it</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color for overrides</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your override color to 'Available Studs' below for it to show up in step 4</p>
+                      </small>
+                      <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
+                        Expand Picture
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <hr />
-              <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
-                <h4>Available Studs</h4>
-                <div style="margin-bottom: 20px">
-                  <small>
-                    <b>Required Studs: <span id="required-studs"></span></b><br>
-                    <b>Available Studs: <span id="available-studs"></span></b><br>
-                    <b>Missing Studs: <span id="missing-studs"></span></b><br>
-                    <em>Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
-                    </em>
-                  </small>
-                </div>
-                <div style="padding-bottom: 10px">
-                  <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
-                    Clear Selected Studs
-                  </button>
-                </div>
-                <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Color</th>
-                      <th scope="col">Number Available</th>
-                    </tr>
-                  </thead>
-                  <tbody id="custom-stud-table-body">
-                  </tbody>
-                </table>
-                <div style="padding-bottom: 10px">
-                  <button class="btn btn-success" id="add-custom-stud-button">
-                    <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
-                </div>
-                <div class="btn-group" style="padding-bottom: 10px" hidden>
-                  <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Input Set
-                  </button>
-                  <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+
+                <div class="card accordion-card hide-on-step-3-expansion">
+                  <div class="card-header" id="step-3-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
+                        Bleedthrough
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <label>
+                          <input type="checkbox" id="use-bleedthrough-check" checked>
+                          Account for round stud bleedthrough
+                        </label>
+                        <small>
+                          <p style="margin-top: 2px">This setting accounts for the fact that pixels represented by round pieces
+                            appear slightly darker due to the black background. Disable it if you're using square pieces for pixels.
+                          </p>
+                        </small>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div style="padding-bottom: 10px">
-                  <button class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
-                    Export Selected Studs
-                  </button>
-                </div>
-                <div class="btn-group">
-                  <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Mix in Studs From Existing Set
-                  </button>
-                  <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-3-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
+                        Available Studs
+                      </button>
+                    </h5>
                   </div>
-                  <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
+                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
+                        <div style="margin-bottom: 20px">
+                          <small>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many studs of each color you have available to create the image
+                            </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; By default, this is set to all available bricklink stud colors </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
+                              then clear it and then use the mix in option to add in the pieces from your set.
+                            </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
+                            </p>
+                            <b>Required Studs: <span id="required-studs"></span></b><br>
+                            <b>Available Studs: <span id="available-studs"></span></b><br>
+                            <b>Missing Studs: <span id="missing-studs"></span></b><br>
+                          </small>
+                        </div>
+                        <div style="padding-bottom: 10px">
+                          <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
+                            Clear Available Studs
+                          </button>
+                        </div>
+                        <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Color</th>
+                              <th scope="col">Number Available</th>
+                            </tr>
+                          </thead>
+                          <tbody id="custom-stud-table-body">
+                          </tbody>
+                        </table>
+                        <div style="padding-bottom: 10px">
+                          <button class="btn btn-success" id="add-custom-stud-button">
+                            <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
+                        </div>
+                        <div class="btn-group" style="padding-bottom: 10px" hidden>
+                          <button class="btn dropdown-toggle" type="button" id="stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Input Set
+                          </button>
+                          <div class="dropdown-menu" id="stud-map-options" aria-labelledby="stud-map-button">
+                          </div>
+                        </div>
+                        <div style="padding-bottom: 10px">
+                          <button class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
+                            Export Selected Studs
+                          </button>
+                        </div>
+                        <div class="btn-group">
+                          <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Mix in Studs From Existing Set
+                          </button>
+                          <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
+                          </div>
+                          <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
+                        </div>
+                        <br>
+                        <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <br>
-                <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
-              </div>
-              <small>
-                <b style="color: #ff4c00">Important</b>
-                <p>
-                  Some sets use 1x1 tiles, while others use 1x1 studs. Make sure you double check before continuing if you want consistent pixels in your result.
-                </p>
-              </small>
-              <div style="margin-left: 4px">
-                <small>
-                  <b>Tip</b>
-                  <p>
-                    Depending on the input set of studs, many images don't easily translate to the available color palette.
-                    Try to use an image with similar colors to those of the set of studs you have available.
-                  </p>
-                  <p>
-                    In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
-                    For more robust color adjustments, I recommend making the changes in another tool before remixing the image.
-                  </p>
-                </small>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-3-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                        Tips
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 8px; margin-top: 2px">&#9679; Some sets use 1x1 tiles, while others use 1x1 studs. Make sure you double check before continuing if you want consistent pixels in your result.
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Depending on the input set of studs, many images don't easily translate to the available color palette.
+                          Try to use an image with similar colors to those of the set of studs you have available.
+                        </p>
+                        <p style="margin-left: 4px">&#9679; In some cases, adjusting the colors in step 2 can help greatly, but this doesn't work for many source images.
+                          For more robust color adjustments, I recommend making the changes in another tool before remixing the image.
+                        </p>
+                      </small>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+
             <div class="tab-pane fade" id="step-3-depth-tab-content" role="tabpanel" aria-labelledby="step-3-depth-tab-content">
               <canvas id="step-3-depth-canvas" hidden></canvas>
               <canvas id="step-3-depth-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 3: Adjust Depth Map</h4>
-              <hr />
-              <div style="margin-left: 4px">
-                <button class="btn btn-warning" type="button" id="clear-depth-overrides-button">
-                  Clear Overrides
-                </button>
+              <h4>Step 3</h4>
+              <small className="step-header-subtitle">Adjust Depth Map</small>
+              <div id="step-3-depth-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-3-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-depth-1-collapse" aria-expanded="false" aria-controls="step-3-depth-1-collapse">
+                        Refine Depth
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-depth-1-collapse" class="collapse" aria-labelledby="step-3-depth-1-heading" data-parent="#step-3-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="margin-left: 4px; margin-top: 4px">
+                        <button class="btn btn-warning" type="button" id="clear-depth-overrides-button">
+                          Clear Overrides
+                        </button>
+                      </div>
+                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to increase its height</small><br />
+                      <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to decrease its height</small><br />
+                      <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-depth-expansion-button">
+                        Expand Picture
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to increase its height</small><br />
-              <small style="margin-top: 4px; margin-left: 4px">&#9679; Click a pixel to decrease its height</small><br />
-              <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-depth-expansion-button">
-                Expand Picture
-              </button>
             </div>
           </div>
         </div>
@@ -351,102 +602,221 @@
               <canvas id="step-4-canvas" hidden></canvas>
               <canvas id="bricklink-cache-canvas" hidden></canvas>
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
-              <h4>Step 4: Correct for actually available studs</h4>
-              <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
-                <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
-              </div>
-              <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
-              <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                <label>
-                  <input type="checkbox" id="high-quality-insructions-check">
-                  Generate high quality pdf
-                </label>
-              </div>
-              <small>
-                <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
-                <p style=" margin-left: 4px; margin-bottom: 2px">Color names are Bricklink colors</p>
-              </small>
-              <hr />
-              <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
-              <div class="btn-group">
-                <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Bricklink Pixel Piece
-                </button>
-                <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+              <h4>Step 4</h4>
+              <small className="step-header-subtitle">Correct for actually available studs</small>
+
+              <div id="step-4-accordion">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
+                        Tips
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 4px">&#9679; If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
+                          If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
+                          help by reducing the number of studs required.
+                        </p>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-1-collapse" aria-expanded="false" aria-controls="step-4-1-collapse">
+                        Color Ties
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-1-collapse" class="collapse" aria-labelledby="step-4-1-heading" data-parent="#step-4-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <b style="margin-left: 4px; margin-bottom: 2px">Color Tie Resolution Strategy
+                        </b>
+                        <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have an image
+                          with a large completely uniform background but not enough pixels to fill that background
+                        </p>
+                      </small>
+                      <div class="btn-group">
+                        <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                          None
+                        </button>
+                        <div class="dropdown-menu" id="color-ties-resolution-options">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
+                        Instructions
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
+                        <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
+                      </div>
+                      <div id="instructions-canvas-container" hidden></div>
+                      <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <label>
+                          <input type="checkbox" id="high-quality-insructions-check">
+                          Generate high quality pdf
+                        </label>
+                      </div>
+                      <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Color names are Bricklink colors</p>
+                      </small>
+                      <div style="margin-left: 4px; margin-bottom: 4px">
+                        <small>
+                          <b style="color: #ff4c00">Important</b>
+                          <p>
+                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                            Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                            Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
+                            so I recommend starting at the default and then going up.
+                          </p>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-4-collapse" aria-expanded="false" aria-controls="step-4-4-collapse">
+                        Part List
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
+                      <div class="btn-group">
+                        <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Bricklink Pixel Piece
+                        </button>
+                        <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+                        </div>
+                      </div>
+                      <br />
+                      <small>
+                        <p style=" margin-left: 4px">Frame elements are not exported</p>
+                        <p style=" margin-left: 4px">
+                          <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                            Bricklink Upload Page
+                          </a>
+                        </p>
+                      </small>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <br />
-              <small>
-                <p style=" margin-left: 4px">Frame elements are not exported</p>
-                <p style=" margin-left: 4px">
-                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-                    Bricklink Upload Page
-                  </a>
-                </p>
-              </small>
-              <hr />
-              <div id="instructions-canvas-container" hidden></div>
-              <div style="margin-left: 4px">
-                <small>
-                  <b style="color: #ff4c00">Important</b>
-                  <p>
-                    Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                    Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                    Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
-                    so I recommend starting at the default and then going up.
-                  </p>
-                </small>
-                <hr />
-                <small>
-                  <b>Tip</b>
-                  <p>
-                    If there is a significant loss of color quality between steps 3 and 4, then the set you're using is running out of studs.
-                    If you're willing to sacrifice resolution for color accuracy, then changing the resolution in step 1 can
-                    help by reducing the number of studs required.
-                  </p>
-                </small>
-              </div>
+
             </div>
             <div class="tab-pane fade show" id="step-4-depth-tab-content" role="tabpanel" aria-labelledby="step-4-depth-tab">
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
-              <h4>3D Preview</h4>
-              <div> <small style="margin-top: 4px; margin-left: 4px">&#9679; This is a (very) rough preview of what the 3D effect might look like.</small><br />
-                <small style="margin-top: 4px; margin-left: 4px">&#9679; Hover your mouse over the image to vary the perspective.</small><br />
-                <small style="margin-top: 4px; margin-left: 4px">&#9679; Make sure your depth map is not blank.</small><br />
-                <small style="margin-top: 4px; margin-left: 4px">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically.</small><br />
-                <small style="margin-top: 4px; margin-left: 4px">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
-                  and may not be 100% representative of what the physical art piece would look like.</small>
-              </div>
-              <hr />
-              <div>
-                <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
-                  Generate Depth Instructions PDF
-                </button>
-                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                  <label>
-                    <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
-                    Generate high quality pdf
-                  </label>
+              <h4 style="margin-top: 4px; padding-bottom: 4px;">3D Preview</h4>
+              <div id="step-4-depth-accordion">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-1-collapse" aria-expanded="false" aria-controls="step-4-depth-1-collapse">
+                        Tips
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-1-collapse" class="collapse" aria-labelledby="step-4-depth-1-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Hover your mouse over the image to vary the perspective</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure your depth map is not blank</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                          and may not be 100% representative of what the physical art piece would look like</p>
+                      </small>
+                    </div>
+                  </div>
                 </div>
-                <small>
-                  <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
-                  <p style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</p>
-                </small>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-2-collapse" aria-expanded="false" aria-controls="step-4-depth-2-collapse">
+                        Instructions
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-2-collapse" class="collapse" aria-labelledby="step-4-depth-2-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
+                        Generate Depth Instructions PDF
+                      </button>
+                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <label>
+                          <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
+                          Generate high quality pdf
+                        </label>
+                      </div>
+                      <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                      </small>
+                      <div style="margin-left: 4px; margin-bottom: 4px">
+                        <small>
+                          <b style="color: #ff4c00">Important</b>
+                          <p>
+                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                            Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                            Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
+                            so I recommend starting at the default and then going up.
+                          </p>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-3-collapse" aria-expanded="false" aria-controls="step-4-depth-3-collapse">
+                        Part List
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-3-collapse" class="collapse" aria-labelledby="step-4-depth-3-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
+                        Copy Bricklink XML to Clipboard
+                      </button>
+                      <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
+                      <!-- <small style=" margin-left: 4px">
+                          <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                            Bricklink Upload Page
+                          </a>
+                        </small> -->
+                    </div>
+                  </div>
+                </div>
               </div>
-              <hr />
-              <div>
-                <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
-                  Copy Bricklink XML to Clipboard
-                </button>
-                <br />
-                <!-- <small style=" margin-left: 4px">
-                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-                    Bricklink Upload Page
-                  </a>
-                </small> -->
-              </div>
-              <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
             </div>
           </div>
         </div>
@@ -454,10 +824,10 @@
 
     </div>
 
-    <div id="image-input" class="card card-body" style="padding-bottom: 10px">
+    <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <div>
+          <div id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
             <button class="btn btn-success" type="button" id="input-image-selector">
               Select Input Image

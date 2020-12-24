@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.23";
+const VERSION_NUMBER = "v2020.12.24";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -373,7 +373,7 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
 
 let selectedTiebreakTechnique = "none";
 const TIEBREAK_TECHNIQUES = [
-    {name: "No Color Tie Resolution", value: "none"},
+    {name: "None", value: "none"},
     {name: "Random", value: "random"},
     {name: "Mod 2", value: "mod2"},
     {name: "Mod 3", value: "mod3"},
@@ -890,6 +890,11 @@ let isStep3ViewExpanded = false;
 );
 
 function onPixelOverride(row, col, colorHex) {
+    if (
+        !document.getElementById("step-3-1-collapse").className.includes("show")
+    ) {
+        return; // only override if the refine image section is expanded
+    }
     const colorRGB = hexToRgb(colorHex);
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const isAlreadySet =
@@ -947,6 +952,13 @@ function onDepthOverrideIncrease(row, col) {
 }
 
 function onDepthOverrideChange(row, col, isIncrease) {
+    if (
+        !document
+            .getElementById("step-3-depth-1-collapse")
+            .className.includes("show")
+    ) {
+        return; // only override if the refine depth section is expanded
+    }
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const step2DepthImagePixels = getPixelArrayFromCanvas(step2DepthCanvas);
     const currentVal =
@@ -1159,6 +1171,18 @@ step3DepthCanvasUpscaled.addEventListener(
 let step3CanvasHoveredPixel = null;
 [step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
     toHoverCanvas.addEventListener("mousemove", function(event) {
+        if (
+            toHoverCanvas == step3CanvasUpscaled
+                ? !document
+                      .getElementById("step-3-1-collapse")
+                      .className.includes("show")
+                : !document
+                      .getElementById("step-3-depth-1-collapse")
+                      .className.includes("show")
+        ) {
+            return; // only highlight if the refine section is expanded
+        }
+
         const rawRow =
             event.clientY -
             toHoverCanvas.getBoundingClientRect().y -
@@ -1791,6 +1815,10 @@ function handleInputImage(e) {
         document.getElementById("steps-row").hidden = false;
         document.getElementById("input-image-selector").innerHTML =
             "Reselect Input Image";
+        document
+            .getElementById("image-input-new")
+            .appendChild(document.getElementById("image-input"));
+        document.getElementById("image-input-card").hidden = true;
         setTimeout(() => {
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
