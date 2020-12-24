@@ -19,7 +19,25 @@
 
   <style>
     a {
-      text-decoration: none !important
+      text-decoration: none !important;
+    }
+
+    .btn-link {
+      text-decoration: none !important;
+      width: 100%;
+      border-width: 0
+    }
+
+    .card-header {
+      padding: 0;
+    }
+
+    .accordion-card {
+      margin-bottom: 4px;
+    }
+
+    .accordion-card-body {
+      padding: 4px
     }
   </style>
 </head>
@@ -55,42 +73,97 @@
               <canvas id="step-1-canvas" hidden></canvas>
               <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1: Scale input image</h4>
-              <div>
-                <b>Target Resolution:</b>
-                <div style="width: 100%">
-                  <div>Width: <span id="width-text">48</span></div>
-                  <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+
+              <div id="step-1-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-1-collapse" aria-expanded="false" aria-controls="step-1-1-collapse">
+                        Resolution
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-1-collapse" class="collapse" aria-labelledby="step-1-1-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <b>Target Resolution:</b>
+                      <div style="width: 100%">
+                        <div>Width: <span id="width-text">48</span></div>
+                        <input type="range" id="width-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                      </div>
+                      <div style="width: 100%">
+                        <div>Height: <span id="height-text">48</span></div>
+                        <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div style="width: 100%">
-                  <div>Height: <span id="height-text">48</span></div>
-                  <input type="range" id="height-slider" name="points" min="16" max="96" step="16" value="48" style="width: 100%">
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-2-collapse" aria-expanded="false" aria-controls="step-1-2-collapse">
+                        Troubleshooting
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-2-collapse" class="collapse" aria-labelledby="step-1-2-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p>Supported image formats are dependent on your browser's compatibility</p>
+                        <p style="margin-bottom: 0">Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-3-collapse" aria-expanded="false" aria-controls="step-1-3-collapse">
+                        Increase Limit
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-3-collapse" class="collapse" aria-labelledby="step-1-3-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+                        Increase Resolution Limit
+                      </button>
+                      <small>
+                        <div>
+                          <b style="color: #ff4c00;">Important</b>
+                          <p>
+                            Be careful when using high resolutions - this can cause performance issues on
+                            less powerful machines, especially during pdf generation and for 3D previews
+                          </p>
+                        </div>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="card accordion-card" id="enable-depth-button-container">
+                  <div class="card-header" id="step-1-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-4-collapse" aria-expanded="false" aria-controls="step-1-4-collapse">
+                        3D
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-4-collapse" class="collapse" aria-labelledby="step-1-4-heading" data-parent="#step-1-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-info" type="button" id="enable-depth-button">
+                        Enable 3D (Experimental)
+                      </button>
+                      <small>
+                        <div>
+                          <p style="margin-top: 4px; margin-left: 4px">
+                            Enabling 3D mode allows for designing pictures with multiple layers, where some studs/tiles protrude further out than others
+                          </p>
+                        </div>
+                      </small>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div style="margin-left: 4px; margin-top: 10px">
-                <small>
-                  <b>Tips</b>
-                  <p>Supported image formats are dependent on your browser's compatibility</p>
-                  <p>Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
-                </small>
-              </div>
-              <hr />
-              <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
-                Increase Resolution Limit
-              </button>
-              <small>
-                <div>
-                  <b style="color: #ff4c00;">Important</b>
-                  <p>
-                    Be careful when using high resolutions - this can cause performance issues on
-                    less powerful machines, especially during pdf generation and for 3D previews
-                  </p>
-                </div>
-              </small>
-              <div id="enable-depth-button-container">
-                <hr />
-                <button class="btn btn-info" type="button" id="enable-depth-button">
-                  Enable 3D (Experimental)
-                </button></div>
             </div>
             <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
               <canvas id="web-worker-input-canvas" hidden></canvas>
