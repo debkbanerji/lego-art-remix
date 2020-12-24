@@ -173,35 +173,68 @@
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1: Get depth map</h4>
-              <div id="depth-map-input-container">
-                <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
-                <button class="btn btn-success" type="button" id="input-depth-image-selector">
-                  Select Depth Map Image
-                </button>
-                <hr />
-                <button class="btn btn-success" type="button" id="generate-depth-image">
-                  Compute Using DNN
-                </button>
-                <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
-                <div>
-                  <small>
-                    <b style="color: #ff4c00">Important</b>
-                    <br />
-                    <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
-                    </p>
-                    <b>How does this work?</b>
-                    <p>The depth map is computed using a DNN (deep neural network).
-                      For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
-                      The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
-                        target="_blank">here</a>.
-                    </p>
-                    <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
-                      <b>Citation for Model Used</b>
-                      <span>
-                        Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
-                          Analysis and Machine Intelligence</i></span>
+
+              <div id="step-1-depth-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-1-collapse" aria-expanded="false" aria-controls="step-1-depth-1-collapse">
+                        Select
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-depth-1-collapse" class="collapse" aria-labelledby="step-1-depth-1-heading" data-parent="#step-1-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
+                      <button class="btn btn-success" type="button" id="input-depth-image-selector">
+                        Select Depth Map Image
+                      </button>
+                      <small>If you have a depth map corresponding to your image you can select it here. If you don't,
+                        you can generate an approximation in the 'generate' section.
+                      </small>
                     </div>
-                  </small>
+                  </div>
+                </div>
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-1-depth-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-2-collapse" aria-expanded="false" aria-controls="step-1-depth-2-collapse">
+                        Generate
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-1-depth-2-collapse" class="collapse" aria-labelledby="step-1-depth-2-heading" data-parent="#step-1-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button class="btn btn-success" type="button" id="generate-depth-image">
+                        Compute Using DNN
+                      </button>
+                      <br />
+                      <small>This will compute an approximation of the depth map if you do not have one
+                      </small>
+                      <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
+                      <div>
+                        <small>
+                          <b style="color: #ff4c00">Important</b>
+                          <br />
+                          <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
+                          </p>
+                          <b>How does this work?</b>
+                          <p>The depth map is computed using a DNN (deep neural network).
+                            For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
+                            The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
+                              target="_blank">here</a>.
+                          </p>
+                          <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
+                            <b>Citation for Model Used</b>
+                            <span>
+                              Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on
+                                Pattern
+                                Analysis and Machine Intelligence</i></span>
+                          </div>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
