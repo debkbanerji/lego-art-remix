@@ -172,6 +172,16 @@ function enableDepth() {
 
     create3dPreview();
     depthEnabled = true;
+
+    perfLoggingDatabase
+        .ref("enable-depth-count/total")
+        .transaction(incrementTransaction);
+    const loggingTimestamp = Math.floor(
+        (Date.now() - (Date.now() % 8.64e7)) / 1000
+    ); // 8.64e+7 = ms in day
+    perfLoggingDatabase
+        .ref("enable-depth-count/per-day/" + loggingTimestamp)
+        .transaction(incrementTransaction);
 }
 document
     .getElementById("enable-depth-button")
