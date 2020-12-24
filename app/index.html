@@ -37,7 +37,7 @@
     }
 
     .accordion-card-body {
-      padding: 4px
+      padding: 4px;
     }
   </style>
 </head>
@@ -296,17 +296,17 @@
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2: Make depth discrete</h4>
-              <div id="step-3-accordion">
+              <div id="step-2-depth-accordion">
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-3-1-heading">
+                  <div class="card-header" id="step-2-depth-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-1-collapse" aria-expanded="false" aria-controls="step-3-1-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-1-collapse" aria-expanded="false" aria-controls="step-2-depth-1-collapse">
                         Level Count
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
+                  <div id="step-2-depth-1-collapse" class="collapse" aria-labelledby="step-2-depth-1-heading" data-parent="#step-2-depth-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
                         <div><b>Number of depth levels: <span id="num-depth-levels-text">3</span></b></div>
@@ -321,14 +321,14 @@
                 </div>
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-3-2-heading">
+                  <div class="card-header" id="step-2-depth-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-2-collapse" aria-expanded="false" aria-controls="step-2-depth-2-collapse">
                         Thresholds
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
+                  <div id="step-2-depth-2-collapse" class="collapse" aria-labelledby="step-2-depth-2-heading" data-parent="#step-2-depth-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
                         <div><b>Depth threshold<span class="threshold-plural-s" hidden>s</span></b></div>
@@ -345,14 +345,14 @@
                 </div>
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-3-3-heading">
+                  <div class="card-header" id="step-2-depth-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-3-collapse" aria-expanded="false" aria-controls="step-2-depth-3-collapse">
                         Troubleshooting
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                  <div id="step-2-depth-3-collapse" class="collapse" aria-labelledby="step-2-depth-3-heading" data-parent="#step-2-depth-accordion">
                     <div class="card-body accordion-card-body">
                       <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
                         and adjust the threshold<span class="threshold-plural-s" hidden>s</span> so that they are between the sections
