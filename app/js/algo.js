@@ -791,6 +791,56 @@ function generateInstructionPage(
     );
 }
 
+function getDepthSubPixelMatrix(
+    pixelArray,
+    totalWidth,
+    horizontalOffset,
+    verticalOffset,
+    width,
+    height
+) {
+    console.log({
+        pixelArray,
+        totalWidth,
+        horizontalOffset,
+        verticalOffset,
+        width,
+        height
+    });
+    const result = [];
+    for (var i = 0; i < pixelArray.length / 4; i++) {
+        const iHorizontal = i % totalWidth;
+        const iVertical = Math.floor(i / totalWidth);
+
+        if (
+            horizontalOffset <= iHorizontal &&
+            iHorizontal < horizontalOffset + width &&
+            verticalOffset <= iVertical &&
+            iVertical < verticalOffset + height
+        ) {
+            const targetVertical = iVertical - verticalOffset;
+            const targetHorizontal = iHorizontal - horizontalOffset;
+            result[targetVertical] = result[targetVertical] || [];
+            result[targetVertical][targetHorizontal] = pixelArray[4 * i];
+        }
+    }
+
+    return result;
+}
+
+function getRequiredPartMatrixFromDepthMatrix(
+    depthMatrix,
+    targetLevel,
+    partDimensions
+) {
+    const setPixelMatrix = getSetPixelMatrixFromDepthMatrix(
+        depthMatrix,
+        targetLevel
+    );
+}
+
+function getSetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {}
+
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(
         stud =>
