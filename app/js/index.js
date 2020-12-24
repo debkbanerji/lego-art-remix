@@ -269,7 +269,7 @@ document
         ).hidden = true;
     });
 
-const DEFAULT_STUD_MAP = "warhol_marilyn_monroe";
+const DEFAULT_STUD_MAP = "all_stud_colors";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
 let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
