@@ -134,8 +134,8 @@
                     <div class="card-body accordion-card-body">
                       <div id="image-input-new"></div>
                       <small>
-                        <p>Supported image formats are dependent on your browser's compatibility</p>
-                        <p style="margin-bottom: 0">Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
+                        <p style="margin-left: 4px; margin-top: 4px;">Supported image formats are dependent on your browser's compatibility</p>
+                        <p style="margin-bottom: 0; margin-left: 4px;">Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
                       </small>
                     </div>
                   </div>
@@ -718,44 +718,91 @@
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
               <h4 style="margin-top: 4px;">3D Preview</h4>
+              <div id="step-4-depth-accordion">
 
-              <small>
-                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
-                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Hover your mouse over the image to vary the perspective</p>
-                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure your depth map is not blank</p>
-                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically</p>
-                <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
-                  and may not be 100% representative of what the physical art piece would look like</p>
-              </small>
-              <hr />
-              <div>
-                <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
-                  Generate Depth Instructions PDF
-                </button>
-                <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                  <label>
-                    <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
-                    Generate high quality pdf
-                  </label>
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-1-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-1-collapse" aria-expanded="false" aria-controls="step-4-depth-1-collapse">
+                        Tips
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-1-collapse" class="collapse" aria-labelledby="step-4-depth-1-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Hover your mouse over the image to vary the perspective</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure your depth map is not blank</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
+                          and may not be 100% representative of what the physical art piece would look like</p>
+                      </small>
+                    </div>
+                  </div>
                 </div>
-                <small>
-                  <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
-                  <p style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</p>
-                </small>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-2-collapse" aria-expanded="false" aria-controls="step-4-depth-2-collapse">
+                        Instructions
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-2-collapse" class="collapse" aria-labelledby="step-4-depth-2-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="download-depth-instructions-button" class="btn btn-info" disabled>
+                        Generate Depth Instructions PDF
+                      </button>
+                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <label>
+                          <input type="checkbox" id="high-quality-depth-insructions-check" disabled>
+                          Generate high quality pdf
+                        </label>
+                      </div>
+                      <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                      </small>
+                      <div style="margin-left: 4px; margin-bottom: 4px">
+                        <small>
+                          <b style="color: #ff4c00">Important</b>
+                          <p>
+                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
+                            Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
+                            Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
+                            so I recommend starting at the default and then going up.
+                          </p>
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-3-collapse" aria-expanded="false" aria-controls="step-4-depth-3-collapse">
+                        Part List
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-3-collapse" class="collapse" aria-labelledby="step-4-depth-3-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
+                        Copy Bricklink XML to Clipboard
+                      </button>
+                      <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
+                      <!-- <small style=" margin-left: 4px">
+                          <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                            Bricklink Upload Page
+                          </a>
+                        </small> -->
+                    </div>
+                  </div>
+                </div>
               </div>
-              <hr />
-              <div>
-                <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
-                  Copy Bricklink XML to Clipboard
-                </button>
-                <br />
-                <!-- <small style=" margin-left: 4px">
-                  <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-                    Bricklink Upload Page
-                  </a>
-                </small> -->
-              </div>
-              <small style=" margin-left: 4px; margin-bottom: 4px">Not (<a href="https://github.com/debkbanerji/lego-art-remix/issues/14" target="_blank">yet</a>) implemented</small>
             </div>
           </div>
         </div>
