@@ -126,12 +126,13 @@
                   <div class="card-header" id="step-1-3-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-3-collapse" aria-expanded="false" aria-controls="step-1-3-collapse">
-                        Troubleshooting
+                        Input Image
                       </button>
                     </h5>
                   </div>
                   <div id="step-1-3-collapse" class="collapse" aria-labelledby="step-1-3-heading" data-parent="#step-1-accordion">
                     <div class="card-body accordion-card-body">
+                      <div id="image-input-new"></div>
                       <small>
                         <p>Supported image formats are dependent on your browser's compatibility</p>
                         <p style="margin-bottom: 0">Due to the nature of the Lego Art sets, images with transparency aren't supported</p>
@@ -360,21 +361,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- <div style="padding-bottom: 8px">
-                <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
-                  and adjust the threshold<span class="threshold-plural-s" hidden>s</span></small>
-              </div>
-              <div style="width: 100%">
-                <div>Number of depth levels: <span id="num-depth-levels-text">3</span></div>
-                <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="4" style="width: 100%" value="3">
-              </div>
-              <div style="width: 100%">
-                <div>Depth threshold<span class="threshold-plural-s" hidden>s</span>:</div>
-                <div id="depth-threshold-sliders-containers">
-                  <input type="range" min="0" max="255" style="width: 100%" value="128">
-                </div>
-              </div> -->
             </div>
           </div>
         </div>
@@ -644,10 +630,10 @@
 
     </div>
 
-    <div id="image-input" class="card card-body" style="padding-bottom: 10px">
+    <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <div>
+          <div id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
             <button class="btn btn-success" type="button" id="input-image-selector">
               Select Input Image

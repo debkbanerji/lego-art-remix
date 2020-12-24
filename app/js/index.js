@@ -1791,6 +1791,10 @@ function handleInputImage(e) {
         document.getElementById("steps-row").hidden = false;
         document.getElementById("input-image-selector").innerHTML =
             "Reselect Input Image";
+        document
+            .getElementById("image-input-new")
+            .appendChild(document.getElementById("image-input"));
+        document.getElementById("image-input-card").hidden = true;
         setTimeout(() => {
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
