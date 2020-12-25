@@ -998,26 +998,42 @@ function generateDepthInstructionPage(
 
         const partMatrix = perDepthLevelMatrices[depthIndex];
 
-        ctx.strokeStyle = "#FF0000";
-        ctx.fillStyle = "#FF0000";
+        // ctx.strokeStyle = "#FF0000";
+        ctx.fillStyle = "#222222";
+        ctx.lineWidth = 2;
+        const innerPadding = scalingFactor / 12;
+        const radius = scalingFactor * 0.5 - 2 * innerPadding;
 
-        console.log(partMatrix);
         for (let row = 0; row < partMatrix.length; row++) {
             for (let col = 0; col < partMatrix[0].length; col++) {
+                ctx.beginPath();
+                ctx.arc(
+                    horizontalOffset + (col + 0.5) * scalingFactor,
+                    verticalOffset + (row + 0.5) * scalingFactor,
+                    radius,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+
                 const part = partMatrix[row][col];
                 if (part != null) {
+                    ctx.strokeStyle = "#888888";
                     ctx.beginPath();
-                    // ctx.rect(
-                    //     horizontalOffset + col * scalingFactor,
-                    //     verticalOffset + row * scalingFactor,
-                    //     scalingFactor * part[0],
-                    //     scalingFactor * part[1]
-                    // );
                     ctx.rect(
                         horizontalOffset + col * scalingFactor,
                         verticalOffset + row * scalingFactor,
                         scalingFactor * part[1],
                         scalingFactor * part[0]
+                    );
+                    ctx.stroke();
+                    ctx.strokeStyle = "#FFFFFF";
+                    ctx.beginPath();
+                    ctx.rect(
+                        horizontalOffset + col * scalingFactor + innerPadding,
+                        verticalOffset + row * scalingFactor + innerPadding,
+                        scalingFactor * part[1] - 2 * innerPadding,
+                        scalingFactor * part[0] - 2 * innerPadding
                     );
                     ctx.stroke();
                 }
