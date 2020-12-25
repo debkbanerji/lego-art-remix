@@ -842,8 +842,15 @@ function getRequiredPartMatrixFromDepthMatrix(
     }
 
     partDimensions = JSON.parse(JSON.stringify(partDimensions));
-    partDimensions.sort(part => part[0] * part[1]);
-    partDimensions.reverse(); // sort in decreasing order of area
+    partDimensions.sort(
+        // sort in decreasing order of area
+        // break ties on the second dimension
+        (part1, part2) =>
+            part2[0] * part2[1] -
+            part2[0] * 0.01 -
+            part1[0] * part1[1] +
+            part1[0] * 0.01
+    );
     for (let i = 0; i < partDimensions.length; i++) {
         const part = partDimensions[i];
 
@@ -880,13 +887,6 @@ function getRequiredPartMatrixFromDepthMatrix(
     }
 
     return result;
-}
-
-const DEPTH_SEPERATOR = " X ";
-function getDepthPlateString(part) {
-    return part[0] > part[1]
-        ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
-        : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
 }
 
 function drawDepthPlatesCountForContext(
@@ -1109,6 +1109,56 @@ function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
         }
     }
     return result;
+}
+
+const DEPTH_SEPERATOR = " X ";
+function getDepthPlateString(part) {
+    return part[0] > part[1]
+        ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
+        : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+}
+
+const DEPTH_PLATE_TO_PART_ID = {
+    "2 X 4": 3020, //
+    "2 X 3": 3021, //
+    "2 X 2": 3022, //
+    "1 X 2": 3023, //
+    "1 X 1": 3024, //
+    "4 X 4": 3031, //
+    // "4 X 10": 3030,
+    "2 X 8": 3034, //
+    // "4 X 8": 3035, //
+    "1 X 3": 3623, //
+    "1 X 4": 3710, //
+    "1 X 8": 3460 //
+};
+
+const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
+
+const DEPTH_FILLER_PARTS = Object.keys(DEPTH_PLATE_TO_PART_ID).map(part =>
+    part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+);
+Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
+    const splitPart = part.split(DEPTH_SEPERATOR);
+    if (splitPart[0] !== splitPart[1]) {
+        DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
+    }
+});
+
+function getDepthWantedListXML(depthPartsMap) {
+    const items = Object.keys(depthPartsMap).map(
+        part =>
+            `<ITEM>
+      <ITEMTYPE>P</ITEMTYPE>
+      <ITEMID>${DEPTH_PLATE_TO_PART_ID[part]}</ITEMID>
+      <COLOR>11</COLOR>
+      <MINQTY>${depthPartsMap[part]}</MINQTY>
+    </ITEM>`
+    );
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <INVENTORY>
+    \n${items.join("\n")}\n
+  </INVENTORY>`;
 }
 
 function getWantedListXML(studMap, partID) {

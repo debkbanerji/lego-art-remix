@@ -1665,16 +1665,6 @@ async function generateInstructions() {
     });
 }
 
-const DEPTH_FILLER_PARTS = [
-    [1, 1],
-    [1, 2],
-    [2, 1],
-    [2, 2],
-    [3, 3],
-    [2, 8],
-    [8, 2]
-];
-
 function getUsedPlateMatrices(depthPixelArray) {
     const usedPlatesMatrices = [];
     for (
