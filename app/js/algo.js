@@ -825,6 +825,7 @@ function getRequiredPartMatrixFromDepthMatrix(
     targetLevel,
     partDimensions
 ) {
+    // console.log({partDimensions});
     // pixels which are not set but need to be
     // should be completely true by the end
     const setPixelMatrix = getUnsetPixelMatrixFromDepthMatrix(
@@ -841,6 +842,7 @@ function getRequiredPartMatrixFromDepthMatrix(
         }
     }
 
+    partDimensions = JSON.parse(JSON.stringify(partDimensions));
     partDimensions.sort(part => part[0] * part[1]);
     partDimensions.reverse(); // sort in decreasing order of area
     for (let i = 0; i < partDimensions.length; i++) {
@@ -879,6 +881,187 @@ function getRequiredPartMatrixFromDepthMatrix(
     }
 
     return result;
+}
+
+const DEPTH_SEPERATOR = " X ";
+function getDepthPlateString(part) {
+    return part[0] > part[1]
+        ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
+        : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+}
+
+function getUsedDepthPartsMap(perDepthLevelMatrices) {
+    const result = {};
+    perDepthLevelMatrices.forEach(matrix =>
+        matrix.forEach(row =>
+            row.forEach(part => {
+                if (part != null) {
+                    result[getDepthPlateString(part)] =
+                        (result[getDepthPlateString(part)] || 0) + 1;
+                }
+            })
+        )
+    );
+    return result;
+}
+
+function generateDepthInstructionPage(
+    perDepthLevelMatrices,
+    scalingFactor,
+    canvas,
+    plateNumber
+) {
+    const ctx = canvas.getContext("2d");
+
+    pictureWidth = perDepthLevelMatrices[0].length * scalingFactor;
+    pictureHeight = perDepthLevelMatrices[0][0].length * scalingFactor;
+
+    const radius = scalingFactor / 2;
+
+    // const studMap = getUsedPixelsStudMap(pixelArray);
+    // const filteredAvailableStudHexList = availableStudHexList.filter(
+    //     pixelHex => (studMap[pixelHex] || 0) > 0
+    // );
+    const usedDepthParts = getUsedDepthPartsMap(perDepthLevelMatrices);
+    const sortedDepthParts = Object.keys(usedDepthParts);
+    sortedDepthParts.sort(part => {
+        const partNumbers = part.split(DEPTH_SEPERATOR);
+        return partNumbers[0] * partNumbers[1];
+    });
+
+    const betweenLevelPicturePadding = pictureHeight * 0.2;
+    canvas.height = Math.max(
+        pictureHeight * 1.5 +
+            (pictureHeight + betweenLevelPicturePadding) *
+                (perDepthLevelMatrices.length - 1),
+        pictureHeight * 0.4 + sortedDepthParts.length * radius * 2.5
+    );
+    canvas.width = pictureWidth * 2;
+    // console.log("canvas.height");
+    // console.log(canvas.height);
+    // console.log("canvas.width");
+    // console.log(canvas.width);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // console.log({scalingFactor});
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = "#000000";
+    ctx.font = `${scalingFactor}px Arial`;
+    // console.log(`${scalingFactor}px Arial`);
+    ctx.beginPath();
+    ctx.fillText(
+        `Section ${plateNumber} Depth Plating Instructions`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.2 - scalingFactor
+    );
+    ctx.stroke();
+
+    ctx.lineWidth = 1;
+
+    // const studToNumber = {};
+    // filteredAvailableStudHexList.forEach((stud, i) => {
+    //     studToNumber[stud] = i + 1;
+    // });
+
+    ctx.font = `${scalingFactor / 2}px Arial`;
+
+    for (
+        let depthIndex = 0;
+        depthIndex < perDepthLevelMatrices.length;
+        depthIndex++
+    ) {
+        const horizontalOffset = pictureWidth * 0.75;
+        const verticalOffset =
+            pictureHeight * 0.2 +
+            (pictureHeight + betweenLevelPicturePadding) * depthIndex;
+        // console.log({verticalOffset, pictureHeight, pictureWidth});
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        // console.log({
+        //     horizontalOffset,
+        //     verticalOffset,
+        //     pictureWidth,
+        //     pictureHeight
+        // });
+        ctx.rect(horizontalOffset, verticalOffset, pictureWidth, pictureHeight);
+        ctx.strokeStyle = "#000000";
+        ctx.stroke();
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(
+            horizontalOffset,
+            verticalOffset,
+            pictureWidth,
+            pictureHeight
+        );
+
+        const partMatrix = perDepthLevelMatrices[depthIndex];
+
+        ctx.strokeStyle = "#FF0000";
+        ctx.fillStyle = "#FF0000";
+
+        console.log(partMatrix);
+        for (let row = 0; row < partMatrix.length; row++) {
+            for (let col = 0; col < partMatrix[0].length; col++) {
+                const part = partMatrix[row][col];
+                if (part != null) {
+                    ctx.beginPath();
+                    // ctx.rect(
+                    //     horizontalOffset + col * scalingFactor,
+                    //     verticalOffset + row * scalingFactor,
+                    //     scalingFactor * part[0],
+                    //     scalingFactor * part[1]
+                    // );
+                    ctx.rect(
+                        horizontalOffset + col * scalingFactor,
+                        verticalOffset + row * scalingFactor,
+                        scalingFactor * part[1],
+                        scalingFactor * part[0]
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // for (let i = 0; i < plateWidth; i++) {
+    //     for (let j = 0; j < plateWidth; j++) {
+    //         const pixelIndex = i * plateWidth + j;
+    //         const pixelHex = rgbToHex(
+    //             pixelArray[pixelIndex * 4],
+    //             pixelArray[pixelIndex * 4 + 1],
+    //             pixelArray[pixelIndex * 4 + 2]
+    //         );
+    //         ctx.beginPath();
+    //         const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
+    //         const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
+    //         ctx.arc(x, y, radius, 0, 2 * Math.PI);
+    //         ctx.fillStyle = pixelHex;
+    //         ctx.fill();
+    //         ctx.strokeStyle = inverseHex(pixelHex);
+    //         ctx.stroke();
+    //         ctx.fillStyle = inverseHex(pixelHex);
+    //         ctx.fillText(
+    //             studToNumber[pixelHex],
+    //             x -
+    //                 (scalingFactor *
+    //                     (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
+    //                     8,
+    //             y + scalingFactor / 8
+    //         );
+    //     }
+    // }
+
+    // drawStudCountForContext(
+    //     studMap,
+    //     filteredAvailableStudHexList,
+    //     scalingFactor,
+    //     ctx,
+    //     pictureWidth * 0.25,
+    //     pictureHeight * 0.2 - radius,
+    //     showColorName
+    // );
 }
 
 function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {

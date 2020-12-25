@@ -1662,9 +1662,20 @@ async function generateInstructions() {
     });
 }
 
+const DEPTH_FILLER_PARTS = [
+    [1, 1],
+    [1, 2],
+    [2, 1],
+    [2, 2],
+    [3, 3],
+    [2, 8],
+    [8, 2]
+];
+
 async function generateDepthInstructions() {
+    const isHighQuality = false; //TODO: get from check
     const instructionsCanvasContainer = document.getElementById(
-        "instructions-canvas-container"
+        "depth-instructions-canvas-container"
     );
     instructionsCanvasContainer.innerHTML = "";
     disableInteraction();
@@ -1713,21 +1724,16 @@ async function generateDepthInstructions() {
                         getRequiredPartMatrixFromDepthMatrix(
                             depthSubPixelMatrix,
                             depthLevel,
-                            [
-                                [1, 1],
-                                [1, 2],
-                                [2, 1],
-                                [2, 2],
-                                [3, 3]
-                            ]
+                            DEPTH_FILLER_PARTS
                         )
                     );
                 }
-                console.log({perDepthLevelMatrices});
+                // console.log({perDepthLevelMatrices});
+                usedPlatesMatrices.push(perDepthLevelMatrices);
             }
         }
 
-        const titlePageCanvas = document.createElement("canvas");
+        // const titlePageCanvas = document.createElement("canvas");
 
         // instructionsCanvasContainer.appendChild(titlePageCanvas);
         // generateInstructionTitlePage(
@@ -1744,18 +1750,102 @@ async function generateDepthInstructions() {
         //
         // const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
         //
-        // let pdf = new jsPDF({
-        //     orientation:
-        //         titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+
+        // pictureWidth = targetResolution[0] * SCALING_FACTOR;
+        // pictureHeight = targetResolution[1] * SCALING_FACTOR;
+
+        // let pdfHeight = Math.max(
+        //     pictureHeight * 1.5 +
+        //         pictureHeight *
+        //             1.2 *
+        //             (Number(
+        //                 document.getElementById("num-depth-levels-slider").value
+        //             ) -
+        //                 2),
+        //     pictureHeight * 0.4 +
+        //         DEPTH_FILLER_PARTS.length * (SCALING_FACTOR / 2) * 2.5
+        // );
+        // let pdfWidth = pictureWidth * 2;
+        //
+        // console.log({pdfWidth, pdfHeight});
+
+        let pdf;
+        //  = new jsPDF({
+        //     orientation: pdfWidth < pdfHeight ? "p" : "l",
         //     unit: "mm",
-        //     format: [titlePageCanvas.width, titlePageCanvas.height]
+        //     format: [pdfWidth, pdfHeight]
         // });
         //
-        // const pdfWidth = pdf.internal.pageSize.getWidth();
-        // const pdfHeight = pdf.internal.pageSize.getHeight();
-        //
+        // pdfWidth = pdf.internal.pageSize.getWidth();
+        // pdfHeight = pdf.internal.pageSize.getHeight();
+        // console.log({pdfWidth, pdfHeight});
+
         // const totalPlates =
         //     resultImage.length / (4 * PLATE_WIDTH * PLATE_WIDTH);
+
+        let numParts = 1;
+        for (let i = 0; i < usedPlatesMatrices.length; i++) {
+            await sleep(50);
+
+            const instructionPageCanvas = document.createElement("canvas");
+            instructionsCanvasContainer.appendChild(instructionPageCanvas);
+            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
+
+            perDepthLevelMatrices = usedPlatesMatrices[i];
+            generateDepthInstructionPage(
+                perDepthLevelMatrices,
+                SCALING_FACTOR,
+                instructionPageCanvas,
+                i + 1
+            );
+
+            if (i % (isHighQuality ? 20 : 50) === 0) {
+                if (pdf != null) {
+                    addWaterMark(pdf);
+                    pdf.save(
+                        `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
+                    );
+
+                    numParts++;
+                }
+                pdf = new jsPDF({
+                    orientation:
+                        instructionPageCanvas.width <
+                        instructionPageCanvas.height
+                            ? "p"
+                            : "l",
+                    unit: "mm",
+                    format: [
+                        instructionPageCanvas.width,
+                        instructionPageCanvas.height
+                    ]
+                });
+            } else {
+                pdf.addPage();
+            }
+
+            // setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
+            const imgData = instructionPageCanvas.toDataURL(
+                `image${i + 1}/jpeg`,
+                i
+            );
+
+            pdf.addImage(
+                imgData,
+                "PNG",
+                0,
+                0,
+                pdf.internal.pageSize.getWidth(),
+                pdf.internal.pageSize.getHeight()
+            );
+        }
+
+        pdf.save(
+            numParts > 1
+                ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
+                : "Lego-Art-Remix-Instructions.pdf"
+        );
+        enableInteraction();
         //
         // document.getElementById("pdf-progress-bar").style.width = `${100 /
         //     (totalPlates + 1)}%`;
