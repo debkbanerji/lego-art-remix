@@ -1727,6 +1727,7 @@ async function generateDepthInstructions() {
     );
     instructionsCanvasContainer.innerHTML = "";
     disableInteraction();
+
     runStep4(async () => {
         const isHighQuality = document.getElementById(
             "high-quality-depth-instructions-check"
@@ -1734,6 +1735,14 @@ async function generateDepthInstructions() {
         const depthPixelArray = getPixelArrayFromCanvas(step3DepthCanvas);
 
         const usedPlatesMatrices = getUsedPlateMatrices(depthPixelArray);
+
+        document.getElementById("depth-pdf-progress-bar").style.width = `${0}%`;
+
+        document.getElementById("depth-pdf-progress-bar").style.width = "0%";
+        document.getElementById("depth-pdf-progress-container").hidden = false;
+        document.getElementById(
+            "download-depth-instructions-button"
+        ).hidden = true;
 
         let pdf;
         let numParts = 1;
@@ -1790,6 +1799,11 @@ async function generateDepthInstructions() {
                 pdf.internal.pageSize.getWidth(),
                 pdf.internal.pageSize.getHeight()
             );
+
+            document.getElementById(
+                "depth-pdf-progress-bar"
+            ).style.width = `${((i + 1) * 100) /
+                (usedPlatesMatrices.length + 1)}%`;
         }
 
         pdf.save(
@@ -1797,6 +1811,10 @@ async function generateDepthInstructions() {
                 ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
                 : "Lego-Art-Remix-Instructions.pdf"
         );
+        document.getElementById("depth-pdf-progress-container").hidden = true;
+        document.getElementById(
+            "download-depth-instructions-button"
+        ).hidden = false;
         enableInteraction();
     });
 }
