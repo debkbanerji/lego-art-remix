@@ -186,6 +186,23 @@ if (window.location.href.includes("enable3d")) {
     enableDepth();
 }
 
+Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(plate => {
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = plate;
+    input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
+    input.disabled = plate === "1 X 1";
+    const label = document.createElement("label");
+    const plateSpan = document.createElement("span");
+    plateSpan.innerHTML = " " + plate;
+    label.appendChild(input);
+    label.appendChild(plateSpan);
+    const checkbox = document.createElement("div");
+    checkbox.style = "margin-top: 2px; margin-left: 4px";
+    checkbox.appendChild(label);
+    document.getElementById("depth-plates-container").appendChild(checkbox);
+});
+
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
     let availableStuds = 0;
@@ -1659,6 +1676,23 @@ async function generateInstructions() {
 }
 
 function getUsedPlateMatrices(depthPixelArray) {
+    const availableParts = [
+        ...document.getElementById("depth-plates-container").children
+    ]
+        .map(div => div.children[0])
+        .map(label => label.children[0])
+        .filter(input => input.checked)
+        .map(input => input.name)
+        .map(part =>
+            part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+        );
+    const flippedParts = [];
+    availableParts.forEach(part => {
+        if (part[0] !== part[1]) {
+            flippedParts.push([part[1], part[0]]);
+        }
+    });
+    flippedParts.forEach(part => availableParts.push(part));
     const usedPlatesMatrices = [];
     for (
         let row = 0; // for each row of plates
@@ -1694,7 +1728,7 @@ function getUsedPlateMatrices(depthPixelArray) {
                     getRequiredPartMatrixFromDepthMatrix(
                         depthSubPixelMatrix,
                         depthLevel,
-                        DEPTH_FILLER_PARTS
+                        availableParts
                     )
                 );
             }

@@ -161,7 +161,7 @@
                   </div>
                   <div id="step-1-4-collapse" class="collapse" aria-labelledby="step-1-4-heading" data-parent="#step-1-accordion">
                     <div class="card-body accordion-card-body">
-                      <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px;">
+                      <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px; margin-top:8px;">
                         Increase Resolution Limit
                       </button>
                       <small>
@@ -197,9 +197,10 @@
                   <div id="step-1-depth-1-collapse" class="collapse" aria-labelledby="step-1-depth-1-heading" data-parent="#step-1-depth-accordion">
                     <div class="card-body accordion-card-body">
                       <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
-                      <button class="btn btn-success" type="button" id="input-depth-image-selector">
+                      <button class="btn btn-success" type="button" id="input-depth-image-selector" style="margin-top: 8px">
                         Select Depth Map Image
                       </button>
+                      <br />
                       <small>If you have a depth map corresponding to your image you can select it here. If you don't,
                         you can generate an approximation in the 'generate' section.
                       </small>
@@ -217,7 +218,7 @@
                   </div>
                   <div id="step-1-depth-2-collapse" class="collapse" aria-labelledby="step-1-depth-2-heading" data-parent="#step-1-depth-accordion">
                     <div class="card-body accordion-card-body">
-                      <button class="btn btn-success" type="button" id="generate-depth-image">
+                      <button class="btn btn-success" type="button" id="generate-depth-image" style="margin-top: 8px">
                         Compute Using DNN
                       </button>
                       <br />
@@ -568,7 +569,7 @@
                   </div>
                   <div id="step-3-depth-1-collapse" class="collapse" aria-labelledby="step-3-depth-1-heading" data-parent="#step-3-depth-accordion">
                     <div class="card-body accordion-card-body">
-                      <div style="margin-left: 4px; margin-top: 4px">
+                      <div style="margin-left: 4px; margin-top: 8px">
                         <button class="btn btn-warning" type="button" id="clear-depth-overrides-button">
                           Clear Overrides
                         </button>
@@ -669,7 +670,7 @@
                         <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
                       </div>
                       <div id="instructions-canvas-container" hidden></div>
-                      <button type="button" id="download-instructions-button" class="btn btn-info">Generate Instructions PDF</button>
+                      <button type="button" id="download-instructions-button" class="btn btn-info" style="margin-top: 8px">Generate Instructions PDF</button>
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <label>
                           <input type="checkbox" id="high-quality-instructions-check">
@@ -705,7 +706,7 @@
                   </div>
                   <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
-                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 4px;">Copy Bricklink XML to Clipboard</button>
+                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
                       <div class="btn-group">
                         <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Bricklink Pixel Piece
@@ -757,6 +758,28 @@
                 </div>
 
                 <div class="card accordion-card">
+                  <div class="card-header" id="step-4-depth-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-4-collapse" aria-expanded="false" aria-controls="step-4-depth-4-collapse">
+                        Depth Plates
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-depth-4-collapse" class="collapse" aria-labelledby="step-4-depth-4-heading" data-parent="#step-4-depth-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; This is the set of plates that may be used to generate depth instructions and part
+                          lists</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; These pieces are used as padding so that the correct pixels protrude outwards</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; Note that larger plates may be difficult to attach/detach from the base</p>
+                        <b style=" margin-left: 4px; margin-bottom: 2px">Available Plates:</b>
+                      </small>
+                      <div id="depth-plates-container"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
                   <div class="card-header" id="step-4-depth-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-2-collapse" aria-expanded="false" aria-controls="step-4-depth-2-collapse">
@@ -769,7 +792,7 @@
                       <div class="progress" style="height: 37px;" id="depth-pdf-progress-container" hidden>
                         <div class="progress-bar" id="depth-pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
                       </div>
-                      <button type="button" id="download-depth-instructions-button" class="btn btn-info">
+                      <button type="button" id="download-depth-instructions-button" class="btn btn-info" style="margin-top: 8px">
                         Generate Depth Instructions PDF
                       </button>
                       <div id="depth-instructions-canvas-container" hidden></div>
@@ -807,7 +830,7 @@
                   </div>
                   <div id="step-4-depth-3-collapse" class="collapse" aria-labelledby="step-4-depth-3-heading" data-parent="#step-4-depth-accordion">
                     <div class="card-body accordion-card-body">
-                      <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 4px;">
+                      <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 8px;">
                         Copy Bricklink XML to Clipboard
                       </button>
                       <small style=" margin-left: 4px">
@@ -831,7 +854,7 @@
         <div class="col-sm">
           <div id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
-            <button class="btn btn-success" type="button" id="input-image-selector">
+            <button class="btn btn-success" type="button" id="input-image-selector" style="margin-top: 8px">
               Select Input Image
             </button>
           </div>
