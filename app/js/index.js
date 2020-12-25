@@ -1696,19 +1696,19 @@ function getUsedPlateMatrices(depthPixelArray) {
     const usedPlatesMatrices = [];
     for (
         let row = 0; // for each row of plates
-        row < Math.ceil(targetResolution[0] / PLATE_WIDTH); // round up
+        row < Math.ceil(targetResolution[1] / PLATE_WIDTH); // round up
         row++
     ) {
         for (
             let col = 0; // for each column of plates
-            col < Math.ceil(targetResolution[1] / PLATE_WIDTH); // round up
+            col < Math.ceil(targetResolution[0] / PLATE_WIDTH); // round up
             col++
         ) {
             const horizontalOffset = col * PLATE_WIDTH;
             const verticalOffset = row * PLATE_WIDTH;
             const depthSubPixelMatrix = getDepthSubPixelMatrix(
                 depthPixelArray,
-                targetResolution[1],
+                targetResolution[0],
                 horizontalOffset,
                 verticalOffset,
                 Math.min(PLATE_WIDTH, targetResolution[0] - horizontalOffset),
