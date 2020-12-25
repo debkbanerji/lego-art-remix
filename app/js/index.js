@@ -1468,10 +1468,10 @@ function runStep4(asyncCallback) {
     }
 }
 
-function addWaterMark(pdf) {
+function addWaterMark(pdf, isHighQuality) {
     for (let i = 0; i < pdf.internal.getNumberOfPages(); i++) {
         pdf.setPage(i + 1);
-        pdf.setFontSize(20);
+        pdf.setFontSize(isHighQuality ? 20 : 10);
         pdf.setTextColor(200);
         pdf.text(
             pdf.internal.pageSize.height * 0.25,
@@ -1587,7 +1587,7 @@ async function generateInstructions() {
         for (var i = 0; i < totalPlates; i++) {
             await sleep(50);
             if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
-                addWaterMark(pdf);
+                addWaterMark(pdf, isHighQuality);
                 pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
                 numParts++;
                 pdf = new jsPDF({
@@ -1643,7 +1643,7 @@ async function generateInstructions() {
             );
         }
 
-        addWaterMark(pdf);
+        addWaterMark(pdf, isHighQuality);
         pdf.save(
             numParts > 1
                 ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
@@ -1763,7 +1763,7 @@ async function generateDepthInstructions() {
 
             if (i % (isHighQuality ? 20 : 50) === 0) {
                 if (pdf != null) {
-                    addWaterMark(pdf);
+                    addWaterMark(pdf, isHighQuality);
                     pdf.save(
                         `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
                     );
@@ -1806,7 +1806,7 @@ async function generateDepthInstructions() {
                 (usedPlatesMatrices.length + 1)}%`;
         }
 
-        addWaterMark(pdf);
+        addWaterMark(pdf, isHighQuality);
         pdf.save(
             numParts > 1
                 ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
