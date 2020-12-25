@@ -799,14 +799,6 @@ function getDepthSubPixelMatrix(
     width,
     height
 ) {
-    console.log({
-        pixelArray,
-        totalWidth,
-        horizontalOffset,
-        verticalOffset,
-        width,
-        height
-    });
     const result = [];
     for (var i = 0; i < pixelArray.length / 4; i++) {
         const iHorizontal = i % totalWidth;
@@ -833,13 +825,72 @@ function getRequiredPartMatrixFromDepthMatrix(
     targetLevel,
     partDimensions
 ) {
-    const setPixelMatrix = getSetPixelMatrixFromDepthMatrix(
+    // pixels which are not set but need to be
+    // should be completely true by the end
+    const setPixelMatrix = getUnsetPixelMatrixFromDepthMatrix(
         depthMatrix,
         targetLevel
     );
+
+    // initial result as a null array
+    const result = [];
+    for (let i = 0; i < depthMatrix.length; i++) {
+        result[i] = [];
+        for (let j = 0; j < depthMatrix[0].length; j++) {
+            result[i][j] = null; // nothing has been placed here yet
+        }
+    }
+
+    partDimensions.sort(part => part[0] * part[1]);
+    partDimensions.reverse(); // sort in decreasing order of area
+    for (let i = 0; i < partDimensions.length; i++) {
+        const part = partDimensions[i];
+
+        // place the part as many times as we can
+        for (let row = 0; row < depthMatrix.length - part[0] + 1; row++) {
+            for (
+                let col = 0;
+                col < depthMatrix[0].length - part[1] + 1;
+                col++
+            ) {
+                let canPlacePiece = true;
+                for (let pRow = 0; pRow < part[0] && canPlacePiece; pRow++) {
+                    for (
+                        let pCol = 0;
+                        pCol < part[1] && canPlacePiece;
+                        pCol++
+                    ) {
+                        canPlacePiece =
+                            canPlacePiece &&
+                            !setPixelMatrix[row + pRow][col + pCol];
+                    }
+                }
+                if (canPlacePiece) {
+                    result[row][col] = [part[0], part[1]]; // place the piece here
+                    // now mark the correct pieces as covered
+                    for (let pRow = 0; pRow < part[0]; pRow++) {
+                        for (let pCol = 0; pCol < part[1]; pCol++) {
+                            setPixelMatrix[row + pRow][col + pCol] = true; // set this pixel
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
-function getSetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {}
+function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
+    const result = [];
+    for (let i = 0; i < depthMatrix.length; i++) {
+        result[i] = [];
+        for (let j = 0; j < depthMatrix[0].length; j++) {
+            result[i][j] = depthMatrix[i][j] <= targetLevel; // pixel is not set but needs to be
+        }
+    }
+    return result;
+}
 
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(

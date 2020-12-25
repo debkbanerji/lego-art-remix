@@ -1705,9 +1705,25 @@ async function generateDepthInstructions() {
                     depthLevel <
                     Number(
                         document.getElementById("num-depth-levels-slider").value
-                    ); // round up
+                    ) -
+                        1;
                     depthLevel++
-                ) {}
+                ) {
+                    perDepthLevelMatrices.push(
+                        getRequiredPartMatrixFromDepthMatrix(
+                            depthSubPixelMatrix,
+                            depthLevel,
+                            [
+                                [1, 1],
+                                [1, 2],
+                                [2, 1],
+                                [2, 2],
+                                [3, 3]
+                            ]
+                        )
+                    );
+                }
+                console.log({perDepthLevelMatrices});
             }
         }
 
