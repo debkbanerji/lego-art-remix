@@ -38,10 +38,13 @@ const interactionSelectors = [
     "clear-custom-studs-button",
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
-    "high-quality-insructions-check",
+    "high-quality-instructions-check",
     "input-depth-image-selector",
     "generate-depth-image",
-    "num-depth-levels-slider"
+    "num-depth-levels-slider",
+    "download-depth-instructions-button",
+    "high-quality-depth-instructions-check",
+    "export-depth-to-bricklink-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -65,8 +68,8 @@ function enableInteraction() {
             e =>
                 ![
                     // "download-depth-instructions-button",
-                    // "high-quality-depth-insructions-check",
-                    "export-depth-to-bricklink-button"
+                    // "high-quality-depth-instructions-check",
+                    // "export-depth-to-bricklink-button"
                 ].includes(e.id)
         )
         .forEach(button => (button.disabled = false));
@@ -1522,7 +1525,7 @@ async function generateInstructions() {
     disableInteraction();
     runStep4(async () => {
         const isHighQuality = document.getElementById(
-            "high-quality-insructions-check"
+            "high-quality-instructions-check"
         ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")

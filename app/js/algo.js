@@ -825,7 +825,6 @@ function getRequiredPartMatrixFromDepthMatrix(
     targetLevel,
     partDimensions
 ) {
-    // console.log({partDimensions});
     // pixels which are not set but need to be
     // should be completely true by the end
     const setPixelMatrix = getUnsetPixelMatrixFromDepthMatrix(
@@ -888,6 +887,53 @@ function getDepthPlateString(part) {
     return part[0] > part[1]
         ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
         : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+}
+
+function drawDepthPlatesCountForContext(
+    usedDepthParts,
+    scalingFactor,
+    ctx,
+    horizontalOffset,
+    verticalOffset
+) {
+    const sortedDepthParts = Object.keys(usedDepthParts).filter(
+        part => (usedDepthParts[part] || 0) > 0
+    );
+
+    sortedDepthParts.sort(part => {
+        const partNumbers = part.split(DEPTH_SEPERATOR);
+        return partNumbers[0] * partNumbers[1];
+    });
+
+    ctx.font = `${scalingFactor / 2}px Arial`;
+
+    const lineHeight = scalingFactor * 1.5;
+
+    sortedDepthParts.forEach((part, i) => {
+        const x = horizontalOffset + scalingFactor;
+        const y = verticalOffset + lineHeight * (i + 0.75);
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(
+            x - lineHeight * 0.1,
+            y - lineHeight * 0.35,
+            lineHeight,
+            lineHeight * 0.5
+        );
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(part, x, y);
+        ctx.fillStyle = "#000000";
+    });
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.beginPath();
+    ctx.rect(
+        horizontalOffset,
+        verticalOffset,
+        scalingFactor * 4,
+        lineHeight * (sortedDepthParts.length + 0.5)
+    );
+    ctx.stroke();
 }
 
 function getUsedDepthPartsMap(perDepthLevelMatrices) {
@@ -1025,6 +1071,14 @@ function generateDepthInstructionPage(
             }
         }
     }
+
+    drawDepthPlatesCountForContext(
+        usedDepthParts,
+        scalingFactor,
+        ctx,
+        pictureWidth * 0.25,
+        pictureHeight * 0.2 - radius
+    );
 }
 
 function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
