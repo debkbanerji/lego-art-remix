@@ -1672,6 +1672,52 @@ const DEPTH_FILLER_PARTS = [
     [8, 2]
 ];
 
+function getUsedPlateMatrices(depthPixelArray) {
+    const usedPlatesMatrices = [];
+    for (
+        let row = 0; // for each row of plates
+        row < Math.ceil(targetResolution[0] / PLATE_WIDTH); // round up
+        row++
+    ) {
+        for (
+            let col = 0; // for each column of plates
+            col < Math.ceil(targetResolution[1] / PLATE_WIDTH); // round up
+            col++
+        ) {
+            const horizontalOffset = col * PLATE_WIDTH;
+            const verticalOffset = row * PLATE_WIDTH;
+            const depthSubPixelMatrix = getDepthSubPixelMatrix(
+                depthPixelArray,
+                targetResolution[1],
+                horizontalOffset,
+                verticalOffset,
+                Math.min(PLATE_WIDTH, targetResolution[0] - horizontalOffset),
+                Math.min(PLATE_WIDTH, targetResolution[1] - verticalOffset)
+            );
+            const perDepthLevelMatrices = [];
+            for (
+                let depthLevel = 0; // for each depth level
+                depthLevel <
+                Number(
+                    document.getElementById("num-depth-levels-slider").value
+                ) -
+                    1;
+                depthLevel++
+            ) {
+                perDepthLevelMatrices.push(
+                    getRequiredPartMatrixFromDepthMatrix(
+                        depthSubPixelMatrix,
+                        depthLevel,
+                        DEPTH_FILLER_PARTS
+                    )
+                );
+            }
+            usedPlatesMatrices.push(perDepthLevelMatrices);
+        }
+    }
+    return usedPlatesMatrices;
+}
+
 async function generateDepthInstructions() {
     const instructionsCanvasContainer = document.getElementById(
         "depth-instructions-canvas-container"
@@ -1680,57 +1726,11 @@ async function generateDepthInstructions() {
     disableInteraction();
     runStep4(async () => {
         const isHighQuality = document.getElementById(
-            "high-quality-depth-insructions-check"
+            "high-quality-depth-instructions-check"
         ).checked;
         const depthPixelArray = getPixelArrayFromCanvas(step3DepthCanvas);
 
-        const usedPlatesMatrices = [];
-        const numSections = 0;
-        for (
-            let row = 0; // for each row of plates
-            row < Math.ceil(targetResolution[0] / PLATE_WIDTH); // round up
-            row++
-        ) {
-            for (
-                let col = 0; // for each column of plates
-                col < Math.ceil(targetResolution[1] / PLATE_WIDTH); // round up
-                col++
-            ) {
-                const horizontalOffset = col * PLATE_WIDTH;
-                const verticalOffset = row * PLATE_WIDTH;
-                const depthSubPixelMatrix = getDepthSubPixelMatrix(
-                    depthPixelArray,
-                    targetResolution[1],
-                    horizontalOffset,
-                    verticalOffset,
-                    Math.min(
-                        PLATE_WIDTH,
-                        targetResolution[0] - horizontalOffset
-                    ),
-                    Math.min(PLATE_WIDTH, targetResolution[1] - verticalOffset)
-                );
-                const perDepthLevelMatrices = [];
-                for (
-                    let depthLevel = 0; // for each depth level
-                    depthLevel <
-                    Number(
-                        document.getElementById("num-depth-levels-slider").value
-                    ) -
-                        1;
-                    depthLevel++
-                ) {
-                    perDepthLevelMatrices.push(
-                        getRequiredPartMatrixFromDepthMatrix(
-                            depthSubPixelMatrix,
-                            depthLevel,
-                            DEPTH_FILLER_PARTS
-                        )
-                    );
-                }
-                // console.log({perDepthLevelMatrices});
-                usedPlatesMatrices.push(perDepthLevelMatrices);
-            }
-        }
+        const usedPlatesMatrices = getUsedPlateMatrices(depthPixelArray);
 
         let pdf;
         let numParts = 1;
@@ -1739,7 +1739,6 @@ async function generateDepthInstructions() {
 
             const instructionPageCanvas = document.createElement("canvas");
             instructionsCanvasContainer.appendChild(instructionPageCanvas);
-            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
 
             perDepthLevelMatrices = usedPlatesMatrices[i];
             generateDepthInstructionPage(
@@ -1748,6 +1747,7 @@ async function generateDepthInstructions() {
                 instructionPageCanvas,
                 i + 1
             );
+            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
 
             if (i % (isHighQuality ? 20 : 50) === 0) {
                 if (pdf != null) {
@@ -1774,7 +1774,6 @@ async function generateDepthInstructions() {
                 pdf.addPage();
             }
 
-            // setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
             const imgData = instructionPageCanvas.toDataURL(
                 `image${i + 1}/jpeg`,
                 i
@@ -1796,104 +1795,6 @@ async function generateDepthInstructions() {
                 : "Lego-Art-Remix-Instructions.pdf"
         );
         enableInteraction();
-        //
-        // document.getElementById("pdf-progress-bar").style.width = `${100 /
-        //     (totalPlates + 1)}%`;
-        //
-        // document.getElementById("pdf-progress-bar").style.width = "0%";
-        // document.getElementById("pdf-progress-container").hidden = false;
-        // document.getElementById("download-instructions-button").hidden = true;
-        //
-        // pdf.addImage(
-        //     imgData,
-        //     "PNG",
-        //     0,
-        //     0,
-        //     pdfWidth,
-        //     (pdfWidth * titlePageCanvas.height) / titlePageCanvas.width
-        // );
-        //
-        // let numParts = 1;
-        // for (var i = 0; i < totalPlates; i++) {
-        //     await sleep(50);
-        //     if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
-        //         addWaterMark(pdf);
-        //         pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
-        //         numParts++;
-        //         pdf = new jsPDF({
-        //             orientation:
-        //                 titlePageCanvas.width < titlePageCanvas.height
-        //                     ? "p"
-        //                     : "l",
-        //             unit: "mm",
-        //             format: [titlePageCanvas.width, titlePageCanvas.height]
-        //         });
-        //     } else {
-        //         pdf.addPage();
-        //     }
-        //
-        //     document.getElementById("pdf-progress-bar").style.width = `${((i +
-        //         2) *
-        //         100) /
-        //         (totalPlates + 1)}%`;
-        //
-        //     const instructionPageCanvas = document.createElement("canvas");
-        //     instructionsCanvasContainer.appendChild(instructionPageCanvas);
-        //
-        //     const subPixelArray = getSubPixelArray(
-        //         resultImage,
-        //         i,
-        //         targetResolution[0],
-        //         PLATE_WIDTH
-        //     );
-        //     generateInstructionPage(
-        //         subPixelArray,
-        //         PLATE_WIDTH,
-        //         selectedSortedStuds,
-        //         SCALING_FACTOR,
-        //         instructionPageCanvas,
-        //         i + 1,
-        //         isHighQuality
-        //     );
-        //
-        //     setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
-        //     const imgData = instructionPageCanvas.toDataURL(
-        //         `image${i + 1}/jpeg`,
-        //         i
-        //     );
-        //
-        //     pdf.addImage(
-        //         imgData,
-        //         "PNG",
-        //         0,
-        //         0,
-        //         pdfWidth,
-        //         (pdfWidth * instructionPageCanvas.height) /
-        //             instructionPageCanvas.width
-        //     );
-        // }
-        //
-        // addWaterMark(pdf);
-        // pdf.save(
-        //     numParts > 1
-        //         ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
-        //         : "Lego-Art-Remix-Instructions.pdf"
-        // );
-        // document.getElementById("pdf-progress-container").hidden = true;
-        // document.getElementById("download-instructions-button").hidden = false;
-        // enableInteraction();
-        //
-        // perfLoggingDatabase
-        //     .ref("depth-instructions-generated-count/total")
-        //     .transaction(incrementTransaction);
-        // const loggingTimestamp = Math.floor(
-        //     (Date.now() - (Date.now() % 8.64e7)) / 1000
-        // ); // 8.64e+7 = ms in day
-        // perfLoggingDatabase
-        //     .ref(
-        //         "depth-instructions-generated-count/per-day/" + loggingTimestamp
-        //     )
-        //     .transaction(incrementTransaction);
     });
 }
 
