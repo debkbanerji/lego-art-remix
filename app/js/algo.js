@@ -965,7 +965,7 @@ function generateDepthInstructionPage(
     //     studToNumber[stud] = i + 1;
     // });
 
-    ctx.font = `${scalingFactor / 2}px Arial`;
+    ctx.font = `${scalingFactor * 0.75}px Arial`;
 
     for (
         let depthIndex = 0;
@@ -974,7 +974,7 @@ function generateDepthInstructionPage(
     ) {
         const horizontalOffset = pictureWidth * 0.75;
         const verticalOffset =
-            pictureHeight * 0.2 +
+            pictureHeight * 0.25 +
             (pictureHeight + betweenLevelPicturePadding) * depthIndex;
         // console.log({verticalOffset, pictureHeight, pictureWidth});
         ctx.lineWidth = 5;
@@ -995,6 +995,14 @@ function generateDepthInstructionPage(
             pictureWidth,
             pictureHeight
         );
+
+        ctx.beginPath();
+        ctx.fillText(
+            `Level ${depthIndex + 1}`,
+            pictureWidth * 0.75,
+            verticalOffset - scalingFactor * 0.5
+        );
+        ctx.stroke();
 
         const partMatrix = perDepthLevelMatrices[depthIndex];
 

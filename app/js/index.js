@@ -1673,7 +1673,6 @@ const DEPTH_FILLER_PARTS = [
 ];
 
 async function generateDepthInstructions() {
-    const isHighQuality = false; //TODO: get from check
     const instructionsCanvasContainer = document.getElementById(
         "depth-instructions-canvas-container"
     );
@@ -1733,56 +1732,7 @@ async function generateDepthInstructions() {
             }
         }
 
-        // const titlePageCanvas = document.createElement("canvas");
-
-        // instructionsCanvasContainer.appendChild(titlePageCanvas);
-        // generateInstructionTitlePage(
-        //     resultImage,
-        //     targetResolution[0],
-        //     PLATE_WIDTH,
-        //     selectedSortedStuds,
-        //     SCALING_FACTOR,
-        //     step4CanvasUpscaled,
-        //     titlePageCanvas,
-        //     isHighQuality
-        // );
-        // setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
-        //
-        // const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
-        //
-
-        // pictureWidth = targetResolution[0] * SCALING_FACTOR;
-        // pictureHeight = targetResolution[1] * SCALING_FACTOR;
-
-        // let pdfHeight = Math.max(
-        //     pictureHeight * 1.5 +
-        //         pictureHeight *
-        //             1.2 *
-        //             (Number(
-        //                 document.getElementById("num-depth-levels-slider").value
-        //             ) -
-        //                 2),
-        //     pictureHeight * 0.4 +
-        //         DEPTH_FILLER_PARTS.length * (SCALING_FACTOR / 2) * 2.5
-        // );
-        // let pdfWidth = pictureWidth * 2;
-        //
-        // console.log({pdfWidth, pdfHeight});
-
         let pdf;
-        //  = new jsPDF({
-        //     orientation: pdfWidth < pdfHeight ? "p" : "l",
-        //     unit: "mm",
-        //     format: [pdfWidth, pdfHeight]
-        // });
-        //
-        // pdfWidth = pdf.internal.pageSize.getWidth();
-        // pdfHeight = pdf.internal.pageSize.getHeight();
-        // console.log({pdfWidth, pdfHeight});
-
-        // const totalPlates =
-        //     resultImage.length / (4 * PLATE_WIDTH * PLATE_WIDTH);
-
         let numParts = 1;
         for (let i = 0; i < usedPlatesMatrices.length; i++) {
             await sleep(50);
