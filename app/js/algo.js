@@ -896,13 +896,17 @@ function drawDepthPlatesCountForContext(
     horizontalOffset,
     verticalOffset
 ) {
-    const sortedDepthParts = Object.keys(usedDepthParts).filter(
+    let sortedDepthParts = Object.keys(usedDepthParts).filter(
         part => (usedDepthParts[part] || 0) > 0
     );
 
-    sortedDepthParts.sort(part => {
-        const partNumbers = part.split(DEPTH_SEPERATOR);
-        return partNumbers[0] * partNumbers[1];
+    sortedDepthParts = sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
     });
 
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -910,7 +914,7 @@ function drawDepthPlatesCountForContext(
     const lineHeight = scalingFactor * 1.5;
 
     sortedDepthParts.forEach((part, i) => {
-        const x = horizontalOffset + scalingFactor;
+        const x = horizontalOffset + scalingFactor * 0.8;
         const y = verticalOffset + lineHeight * (i + 0.75);
         ctx.fillStyle = "#000000";
         ctx.fillRect(
@@ -922,6 +926,7 @@ function drawDepthPlatesCountForContext(
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(part, x, y);
         ctx.fillStyle = "#000000";
+        ctx.fillText(` X ${usedDepthParts[part]}`, x + lineHeight, y);
     });
 
     ctx.lineWidth = 5;
@@ -966,9 +971,13 @@ function generateDepthInstructionPage(
 
     const usedDepthParts = getUsedDepthPartsMap(perDepthLevelMatrices);
     const sortedDepthParts = Object.keys(usedDepthParts);
-    sortedDepthParts.sort(part => {
-        const partNumbers = part.split(DEPTH_SEPERATOR);
-        return partNumbers[0] * partNumbers[1];
+    sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
     });
 
     const betweenLevelPicturePadding = pictureHeight * 0.2;
