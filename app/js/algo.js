@@ -900,6 +900,16 @@ function drawDepthPlatesCountForContext(
         part => (usedDepthParts[part] || 0) > 0
     );
 
+    if (sortedDepthParts.length === 0) {
+        ctx.fillStyle = "#000000";
+        ctx.fillText(
+            `No depth offset in section`,
+            horizontalOffset - scalingFactor * 1.5,
+            verticalOffset + scalingFactor * 0.75
+        );
+        return;
+    }
+
     sortedDepthParts = sortedDepthParts.sort((part1, part2) => {
         const part1Numbers = part1.split(DEPTH_SEPERATOR);
         const part2Numbers = part2.split(DEPTH_SEPERATOR);
