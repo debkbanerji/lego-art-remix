@@ -1806,6 +1806,7 @@ async function generateDepthInstructions() {
                 (usedPlatesMatrices.length + 1)}%`;
         }
 
+        addWaterMark(pdf);
         pdf.save(
             numParts > 1
                 ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
