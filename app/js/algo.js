@@ -1113,7 +1113,7 @@ function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
 
 const DEPTH_SEPERATOR = " X ";
 function getDepthPlateString(part) {
-    return part[0] > part[1]
+    return part[0] < part[1]
         ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
         : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
 }

@@ -63,16 +63,9 @@ function disableInteraction() {
 function enableInteraction() {
     customStudTableBody.hidden = false;
     interactionSelectors.forEach(button => (button.disabled = false));
-    [...document.getElementsByClassName("btn")]
-        .filter(
-            e =>
-                ![
-                    // "download-depth-instructions-button",
-                    // "high-quality-depth-instructions-check",
-                    // "export-depth-to-bricklink-button"
-                ].includes(e.id)
-        )
-        .forEach(button => (button.disabled = false));
+    [...document.getElementsByClassName("btn")].forEach(
+        button => (button.disabled = false)
+    );
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(" disabled", ""))
     );
@@ -1869,6 +1862,26 @@ document
                     selectedPixelPartNumber
                 )
             )
+            .then(
+                function() {
+                    enableInteraction();
+                },
+                function(err) {
+                    console.error("Async: Could not copy text: ", err);
+                }
+            );
+    });
+
+document
+    .getElementById("export-depth-to-bricklink-button")
+    .addEventListener("click", () => {
+        disableInteraction();
+        const depthPixelArray = getPixelArrayFromCanvas(step3DepthCanvas);
+        const usedPlatesMatrices = getUsedPlateMatrices(depthPixelArray);
+        const depthPartsMap = getUsedDepthPartsMap(usedPlatesMatrices.flat());
+
+        navigator.clipboard
+            .writeText(getDepthWantedListXML(depthPartsMap))
             .then(
                 function() {
                     enableInteraction();
