@@ -918,10 +918,6 @@ function generateDepthInstructionPage(
 
     const radius = scalingFactor / 2;
 
-    // const studMap = getUsedPixelsStudMap(pixelArray);
-    // const filteredAvailableStudHexList = availableStudHexList.filter(
-    //     pixelHex => (studMap[pixelHex] || 0) > 0
-    // );
     const usedDepthParts = getUsedDepthPartsMap(perDepthLevelMatrices);
     const sortedDepthParts = Object.keys(usedDepthParts);
     sortedDepthParts.sort(part => {
@@ -937,19 +933,13 @@ function generateDepthInstructionPage(
         pictureHeight * 0.4 + sortedDepthParts.length * radius * 2.5
     );
     canvas.width = pictureWidth * 2;
-    // console.log("canvas.height");
-    // console.log(canvas.height);
-    // console.log("canvas.width");
-    // console.log(canvas.width);
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // console.log({scalingFactor});
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#000000";
     ctx.fillStyle = "#000000";
     ctx.font = `${scalingFactor}px Arial`;
-    // console.log(`${scalingFactor}px Arial`);
     ctx.beginPath();
     ctx.fillText(
         `Section ${plateNumber} Depth Plating Instructions`,
@@ -959,11 +949,6 @@ function generateDepthInstructionPage(
     ctx.stroke();
 
     ctx.lineWidth = 1;
-
-    // const studToNumber = {};
-    // filteredAvailableStudHexList.forEach((stud, i) => {
-    //     studToNumber[stud] = i + 1;
-    // });
 
     ctx.font = `${scalingFactor * 0.75}px Arial`;
 
@@ -976,15 +961,8 @@ function generateDepthInstructionPage(
         const verticalOffset =
             pictureHeight * 0.25 +
             (pictureHeight + betweenLevelPicturePadding) * depthIndex;
-        // console.log({verticalOffset, pictureHeight, pictureWidth});
         ctx.lineWidth = 5;
         ctx.beginPath();
-        // console.log({
-        //     horizontalOffset,
-        //     verticalOffset,
-        //     pictureWidth,
-        //     pictureHeight
-        // });
         ctx.rect(horizontalOffset, verticalOffset, pictureWidth, pictureHeight);
         ctx.strokeStyle = "#000000";
         ctx.stroke();
@@ -1006,7 +984,6 @@ function generateDepthInstructionPage(
 
         const partMatrix = perDepthLevelMatrices[depthIndex];
 
-        // ctx.strokeStyle = "#FF0000";
         ctx.fillStyle = "#222222";
         ctx.lineWidth = 2;
         const innerPadding = scalingFactor / 12;
@@ -1048,44 +1025,6 @@ function generateDepthInstructionPage(
             }
         }
     }
-
-    // for (let i = 0; i < plateWidth; i++) {
-    //     for (let j = 0; j < plateWidth; j++) {
-    //         const pixelIndex = i * plateWidth + j;
-    //         const pixelHex = rgbToHex(
-    //             pixelArray[pixelIndex * 4],
-    //             pixelArray[pixelIndex * 4 + 1],
-    //             pixelArray[pixelIndex * 4 + 2]
-    //         );
-    //         ctx.beginPath();
-    //         const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
-    //         const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
-    //         ctx.arc(x, y, radius, 0, 2 * Math.PI);
-    //         ctx.fillStyle = pixelHex;
-    //         ctx.fill();
-    //         ctx.strokeStyle = inverseHex(pixelHex);
-    //         ctx.stroke();
-    //         ctx.fillStyle = inverseHex(pixelHex);
-    //         ctx.fillText(
-    //             studToNumber[pixelHex],
-    //             x -
-    //                 (scalingFactor *
-    //                     (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
-    //                     8,
-    //             y + scalingFactor / 8
-    //         );
-    //     }
-    // }
-
-    // drawStudCountForContext(
-    //     studMap,
-    //     filteredAvailableStudHexList,
-    //     scalingFactor,
-    //     ctx,
-    //     pictureWidth * 0.25,
-    //     pictureHeight * 0.2 - radius,
-    //     showColorName
-    // );
 }
 
 function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
