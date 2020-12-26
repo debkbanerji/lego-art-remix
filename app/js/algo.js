@@ -545,7 +545,7 @@ function drawStudCountForContext(
     ctx,
     horizontalOffset,
     verticalOffset,
-    showColorName
+    showColorName // unused
 ) {
     const radius = scalingFactor / 2;
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -566,19 +566,13 @@ function drawStudCountForContext(
             y + scalingFactor / 8
         );
         ctx.fillStyle = "#000000";
+        ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
+        ctx.font = `${scalingFactor / 2.5}px Arial`;
         ctx.fillText(
-            `X ${studMap[pixelHex] || 0}`,
+            HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
             x + radius * 1.5,
-            y + scalingFactor / 8
+            y + scalingFactor / 2.5
         );
-        ctx.font = `${scalingFactor / 4}px Arial`;
-        if (showColorName) {
-            ctx.fillText(
-                HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
-                x + radius * 1.5,
-                y + scalingFactor / 2.5
-            );
-        }
         ctx.font = `${scalingFactor / 2}px Arial`;
     });
 
@@ -588,7 +582,7 @@ function drawStudCountForContext(
     ctx.rect(
         horizontalOffset - radius * 2,
         verticalOffset + radius * 0.75,
-        radius * 8,
+        radius * 11,
         radius * 2.5 * (availableStudHexList.length + 0.5)
     );
     ctx.stroke();
@@ -602,7 +596,7 @@ function generateInstructionTitlePage(
     scalingFactor,
     finalImageCanvas,
     canvas,
-    showColorName
+    showColorName // unused
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -631,7 +625,7 @@ function generateInstructionTitlePage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName
+        showColorName // unused
     );
 
     ctx.fillStyle = "#000000";
@@ -693,7 +687,7 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    showColorName
+    showColorName // unused
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -787,7 +781,7 @@ function generateInstructionPage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName
+        showColorName // unused
     );
 }
 
