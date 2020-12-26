@@ -1085,16 +1085,16 @@ step3CanvasUpscaled.addEventListener(
         const rawRow =
             event.clientY -
             step3CanvasUpscaled.getBoundingClientRect().y -
-            step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3CanvasUpscaled.offsetHeight / targetResolution[1] / 2;
         const rawCol =
             event.clientX -
             step3CanvasUpscaled.getBoundingClientRect().x -
-            step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3CanvasUpscaled.offsetWidth / targetResolution[0] / 2;
         const row = Math.round(
-            (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
+            (rawRow * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
         );
         const col = Math.round(
-            (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
+            (rawCol * targetResolution[0]) / step3CanvasUpscaled.offsetWidth
         );
         const rgb = document
             .getElementById("paintbrush-controls")
@@ -1116,18 +1116,17 @@ step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
     const rawRow =
         event.clientY -
         step3CanvasUpscaled.getBoundingClientRect().y -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        step3CanvasUpscaled.offsetHeight / targetResolution[1] / 2;
     const rawCol =
         event.clientX -
         step3CanvasUpscaled.getBoundingClientRect().x -
-        step3CanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+        step3CanvasUpscaled.offsetWidth / targetResolution[0] / 2;
     const row = Math.round(
-        (rawRow * targetResolution[0]) / step3CanvasUpscaled.offsetHeight
+        (rawRow * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
     );
     const col = Math.round(
-        (rawCol * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
+        (rawCol * targetResolution[0]) / step3CanvasUpscaled.offsetWidth
     );
-    // IMPORTANT!!!!!!!! TODO: Fix for nonexistant colors, don't draw dark colors
 
     onCherryPickColor(row, col);
 });
@@ -1139,18 +1138,18 @@ step3DepthCanvasUpscaled.addEventListener(
         const rawRow =
             event.clientY -
             step3DepthCanvasUpscaled.getBoundingClientRect().y -
-            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[1] / 2;
         const rawCol =
             event.clientX -
             step3DepthCanvasUpscaled.getBoundingClientRect().x -
-            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3DepthCanvasUpscaled.offsetWidth / targetResolution[0] / 2;
         const row = Math.round(
-            (rawRow * targetResolution[0]) /
+            (rawRow * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
         const col = Math.round(
-            (rawCol * targetResolution[1]) /
-                step3DepthCanvasUpscaled.offsetHeight
+            (rawCol * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetWidth
         );
         onDepthOverrideDecrease(row, col);
     },
@@ -1163,18 +1162,18 @@ step3DepthCanvasUpscaled.addEventListener(
         const rawRow =
             event.clientY -
             step3DepthCanvasUpscaled.getBoundingClientRect().y -
-            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3DepthCanvasUpscaled.offsetHeight / targetResolution[1] / 2;
         const rawCol =
             event.clientX -
             step3DepthCanvasUpscaled.getBoundingClientRect().x -
-            step3DepthCanvasUpscaled.offsetHeight / targetResolution[0] / 2;
+            step3DepthCanvasUpscaled.offsetWidth / targetResolution[0] / 2;
         const row = Math.round(
-            (rawRow * targetResolution[0]) /
+            (rawRow * targetResolution[1]) /
                 step3DepthCanvasUpscaled.offsetHeight
         );
         const col = Math.round(
-            (rawCol * targetResolution[1]) /
-                step3DepthCanvasUpscaled.offsetHeight
+            (rawCol * targetResolution[0]) /
+                step3DepthCanvasUpscaled.offsetWidth
         );
         onDepthOverrideIncrease(row, col);
     },
@@ -1199,16 +1198,16 @@ let step3CanvasHoveredPixel = null;
         const rawRow =
             event.clientY -
             toHoverCanvas.getBoundingClientRect().y -
-            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+            toHoverCanvas.offsetHeight / targetResolution[1] / 2;
         const rawCol =
             event.clientX -
             toHoverCanvas.getBoundingClientRect().x -
-            toHoverCanvas.offsetHeight / targetResolution[0] / 2;
+            toHoverCanvas.offsetWidth / targetResolution[0] / 2;
         const pixelRow = Math.round(
-            (rawRow * targetResolution[0]) / toHoverCanvas.offsetHeight
+            (rawRow * targetResolution[1]) / toHoverCanvas.offsetHeight
         );
         const pixelCol = Math.round(
-            (rawCol * targetResolution[1]) / toHoverCanvas.offsetHeight
+            (rawCol * targetResolution[0]) / toHoverCanvas.offsetWidth
         );
         const circleCircumferance = SCALING_FACTOR;
         const highlightCircleRadius = 0.1 * circleCircumferance;
