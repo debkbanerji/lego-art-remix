@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.25";
+const VERSION_NUMBER = "v2020.12.26";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -19,7 +19,6 @@ const HIGH_DPI = 96;
 const interactionSelectors = [
     "input-image-selector",
     "input-image-selector-hidden",
-    "stud-map-button",
     "mix-in-stud-map-button",
     "width-slider",
     "height-slider",
@@ -166,6 +165,8 @@ function enableDepth() {
     document.getElementById("export-to-bricklink-button").innerHTML =
         "Copy Pixels Bricklink XML to Clipboard";
 
+    onDepthMapCountChange();
+
     create3dPreview();
     depthEnabled = true;
 
@@ -286,10 +287,8 @@ const DEFAULT_STUD_MAP = "all_stud_colors";
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
 let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
-document.getElementById("stud-map-button").innerHTML =
-    "Input Set: " + STUD_MAPS[DEFAULT_STUD_MAP].name;
 
-function populateCustomStudSelectors(studMap) {
+function populateCustomStudSelectors(studMap, shouldRunAfterPopulation) {
     customStudTableBody.innerHTML = "";
     studMap.sortedStuds.forEach(stud => {
         const studRow = getNewCustomStudRow();
@@ -301,11 +300,12 @@ function populateCustomStudSelectors(studMap) {
         studRow.children[1].children[0].value = studMap.studMap[stud];
         customStudTableBody.appendChild(studRow);
     });
-    runCustomStudMap();
+    if (shouldRunAfterPopulation) {
+        runCustomStudMap();
+    }
 }
 
 function mixInStudMap(studMap) {
-    document.getElementById("stud-map-button").innerHTML = "Custom set";
     studMap.sortedStuds.forEach(stud => {
         let existingRow = null;
         Array.from(customStudTableBody.children).forEach(row => {
@@ -343,25 +343,7 @@ function mixInStudMap(studMap) {
     runCustomStudMap();
 }
 
-populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP]);
-
-const studMapOptions = document.getElementById("stud-map-options");
-studMapOptions.innerHTML = "";
-Object.keys(STUD_MAPS)
-    .filter(key => key !== "rgb")
-    .forEach(studMap => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = STUD_MAPS[studMap].name;
-        option.value = studMap;
-        option.addEventListener("click", () => {
-            populateCustomStudSelectors(STUD_MAPS[studMap]);
-            document.getElementById("stud-map-button").innerHTML =
-                STUD_MAPS[studMap].name;
-            selectedFullSetName = STUD_MAPS[studMap].officialName;
-        });
-        studMapOptions.appendChild(option);
-    });
+populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
@@ -453,7 +435,6 @@ document.getElementById("import-stud-map-file-input").addEventListener(
 document
     .getElementById("clear-custom-studs-button")
     .addEventListener("click", () => {
-        document.getElementById("stud-map-button").innerHTML = "Custom set";
         customStudTableBody.innerHTML = "";
         runCustomStudMap();
     });
@@ -479,17 +460,6 @@ function runCustomStudMap() {
     }
     runStep1();
 }
-
-const customOption = document.createElement("a");
-customOption.className = "dropdown-item btn";
-customOption.textContent = "Custom";
-customOption.value = "custom";
-customOption.addEventListener("click", () => {
-    document.getElementById("stud-map-button").innerHTML = "Custom set";
-    customStudTableBody.innerHTML = "";
-    runCustomStudMap();
-});
-studMapOptions.appendChild(customOption);
 
 function getColorSquare(hex) {
     const result = document.createElement("div");
@@ -533,7 +503,6 @@ function getColorSelectorDropdown() {
         option.addEventListener("click", () => {
             button.innerHTML = "";
             button.appendChild(getColorSquare(color.hex));
-            document.getElementById("stud-map-button").innerHTML = "Custom set";
             container.setAttribute("title", color.name);
             runCustomStudMap();
         });
@@ -577,7 +546,6 @@ function getNewCustomStudRow() {
         numberInput.value = Math.round(
             Math.min(Math.max(parseFloat(numberInput.value) || 0, 0), 99999)
         );
-        document.getElementById("stud-map-button").innerHTML = "Custom set";
         runCustomStudMap();
     });
     numberCell.style = "display: flex; flex-direction: horizontal; width: 100%";
@@ -669,7 +637,6 @@ function onDepthMapCountChange() {
 document
     .getElementById("num-depth-levels-slider")
     .addEventListener("change", onDepthMapCountChange, false);
-onDepthMapCountChange();
 
 document.getElementById("reset-colors-button").addEventListener(
     "click",
