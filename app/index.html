@@ -119,13 +119,16 @@
                   </div>
                   <div id="step-1-2-collapse" class="collapse" aria-labelledby="step-1-2-heading" data-parent="#step-1-accordion">
                     <div class="card-body accordion-card-body">
-                      <button class="btn btn-info" type="button" id="enable-depth-button">
-                        Enable 3D (Experimental)
+                      <button class="btn btn-info" type="button" id="enable-depth-button" style="margin-top: 8px">
+                        Enable 3D
                       </button>
                       <small>
                         <div>
-                          <p style="margin-top: 4px; margin-left: 4px">
+                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px;">
                             Enabling 3D mode allows for designing pictures with multiple layers, where some pixels protrude further out than others
+                          </p>
+                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px;">
+                            This may not be a good fit for all images, but can work quite well in many cases
                           </p>
                         </div>
                       </small>
@@ -472,10 +475,10 @@
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many studs of each color you have available to create the image
                             </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; By default, this is set to all available bricklink stud colors </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
-                              then clear it and then use the mix in option to add in the pieces from your set.
-                            </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
+                            </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px; font-weight: 550">&#9679; If you're working with an existing set,
+                              then clear the available studs and use the mix in option to add in the pieces from your set.
                             </p>
                             <b>Required Studs: <span id="required-studs"></span></b><br>
                             <b>Available Studs: <span id="available-studs"></span></b><br>
@@ -759,7 +762,7 @@
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
                         <div><small id="height-text"><b>Preview effect intensity</b></small></div>
-                        <input type="range" id="3d-effect-intensity" name="points" min="0.01" max="0.03" step="0.005" value="0.01" style="width: 100%">
+                        <input type="range" id="3d-effect-intensity" name="points" min="0.015" max="0.03" step="0.005" value="0.01" style="width: 100%">
                       </div>
                       <small>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
