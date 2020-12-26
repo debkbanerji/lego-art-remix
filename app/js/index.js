@@ -2181,3 +2181,39 @@ document
     .addEventListener("click", () => {
         depthImageSelectorHidden.click();
     });
+
+function createBackground() {
+    const canvas = document.getElementById("background-image-cache-canvas");
+    const ctx = canvas.getContext("2d");
+
+    const CIRCLE_RADIUS = 10;
+    const WIDTH_COUNT = 40;
+    const HEIGHT_COUNT = 20;
+    const MIN_CIRCLE_BRIGHTNESS = 245;
+
+    canvas.width = CIRCLE_RADIUS * WIDTH_COUNT;
+    canvas.height = CIRCLE_RADIUS * HEIGHT_COUNT;
+
+    for (var i = 0; i < HEIGHT_COUNT; i++) {
+        for (var j = 0; j < WIDTH_COUNT; j++) {
+            ctx.beginPath();
+            ctx.arc(
+                CIRCLE_RADIUS + 2 * i * CIRCLE_RADIUS,
+                CIRCLE_RADIUS + 2 * j * CIRCLE_RADIUS,
+                CIRCLE_RADIUS,
+                0,
+                2 * Math.PI
+            );
+            const brightness =
+                MIN_CIRCLE_BRIGHTNESS +
+                Math.floor(Math.random() * (255 - MIN_CIRCLE_BRIGHTNESS));
+            ctx.fillStyle = rgbToHex(brightness, brightness, brightness);
+            ctx.fill();
+        }
+    }
+
+    const dataURL = canvas.toDataURL("image/png", 1.0);
+
+    document.body.style.backgroundImage = `url('${dataURL}')`;
+}
+createBackground();
