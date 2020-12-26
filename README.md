@@ -26,11 +26,11 @@ Lego Art Remix lets you upload your own image, and then uses computer vision to 
 This project is not affiliated with The Lego Group.
 
 ## Performance and Security
-The computer vision techniques used are pretty inexpensive, and the resolutions being dealt with are naturally quite low, so as of the time of writing, the algorithm runs quite quickly. This allows for it to be run on the client, and on the machines that I tested, it ran in near real time.
+The computer vision techniques used are pretty inexpensive (with the exception of optional depth map generation), and the resolutions being dealt with are naturally quite low, so as of the time of writing, the algorithm runs quite quickly. This allows for it to be run on the client, and on the machines that I tested, it ran in near real time.
 
-The most computationally expensive part of the process is generating the instructions, since even pdf generation is done client side.
+The most computationally expensive part of the process, apart from depth map generation, is generating the instructions, since even pdf generation is done client side.
 
-Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. The only server code consists of simple increments to anonymously estimate usage, for the purposes for tracking performance in case the static deployment needs to be scaled up.
+Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. This also makes it much easier for me to maintain and host. The only server code consists of simple increments to anonymously estimate usage, for the purposes for tracking performance in case the static deployment needs to be scaled up.
 
 Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of [ONNX.js](https://github.com/microsoft/onnxjs). I've compiled a version of the library based on [this](https://github.com/microsoft/onnxjs/pull/228) pull request, with a small additional change I made to support the resize operation in v10. The model used is [MiDaS](https://github.com/intel-isl/MiDaS) - more specifically, the small ONNX version which can be found [here](https://github.com/intel-isl/MiDaS/releases/tag/v2_1). It's incredible that ONNX.js allows us to use amazing work such as this within a web browser.
 
