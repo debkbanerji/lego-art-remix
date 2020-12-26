@@ -2037,8 +2037,8 @@ function triggerDepthMapGeneration() {
                 webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
                 drawPixelsOnCanvas(result, webWorkerOutputCanvas);
                 setTimeout(() => {
-                    inputDepthCanvas.width = CNN_INPUT_IMAGE_WIDTH;
-                    inputDepthCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                    inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+                    inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
                     inputDepthCanvasContext.drawImage(
                         webWorkerOutputCanvas,
                         0,
@@ -2047,8 +2047,8 @@ function triggerDepthMapGeneration() {
                         CNN_INPUT_IMAGE_HEIGHT,
                         0,
                         0,
-                        CNN_INPUT_IMAGE_WIDTH,
-                        CNN_INPUT_IMAGE_HEIGHT
+                        SERIALIZE_EDGE_LENGTH,
+                        SERIALIZE_EDGE_LENGTH
                     );
                     setTimeout(() => {
                         loadingMessageComponent.hidden = true;
@@ -2072,16 +2072,27 @@ document
     .getElementById("generate-depth-image")
     .addEventListener("click", triggerDepthMapGeneration);
 
+const SERIALIZE_EDGE_LENGTH = 512;
 function handleInputImage(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         inputImage = new Image();
         inputImage.onload = function() {
-            inputCanvas.width = inputImage.width;
-            inputCanvas.height = inputImage.height;
-            inputCanvasContext.drawImage(inputImage, 0, 0);
-            inputDepthCanvas.width = inputImage.width;
-            inputDepthCanvas.height = inputImage.height;
+            inputCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputCanvas.height = SERIALIZE_EDGE_LENGTH;
+            inputCanvasContext.drawImage(
+                inputImage,
+                0,
+                0,
+                inputImage.width,
+                inputImage.height,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH
+            );
+            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
             inputDepthCanvasContext.fillStyle = "black";
             inputDepthCanvasContext.fillRect(
                 0,
@@ -2123,9 +2134,19 @@ function handleInputDepthMapImage(e) {
     reader.onload = function(event) {
         inputImage = new Image();
         inputImage.onload = function() {
-            inputDepthCanvas.width = inputImage.width;
-            inputDepthCanvas.height = inputImage.height;
-            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
+            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvasContext.drawImage(
+                inputImage,
+                0,
+                0,
+                inputImage.width,
+                inputImage.height,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH
+            );
         };
         inputImage.src = event.target.result;
         setTimeout(() => {
