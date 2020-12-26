@@ -1239,6 +1239,17 @@ let step3CanvasHoveredPixel = null;
                             ? "#FFFFFF"
                             : "#E83E8C";
                     ctx.fill();
+
+                    step4CanvasUpscaledContext.beginPath();
+                    step4CanvasUpscaledContext.arc(
+                        col,
+                        row,
+                        highlightCircleRadius,
+                        0,
+                        2 * Math.PI
+                    );
+                    step4CanvasUpscaledContext.fillStyle = "#FFFFFF";
+                    step4CanvasUpscaledContext.fill();
                 });
             });
 
@@ -1267,6 +1278,17 @@ let step3CanvasHoveredPixel = null;
                         );
                         ctx.fillStyle = "#000000";
                         ctx.fill();
+
+                        step4CanvasUpscaledContext.beginPath();
+                        step4CanvasUpscaledContext.arc(
+                            col,
+                            row,
+                            highlightCircleRadius,
+                            0,
+                            2 * Math.PI
+                        );
+                        step4CanvasUpscaledContext.fillStyle = "#000000";
+                        step4CanvasUpscaledContext.fill();
                     });
                 });
             }
@@ -1298,6 +1320,17 @@ let step3CanvasHoveredPixel = null;
                     ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
                     ctx.fillStyle = "#000000";
                     ctx.fill();
+
+                    step4CanvasUpscaledContext.beginPath();
+                    step4CanvasUpscaledContext.arc(
+                        col,
+                        row,
+                        highlightCircleRadius,
+                        0,
+                        2 * Math.PI
+                    );
+                    step4CanvasUpscaledContext.fillStyle = "#000000";
+                    step4CanvasUpscaledContext.fill();
                 });
             });
         }
