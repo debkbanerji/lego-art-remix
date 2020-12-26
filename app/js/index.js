@@ -1861,6 +1861,18 @@ async function generateDepthInstructions() {
             "download-depth-instructions-button"
         ).hidden = false;
         enableInteraction();
+
+        perfLoggingDatabase
+            .ref("depth-instructions-generated-count/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "depth-instructions-generated-count/per-day/" + loggingTimestamp
+            )
+            .transaction(incrementTransaction);
     });
 }
 
