@@ -966,6 +966,106 @@ function getUsedDepthPartsMap(perDepthLevelMatrices) {
     return result;
 }
 
+function generateDepthInstructionTitlePage(
+    usedPlatesMatrices,
+    targetResolution,
+    scalingFactor,
+    canvas,
+    finalDepthImageCanvas,
+    plateWidth
+) {
+    const ctx = canvas.getContext("2d");
+
+    pictureWidth = usedPlatesMatrices[0][0].length * scalingFactor;
+    pictureHeight = usedPlatesMatrices[0][0][0].length * scalingFactor;
+
+    const usedDepthParts = getUsedDepthPartsMap(usedPlatesMatrices.flat());
+    const sortedDepthParts = Object.keys(usedDepthParts);
+    sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
+    });
+
+    const betweenLevelPicturePadding = pictureHeight * 0.2;
+    canvas.height = Math.max(
+        pictureHeight * 1.5 +
+            (pictureHeight + betweenLevelPicturePadding) *
+                (usedPlatesMatrices[0].length - 1),
+        pictureHeight * 0.4 +
+            sortedDepthParts.length * (scalingFactor / 2) * 2.5
+    );
+    canvas.width = pictureWidth * 2;
+
+    drawDepthPlatesCountForContext(
+        usedDepthParts,
+        scalingFactor,
+        ctx,
+        pictureWidth * 0.25,
+        pictureHeight * 0.2 - scalingFactor / 2
+    );
+
+    ctx.fillStyle = "#000000";
+    ctx.font = `${scalingFactor * 2}px Arial`;
+    ctx.fillText("Lego Art Remix", pictureWidth * 0.75, pictureHeight * 0.28);
+    ctx.font = `${scalingFactor / 2}px Arial`;
+    ctx.fillText(
+        `Depth Instructions`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.34
+    );
+    ctx.fillText(
+        `Resolution: ${targetResolution[0]} x ${targetResolution[1]}`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.37
+    );
+
+    const legendHorizontalOffset = pictureWidth * 0.75;
+    const legendVerticalOffset = pictureHeight * 0.41;
+    // const numPlates = pixelArray.length / (4 * plateWidth * plateWidth);
+    const numPlates = usedPlatesMatrices.length;
+    const legendSquareSide = scalingFactor;
+
+    ctx.drawImage(
+        finalDepthImageCanvas,
+        0,
+        0,
+        finalDepthImageCanvas.width,
+        finalDepthImageCanvas.height,
+        legendHorizontalOffset +
+            legendSquareSide / 4 +
+            (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendVerticalOffset,
+        (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendSquareSide * ((numPlates * plateWidth) / targetResolution[0])
+    );
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.font = `${legendSquareSide / 2}px Arial`;
+
+    for (var i = 0; i < numPlates; i++) {
+        const horIndex = ((i * plateWidth) % targetResolution[0]) / plateWidth;
+        const vertIndex = Math.floor((i * plateWidth) / targetResolution[0]);
+        ctx.beginPath();
+        ctx.rect(
+            legendHorizontalOffset + horIndex * legendSquareSide,
+            legendVerticalOffset + vertIndex * legendSquareSide,
+            legendSquareSide,
+            legendSquareSide
+        );
+        ctx.fillText(
+            i + 1,
+            legendHorizontalOffset + (horIndex + 0.18) * legendSquareSide,
+            legendVerticalOffset + (vertIndex + 0.65) * legendSquareSide
+        );
+        ctx.stroke();
+    }
+}
+
 function generateDepthInstructionPage(
     perDepthLevelMatrices,
     scalingFactor,

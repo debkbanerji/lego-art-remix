@@ -1761,24 +1761,42 @@ async function generateDepthInstructions() {
             "download-depth-instructions-button"
         ).hidden = true;
 
-        let pdf;
+        const titlePageCanvas = document.createElement("canvas");
+        instructionsCanvasContainer.innerHTML = "";
+        instructionsCanvasContainer.appendChild(titlePageCanvas);
+        generateDepthInstructionTitlePage(
+            usedPlatesMatrices,
+            targetResolution,
+            SCALING_FACTOR,
+            titlePageCanvas,
+            step3DepthCanvasUpscaled,
+            PLATE_WIDTH
+        );
+        setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
+
+        const imgData = titlePageCanvas.toDataURL(`image_title/jpeg`, 1.0);
+
+        let pdf = new jsPDF({
+            orientation:
+                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            unit: "mm",
+            format: [titlePageCanvas.width, titlePageCanvas.height]
+        });
+
+        pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            0,
+            pdf.internal.pageSize.getWidth(),
+            pdf.internal.pageSize.getHeight()
+        );
+
         let numParts = 1;
         for (let i = 0; i < usedPlatesMatrices.length; i++) {
             await sleep(50);
 
-            const instructionPageCanvas = document.createElement("canvas");
-            instructionsCanvasContainer.appendChild(instructionPageCanvas);
-
-            perDepthLevelMatrices = usedPlatesMatrices[i];
-            generateDepthInstructionPage(
-                perDepthLevelMatrices,
-                SCALING_FACTOR,
-                instructionPageCanvas,
-                i + 1
-            );
-            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
-
-            if (i % (isHighQuality ? 20 : 50) === 0) {
+            if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
                 if (pdf != null) {
                     addWaterMark(pdf, isHighQuality);
                     pdf.save(
@@ -1789,19 +1807,28 @@ async function generateDepthInstructions() {
                 }
                 pdf = new jsPDF({
                     orientation:
-                        instructionPageCanvas.width <
-                        instructionPageCanvas.height
+                        titlePageCanvas.width < titlePageCanvas.height
                             ? "p"
                             : "l",
                     unit: "mm",
-                    format: [
-                        instructionPageCanvas.width,
-                        instructionPageCanvas.height
-                    ]
+                    format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
             } else {
                 pdf.addPage();
             }
+
+            const instructionPageCanvas = document.createElement("canvas");
+            instructionsCanvasContainer.innerHTML = "";
+            instructionsCanvasContainer.appendChild(instructionPageCanvas);
+
+            perDepthLevelMatrices = usedPlatesMatrices[i];
+            generateDepthInstructionPage(
+                perDepthLevelMatrices,
+                SCALING_FACTOR,
+                instructionPageCanvas,
+                i + 1
+            );
+            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
 
             const imgData = instructionPageCanvas.toDataURL(
                 `image${i + 1}/jpeg`,
