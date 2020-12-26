@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.24";
+const VERSION_NUMBER = "v2020.12.25";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -38,10 +38,13 @@ const interactionSelectors = [
     "clear-custom-studs-button",
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
-    "high-quality-insructions-check",
+    "high-quality-instructions-check",
     "input-depth-image-selector",
     "generate-depth-image",
-    "num-depth-levels-slider"
+    "num-depth-levels-slider",
+    "download-depth-instructions-button",
+    "high-quality-depth-instructions-check",
+    "export-depth-to-bricklink-button"
 ].map(id => document.getElementById(id));
 
 const customStudTableBody = document.getElementById("custom-stud-table-body");
@@ -60,16 +63,9 @@ function disableInteraction() {
 function enableInteraction() {
     customStudTableBody.hidden = false;
     interactionSelectors.forEach(button => (button.disabled = false));
-    [...document.getElementsByClassName("btn")]
-        .filter(
-            e =>
-                ![
-                    "download-depth-instructions-button",
-                    "high-quality-depth-insructions-check",
-                    "export-depth-to-bricklink-button"
-                ].includes(e.id)
-        )
-        .forEach(button => (button.disabled = false));
+    [...document.getElementsByClassName("btn")].forEach(
+        button => (button.disabled = false)
+    );
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(" disabled", ""))
     );
@@ -143,8 +139,8 @@ const step4Canvas3dUpscaled = document.getElementById(
 const bricklinkCacheCanvas = document.getElementById("bricklink-cache-canvas");
 
 let targetResolution = [
-    document.getElementById("width-slider").value,
-    document.getElementById("height-slider").value
+    Number(document.getElementById("width-slider").value),
+    Number(document.getElementById("height-slider").value)
 ];
 const SCALING_FACTOR = 40;
 const PLATE_WIDTH = 16;
@@ -189,6 +185,23 @@ document
 if (window.location.href.includes("enable3d")) {
     enableDepth();
 }
+
+Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(plate => {
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.name = plate;
+    input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
+    input.disabled = plate === "1 X 1";
+    const label = document.createElement("label");
+    const plateSpan = document.createElement("span");
+    plateSpan.innerHTML = " " + plate;
+    label.appendChild(input);
+    label.appendChild(plateSpan);
+    const checkbox = document.createElement("div");
+    checkbox.style = "margin-top: 2px; margin-left: 4px";
+    checkbox.appendChild(label);
+    document.getElementById("depth-plates-container").appendChild(checkbox);
+});
 
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
@@ -1226,6 +1239,17 @@ let step3CanvasHoveredPixel = null;
                             ? "#FFFFFF"
                             : "#E83E8C";
                     ctx.fill();
+
+                    step4CanvasUpscaledContext.beginPath();
+                    step4CanvasUpscaledContext.arc(
+                        col,
+                        row,
+                        highlightCircleRadius,
+                        0,
+                        2 * Math.PI
+                    );
+                    step4CanvasUpscaledContext.fillStyle = "#FFFFFF";
+                    step4CanvasUpscaledContext.fill();
                 });
             });
 
@@ -1254,6 +1278,17 @@ let step3CanvasHoveredPixel = null;
                         );
                         ctx.fillStyle = "#000000";
                         ctx.fill();
+
+                        step4CanvasUpscaledContext.beginPath();
+                        step4CanvasUpscaledContext.arc(
+                            col,
+                            row,
+                            highlightCircleRadius,
+                            0,
+                            2 * Math.PI
+                        );
+                        step4CanvasUpscaledContext.fillStyle = "#000000";
+                        step4CanvasUpscaledContext.fill();
                     });
                 });
             }
@@ -1285,6 +1320,17 @@ let step3CanvasHoveredPixel = null;
                     ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
                     ctx.fillStyle = "#000000";
                     ctx.fill();
+
+                    step4CanvasUpscaledContext.beginPath();
+                    step4CanvasUpscaledContext.arc(
+                        col,
+                        row,
+                        highlightCircleRadius,
+                        0,
+                        2 * Math.PI
+                    );
+                    step4CanvasUpscaledContext.fillStyle = "#000000";
+                    step4CanvasUpscaledContext.fill();
                 });
             });
         }
@@ -1364,7 +1410,9 @@ step4Canvas3dUpscaled.addEventListener("mousemove", function(e) {
         document.getElementById("step-4-depth-tab").className.includes("active")
     ) {
         const {img, displacementFilter} = window.depthPreviewOptions;
-        const displacementScale = 1 / 120;
+        const displacementScale = Number(
+            document.getElementById("3d-effect-intensity").value
+        );
         const rawX =
             event.clientX - step4Canvas3dUpscaled.getBoundingClientRect().x;
         const rawY =
@@ -1384,6 +1432,10 @@ step4Canvas3dUpscaled.addEventListener("mouseleave", function(e) {
         displacementFilter.scale.y = 0;
     }
 });
+
+document
+    .getElementById("3d-effect-intensity")
+    .addEventListener("change", create3dPreview, false);
 
 function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
@@ -1465,10 +1517,10 @@ function runStep4(asyncCallback) {
     }
 }
 
-function addWaterMark(pdf) {
+function addWaterMark(pdf, isHighQuality) {
     for (let i = 0; i < pdf.internal.getNumberOfPages(); i++) {
         pdf.setPage(i + 1);
-        pdf.setFontSize(20);
+        pdf.setFontSize(isHighQuality ? 20 : 10);
         pdf.setTextColor(200);
         pdf.text(
             pdf.internal.pageSize.height * 0.25,
@@ -1522,7 +1574,7 @@ async function generateInstructions() {
     disableInteraction();
     runStep4(async () => {
         const isHighQuality = document.getElementById(
-            "high-quality-insructions-check"
+            "high-quality-instructions-check"
         ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
@@ -1584,7 +1636,7 @@ async function generateInstructions() {
         for (var i = 0; i < totalPlates; i++) {
             await sleep(50);
             if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
-                addWaterMark(pdf);
+                addWaterMark(pdf, isHighQuality);
                 pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
                 numParts++;
                 pdf = new jsPDF({
@@ -1640,7 +1692,7 @@ async function generateInstructions() {
             );
         }
 
-        addWaterMark(pdf);
+        addWaterMark(pdf, isHighQuality);
         pdf.save(
             numParts > 1
                 ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
@@ -1658,6 +1710,207 @@ async function generateInstructions() {
         ); // 8.64e+7 = ms in day
         perfLoggingDatabase
             .ref("instructions-generated-count/per-day/" + loggingTimestamp)
+            .transaction(incrementTransaction);
+    });
+}
+
+function getUsedPlateMatrices(depthPixelArray) {
+    const availableParts = [
+        ...document.getElementById("depth-plates-container").children
+    ]
+        .map(div => div.children[0])
+        .map(label => label.children[0])
+        .filter(input => input.checked)
+        .map(input => input.name)
+        .map(part =>
+            part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+        );
+    const flippedParts = [];
+    availableParts.forEach(part => {
+        if (part[0] !== part[1]) {
+            flippedParts.push([part[1], part[0]]);
+        }
+    });
+    flippedParts.forEach(part => availableParts.push(part));
+    const usedPlatesMatrices = [];
+    for (
+        let row = 0; // for each row of plates
+        row < Math.ceil(targetResolution[1] / PLATE_WIDTH); // round up
+        row++
+    ) {
+        for (
+            let col = 0; // for each column of plates
+            col < Math.ceil(targetResolution[0] / PLATE_WIDTH); // round up
+            col++
+        ) {
+            const horizontalOffset = col * PLATE_WIDTH;
+            const verticalOffset = row * PLATE_WIDTH;
+            const depthSubPixelMatrix = getDepthSubPixelMatrix(
+                depthPixelArray,
+                targetResolution[0],
+                horizontalOffset,
+                verticalOffset,
+                Math.min(PLATE_WIDTH, targetResolution[0] - horizontalOffset),
+                Math.min(PLATE_WIDTH, targetResolution[1] - verticalOffset)
+            );
+            const perDepthLevelMatrices = [];
+            for (
+                let depthLevel = 0; // for each depth level
+                depthLevel <
+                Number(
+                    document.getElementById("num-depth-levels-slider").value
+                ) -
+                    1;
+                depthLevel++
+            ) {
+                perDepthLevelMatrices.push(
+                    getRequiredPartMatrixFromDepthMatrix(
+                        depthSubPixelMatrix,
+                        depthLevel,
+                        availableParts
+                    )
+                );
+            }
+            usedPlatesMatrices.push(perDepthLevelMatrices);
+        }
+    }
+    return usedPlatesMatrices;
+}
+
+async function generateDepthInstructions() {
+    const instructionsCanvasContainer = document.getElementById(
+        "depth-instructions-canvas-container"
+    );
+    instructionsCanvasContainer.innerHTML = "";
+    disableInteraction();
+
+    runStep4(async () => {
+        const isHighQuality = document.getElementById(
+            "high-quality-depth-instructions-check"
+        ).checked;
+        const depthPixelArray = getPixelArrayFromCanvas(step3DepthCanvas);
+
+        const usedPlatesMatrices = getUsedPlateMatrices(depthPixelArray);
+
+        document.getElementById("depth-pdf-progress-bar").style.width = `${0}%`;
+
+        document.getElementById("depth-pdf-progress-bar").style.width = "0%";
+        document.getElementById("depth-pdf-progress-container").hidden = false;
+        document.getElementById(
+            "download-depth-instructions-button"
+        ).hidden = true;
+
+        const titlePageCanvas = document.createElement("canvas");
+        instructionsCanvasContainer.innerHTML = "";
+        instructionsCanvasContainer.appendChild(titlePageCanvas);
+        generateDepthInstructionTitlePage(
+            usedPlatesMatrices,
+            targetResolution,
+            SCALING_FACTOR,
+            titlePageCanvas,
+            step3DepthCanvasUpscaled,
+            PLATE_WIDTH
+        );
+        setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
+
+        const imgData = titlePageCanvas.toDataURL(`image_title/jpeg`, 1.0);
+
+        let pdf = new jsPDF({
+            orientation:
+                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            unit: "mm",
+            format: [titlePageCanvas.width, titlePageCanvas.height]
+        });
+
+        pdf.addImage(
+            imgData,
+            "PNG",
+            0,
+            0,
+            pdf.internal.pageSize.getWidth(),
+            pdf.internal.pageSize.getHeight()
+        );
+
+        let numParts = 1;
+        for (let i = 0; i < usedPlatesMatrices.length; i++) {
+            await sleep(50);
+
+            if ((i + 1) % (isHighQuality ? 20 : 50) === 0) {
+                if (pdf != null) {
+                    addWaterMark(pdf, isHighQuality);
+                    pdf.save(
+                        `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
+                    );
+
+                    numParts++;
+                }
+                pdf = new jsPDF({
+                    orientation:
+                        titlePageCanvas.width < titlePageCanvas.height
+                            ? "p"
+                            : "l",
+                    unit: "mm",
+                    format: [titlePageCanvas.width, titlePageCanvas.height]
+                });
+            } else {
+                pdf.addPage();
+            }
+
+            const instructionPageCanvas = document.createElement("canvas");
+            instructionsCanvasContainer.innerHTML = "";
+            instructionsCanvasContainer.appendChild(instructionPageCanvas);
+
+            perDepthLevelMatrices = usedPlatesMatrices[i];
+            generateDepthInstructionPage(
+                perDepthLevelMatrices,
+                SCALING_FACTOR,
+                instructionPageCanvas,
+                i + 1
+            );
+            setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
+
+            const imgData = instructionPageCanvas.toDataURL(
+                `image${i + 1}/jpeg`,
+                i
+            );
+
+            pdf.addImage(
+                imgData,
+                "PNG",
+                0,
+                0,
+                pdf.internal.pageSize.getWidth(),
+                pdf.internal.pageSize.getHeight()
+            );
+
+            document.getElementById(
+                "depth-pdf-progress-bar"
+            ).style.width = `${((i + 1) * 100) /
+                (usedPlatesMatrices.length + 1)}%`;
+        }
+
+        addWaterMark(pdf, isHighQuality);
+        pdf.save(
+            numParts > 1
+                ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
+                : "Lego-Art-Remix-Instructions.pdf"
+        );
+        document.getElementById("depth-pdf-progress-container").hidden = true;
+        document.getElementById(
+            "download-depth-instructions-button"
+        ).hidden = false;
+        enableInteraction();
+
+        perfLoggingDatabase
+            .ref("depth-instructions-generated-count/total")
+            .transaction(incrementTransaction);
+        const loggingTimestamp = Math.floor(
+            (Date.now() - (Date.now() % 8.64e7)) / 1000
+        ); // 8.64e+7 = ms in day
+        perfLoggingDatabase
+            .ref(
+                "depth-instructions-generated-count/per-day/" + loggingTimestamp
+            )
             .transaction(incrementTransaction);
     });
 }
@@ -1703,6 +1956,12 @@ document
     });
 
 document
+    .getElementById("download-depth-instructions-button")
+    .addEventListener("click", async () => {
+        await generateDepthInstructions();
+    });
+
+document
     .getElementById("export-to-bricklink-button")
     .addEventListener("click", () => {
         disableInteraction();
@@ -1715,6 +1974,26 @@ document
                     selectedPixelPartNumber
                 )
             )
+            .then(
+                function() {
+                    enableInteraction();
+                },
+                function(err) {
+                    console.error("Async: Could not copy text: ", err);
+                }
+            );
+    });
+
+document
+    .getElementById("export-depth-to-bricklink-button")
+    .addEventListener("click", () => {
+        disableInteraction();
+        const depthPixelArray = getPixelArrayFromCanvas(step3DepthCanvas);
+        const usedPlatesMatrices = getUsedPlateMatrices(depthPixelArray);
+        const depthPartsMap = getUsedDepthPartsMap(usedPlatesMatrices.flat());
+
+        navigator.clipboard
+            .writeText(getDepthWantedListXML(depthPartsMap))
             .then(
                 function() {
                     enableInteraction();
@@ -1758,8 +2037,8 @@ function triggerDepthMapGeneration() {
                 webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
                 drawPixelsOnCanvas(result, webWorkerOutputCanvas);
                 setTimeout(() => {
-                    inputDepthCanvas.width = CNN_INPUT_IMAGE_WIDTH;
-                    inputDepthCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+                    inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+                    inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
                     inputDepthCanvasContext.drawImage(
                         webWorkerOutputCanvas,
                         0,
@@ -1768,8 +2047,8 @@ function triggerDepthMapGeneration() {
                         CNN_INPUT_IMAGE_HEIGHT,
                         0,
                         0,
-                        CNN_INPUT_IMAGE_WIDTH,
-                        CNN_INPUT_IMAGE_HEIGHT
+                        SERIALIZE_EDGE_LENGTH,
+                        SERIALIZE_EDGE_LENGTH
                     );
                     setTimeout(() => {
                         loadingMessageComponent.hidden = true;
@@ -1793,16 +2072,27 @@ document
     .getElementById("generate-depth-image")
     .addEventListener("click", triggerDepthMapGeneration);
 
+const SERIALIZE_EDGE_LENGTH = 512;
 function handleInputImage(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         inputImage = new Image();
         inputImage.onload = function() {
-            inputCanvas.width = inputImage.width;
-            inputCanvas.height = inputImage.height;
-            inputCanvasContext.drawImage(inputImage, 0, 0);
-            inputDepthCanvas.width = inputImage.width;
-            inputDepthCanvas.height = inputImage.height;
+            inputCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputCanvas.height = SERIALIZE_EDGE_LENGTH;
+            inputCanvasContext.drawImage(
+                inputImage,
+                0,
+                0,
+                inputImage.width,
+                inputImage.height,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH
+            );
+            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
             inputDepthCanvasContext.fillStyle = "black";
             inputDepthCanvasContext.fillRect(
                 0,
@@ -1844,9 +2134,19 @@ function handleInputDepthMapImage(e) {
     reader.onload = function(event) {
         inputImage = new Image();
         inputImage.onload = function() {
-            inputDepthCanvas.width = inputImage.width;
-            inputDepthCanvas.height = inputImage.height;
-            inputDepthCanvasContext.drawImage(inputImage, 0, 0);
+            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvasContext.drawImage(
+                inputImage,
+                0,
+                0,
+                inputImage.width,
+                inputImage.height,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH
+            );
         };
         inputImage.src = event.target.result;
         setTimeout(() => {

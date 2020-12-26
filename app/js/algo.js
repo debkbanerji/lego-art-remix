@@ -791,6 +791,476 @@ function generateInstructionPage(
     );
 }
 
+function getDepthSubPixelMatrix(
+    pixelArray,
+    totalWidth,
+    horizontalOffset,
+    verticalOffset,
+    width,
+    height
+) {
+    const result = [];
+    for (var i = 0; i < pixelArray.length / 4; i++) {
+        const iHorizontal = i % totalWidth;
+        const iVertical = Math.floor(i / totalWidth);
+
+        if (
+            horizontalOffset <= iHorizontal &&
+            iHorizontal < horizontalOffset + width &&
+            verticalOffset <= iVertical &&
+            iVertical < verticalOffset + height
+        ) {
+            const targetVertical = iVertical - verticalOffset;
+            const targetHorizontal = iHorizontal - horizontalOffset;
+            result[targetVertical] = result[targetVertical] || [];
+            result[targetVertical][targetHorizontal] = pixelArray[4 * i];
+        }
+    }
+
+    return result;
+}
+
+function getRequiredPartMatrixFromDepthMatrix(
+    depthMatrix,
+    targetLevel,
+    partDimensions
+) {
+    // pixels which are not set but need to be
+    // should be completely true by the end
+    const setPixelMatrix = getUnsetPixelMatrixFromDepthMatrix(
+        depthMatrix,
+        targetLevel
+    );
+
+    // initial result as a null array
+    const result = [];
+    for (let i = 0; i < depthMatrix.length; i++) {
+        result[i] = [];
+        for (let j = 0; j < depthMatrix[0].length; j++) {
+            result[i][j] = null; // nothing has been placed here yet
+        }
+    }
+
+    partDimensions = JSON.parse(JSON.stringify(partDimensions));
+    partDimensions.sort(
+        // sort in decreasing order of area
+        // break ties on the second dimension
+        (part1, part2) =>
+            part2[0] * part2[1] -
+            part2[0] * 0.01 -
+            part1[0] * part1[1] +
+            part1[0] * 0.01
+    );
+    for (let i = 0; i < partDimensions.length; i++) {
+        const part = partDimensions[i];
+
+        // place the part as many times as we can
+        for (let row = 0; row < depthMatrix.length - part[0] + 1; row++) {
+            for (
+                let col = 0;
+                col < depthMatrix[0].length - part[1] + 1;
+                col++
+            ) {
+                let canPlacePiece = true;
+                for (let pRow = 0; pRow < part[0] && canPlacePiece; pRow++) {
+                    for (
+                        let pCol = 0;
+                        pCol < part[1] && canPlacePiece;
+                        pCol++
+                    ) {
+                        canPlacePiece =
+                            canPlacePiece &&
+                            !setPixelMatrix[row + pRow][col + pCol];
+                    }
+                }
+                if (canPlacePiece) {
+                    result[row][col] = [part[0], part[1]]; // place the piece here
+                    // now mark the correct pieces as covered
+                    for (let pRow = 0; pRow < part[0]; pRow++) {
+                        for (let pCol = 0; pCol < part[1]; pCol++) {
+                            setPixelMatrix[row + pRow][col + pCol] = true; // set this pixel
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+function drawDepthPlatesCountForContext(
+    usedDepthParts,
+    scalingFactor,
+    ctx,
+    horizontalOffset,
+    verticalOffset
+) {
+    let sortedDepthParts = Object.keys(usedDepthParts).filter(
+        part => (usedDepthParts[part] || 0) > 0
+    );
+
+    if (sortedDepthParts.length === 0) {
+        ctx.fillStyle = "#000000";
+        ctx.fillText(
+            `No depth offset in section`,
+            horizontalOffset - scalingFactor * 1.5,
+            verticalOffset + scalingFactor * 0.75
+        );
+        return;
+    }
+
+    sortedDepthParts = sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
+    });
+
+    ctx.font = `${scalingFactor / 2}px Arial`;
+
+    const lineHeight = scalingFactor * 1.5;
+
+    sortedDepthParts.forEach((part, i) => {
+        const x = horizontalOffset + scalingFactor * 0.8;
+        const y = verticalOffset + lineHeight * (i + 0.75);
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(
+            x - lineHeight * 0.1,
+            y - lineHeight * 0.35,
+            lineHeight,
+            lineHeight * 0.5
+        );
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(part, x, y);
+        ctx.fillStyle = "#000000";
+        ctx.fillText(` X ${usedDepthParts[part]}`, x + lineHeight, y);
+    });
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.beginPath();
+    ctx.rect(
+        horizontalOffset,
+        verticalOffset,
+        scalingFactor * 4,
+        lineHeight * (sortedDepthParts.length + 0.5)
+    );
+    ctx.stroke();
+}
+
+function getUsedDepthPartsMap(perDepthLevelMatrices) {
+    const result = {};
+    perDepthLevelMatrices.forEach(matrix =>
+        matrix.forEach(row =>
+            row.forEach(part => {
+                if (part != null) {
+                    result[getDepthPlateString(part)] =
+                        (result[getDepthPlateString(part)] || 0) + 1;
+                }
+            })
+        )
+    );
+    return result;
+}
+
+function generateDepthInstructionTitlePage(
+    usedPlatesMatrices,
+    targetResolution,
+    scalingFactor,
+    canvas,
+    finalDepthImageCanvas,
+    plateWidth
+) {
+    const ctx = canvas.getContext("2d");
+
+    pictureWidth = usedPlatesMatrices[0][0].length * scalingFactor;
+    pictureHeight = usedPlatesMatrices[0][0][0].length * scalingFactor;
+
+    const usedDepthParts = getUsedDepthPartsMap(usedPlatesMatrices.flat());
+    const sortedDepthParts = Object.keys(usedDepthParts);
+    sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
+    });
+
+    const betweenLevelPicturePadding = pictureHeight * 0.2;
+    canvas.height = Math.max(
+        pictureHeight * 1.5 +
+            (pictureHeight + betweenLevelPicturePadding) *
+                (usedPlatesMatrices[0].length - 1),
+        pictureHeight * 0.4 +
+            sortedDepthParts.length * (scalingFactor / 2) * 2.5
+    );
+    canvas.width = pictureWidth * 2;
+
+    drawDepthPlatesCountForContext(
+        usedDepthParts,
+        scalingFactor,
+        ctx,
+        pictureWidth * 0.25,
+        pictureHeight * 0.2 - scalingFactor / 2
+    );
+
+    ctx.fillStyle = "#000000";
+    ctx.font = `${scalingFactor * 2}px Arial`;
+    ctx.fillText("Lego Art Remix", pictureWidth * 0.75, pictureHeight * 0.28);
+    ctx.font = `${scalingFactor / 2}px Arial`;
+    ctx.fillText(
+        `Depth Instructions`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.34
+    );
+    ctx.fillText(
+        `Resolution: ${targetResolution[0]} x ${targetResolution[1]}`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.37
+    );
+
+    const legendHorizontalOffset = pictureWidth * 0.75;
+    const legendVerticalOffset = pictureHeight * 0.41;
+    // const numPlates = pixelArray.length / (4 * plateWidth * plateWidth);
+    const numPlates = usedPlatesMatrices.length;
+    const legendSquareSide = scalingFactor;
+
+    ctx.drawImage(
+        finalDepthImageCanvas,
+        0,
+        0,
+        finalDepthImageCanvas.width,
+        finalDepthImageCanvas.height,
+        legendHorizontalOffset +
+            legendSquareSide / 4 +
+            (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendVerticalOffset,
+        (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendSquareSide * ((numPlates * plateWidth) / targetResolution[0])
+    );
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.font = `${legendSquareSide / 2}px Arial`;
+
+    for (var i = 0; i < numPlates; i++) {
+        const horIndex = ((i * plateWidth) % targetResolution[0]) / plateWidth;
+        const vertIndex = Math.floor((i * plateWidth) / targetResolution[0]);
+        ctx.beginPath();
+        ctx.rect(
+            legendHorizontalOffset + horIndex * legendSquareSide,
+            legendVerticalOffset + vertIndex * legendSquareSide,
+            legendSquareSide,
+            legendSquareSide
+        );
+        ctx.fillText(
+            i + 1,
+            legendHorizontalOffset + (horIndex + 0.18) * legendSquareSide,
+            legendVerticalOffset + (vertIndex + 0.65) * legendSquareSide
+        );
+        ctx.stroke();
+    }
+}
+
+function generateDepthInstructionPage(
+    perDepthLevelMatrices,
+    scalingFactor,
+    canvas,
+    plateNumber
+) {
+    const ctx = canvas.getContext("2d");
+
+    pictureWidth = perDepthLevelMatrices[0].length * scalingFactor;
+    pictureHeight = perDepthLevelMatrices[0][0].length * scalingFactor;
+
+    const radius = scalingFactor / 2;
+
+    const usedDepthParts = getUsedDepthPartsMap(perDepthLevelMatrices);
+    const sortedDepthParts = Object.keys(usedDepthParts);
+    sortedDepthParts.sort((part1, part2) => {
+        const part1Numbers = part1.split(DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        return (
+            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
+            Number(part2Numbers[0]) * Number(part2Numbers[1])
+        );
+    });
+
+    const betweenLevelPicturePadding = pictureHeight * 0.2;
+    canvas.height = Math.max(
+        pictureHeight * 1.5 +
+            (pictureHeight + betweenLevelPicturePadding) *
+                (perDepthLevelMatrices.length - 1),
+        pictureHeight * 0.4 + sortedDepthParts.length * radius * 2.5
+    );
+    canvas.width = pictureWidth * 2;
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = "#000000";
+    ctx.font = `${scalingFactor}px Arial`;
+    ctx.beginPath();
+    ctx.fillText(
+        `Section ${plateNumber} Depth Plating Instructions`,
+        pictureWidth * 0.75,
+        pictureHeight * 0.2 - scalingFactor
+    );
+    ctx.stroke();
+
+    ctx.lineWidth = 1;
+
+    ctx.font = `${scalingFactor * 0.75}px Arial`;
+
+    for (
+        let depthIndex = 0;
+        depthIndex < perDepthLevelMatrices.length;
+        depthIndex++
+    ) {
+        const horizontalOffset = pictureWidth * 0.75;
+        const verticalOffset =
+            pictureHeight * 0.25 +
+            (pictureHeight + betweenLevelPicturePadding) * depthIndex;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.rect(horizontalOffset, verticalOffset, pictureWidth, pictureHeight);
+        ctx.strokeStyle = "#000000";
+        ctx.stroke();
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(
+            horizontalOffset,
+            verticalOffset,
+            pictureWidth,
+            pictureHeight
+        );
+
+        ctx.beginPath();
+        ctx.fillText(
+            `Level ${depthIndex + 1}`,
+            pictureWidth * 0.75,
+            verticalOffset - scalingFactor * 0.5
+        );
+        ctx.stroke();
+
+        const partMatrix = perDepthLevelMatrices[depthIndex];
+
+        ctx.fillStyle = "#222222";
+        ctx.lineWidth = 2;
+        const innerPadding = scalingFactor / 12;
+        const radius = scalingFactor * 0.5 - 2 * innerPadding;
+
+        for (let row = 0; row < partMatrix.length; row++) {
+            for (let col = 0; col < partMatrix[0].length; col++) {
+                ctx.beginPath();
+                ctx.arc(
+                    horizontalOffset + (col + 0.5) * scalingFactor,
+                    verticalOffset + (row + 0.5) * scalingFactor,
+                    radius,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+
+                const part = partMatrix[row][col];
+                if (part != null) {
+                    ctx.strokeStyle = "#888888";
+                    ctx.beginPath();
+                    ctx.rect(
+                        horizontalOffset + col * scalingFactor,
+                        verticalOffset + row * scalingFactor,
+                        scalingFactor * part[1],
+                        scalingFactor * part[0]
+                    );
+                    ctx.stroke();
+                    ctx.strokeStyle = "#FFFFFF";
+                    ctx.beginPath();
+                    ctx.rect(
+                        horizontalOffset + col * scalingFactor + innerPadding,
+                        verticalOffset + row * scalingFactor + innerPadding,
+                        scalingFactor * part[1] - 2 * innerPadding,
+                        scalingFactor * part[0] - 2 * innerPadding
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    drawDepthPlatesCountForContext(
+        usedDepthParts,
+        scalingFactor,
+        ctx,
+        pictureWidth * 0.25,
+        pictureHeight * 0.2 - radius
+    );
+}
+
+function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
+    const result = [];
+    for (let i = 0; i < depthMatrix.length; i++) {
+        result[i] = [];
+        for (let j = 0; j < depthMatrix[0].length; j++) {
+            result[i][j] = depthMatrix[i][j] <= targetLevel; // pixel is not set but needs to be
+        }
+    }
+    return result;
+}
+
+const DEPTH_SEPERATOR = " X ";
+function getDepthPlateString(part) {
+    return part[0] < part[1]
+        ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
+        : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+}
+
+const DEPTH_PLATE_TO_PART_ID = {
+    "1 X 1": 3024,
+    "1 X 2": 3023,
+    "1 X 3": 3623,
+    "1 X 4": 3710,
+    "1 X 8": 3460,
+    "2 X 2": 3022,
+    "2 X 3": 3021,
+    "2 X 4": 3020,
+    "2 X 8": 3034,
+    "4 X 4": 3031,
+    "4 X 8": 3035,
+    "4 X 10": 3030
+};
+
+const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
+
+const DEPTH_FILLER_PARTS = Object.keys(DEPTH_PLATE_TO_PART_ID).map(part =>
+    part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+);
+Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
+    const splitPart = part.split(DEPTH_SEPERATOR);
+    if (splitPart[0] !== splitPart[1]) {
+        DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
+    }
+});
+
+function getDepthWantedListXML(depthPartsMap) {
+    const items = Object.keys(depthPartsMap).map(
+        part =>
+            `<ITEM>
+      <ITEMTYPE>P</ITEMTYPE>
+      <ITEMID>${DEPTH_PLATE_TO_PART_ID[part]}</ITEMID>
+      <COLOR>11</COLOR>
+      <MINQTY>${depthPartsMap[part]}</MINQTY>
+    </ITEM>`
+    );
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <INVENTORY>
+    \n${items.join("\n")}\n
+  </INVENTORY>`;
+}
+
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(
         stud =>
