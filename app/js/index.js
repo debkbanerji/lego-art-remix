@@ -1377,7 +1377,9 @@ step4Canvas3dUpscaled.addEventListener("mousemove", function(e) {
         document.getElementById("step-4-depth-tab").className.includes("active")
     ) {
         const {img, displacementFilter} = window.depthPreviewOptions;
-        const displacementScale = 1 / 120;
+        const displacementScale = Number(
+            document.getElementById("3d-effect-intensity").value
+        );
         const rawX =
             event.clientX - step4Canvas3dUpscaled.getBoundingClientRect().x;
         const rawY =
@@ -1397,6 +1399,10 @@ step4Canvas3dUpscaled.addEventListener("mouseleave", function(e) {
         displacementFilter.scale.y = 0;
     }
 });
+
+document
+    .getElementById("3d-effect-intensity")
+    .addEventListener("change", create3dPreview, false);
 
 function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
