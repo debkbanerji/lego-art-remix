@@ -5,6 +5,18 @@ document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 let perfLoggingDatabase;
 try {
     perfLoggingDatabase = firebase.database();
+    perfLoggingDatabase
+        .ref("/input-image-count/total")
+        .once("value")
+        .then(snapshot => {
+            const val = snapshot.val();
+            console.log(val);
+            if (val != null) {
+                document.getElementById(
+                    "total-generated-count"
+                ).innerHTML = `<br/>${val} images created to date`;
+            }
+        });
 } catch (_e) {
     // we don't care if this fails
 }
