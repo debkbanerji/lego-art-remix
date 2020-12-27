@@ -10,7 +10,6 @@ try {
         .once("value")
         .then(snapshot => {
             const val = snapshot.val();
-            console.log(val);
             if (val != null) {
                 document.getElementById(
                     "total-generated-count"
