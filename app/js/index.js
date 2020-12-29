@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2020.12.26";
+const VERSION_NUMBER = "v2020.12.28";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -681,19 +681,20 @@ function runStep1() {
     window.URL.revokeObjectURL(
         document.getElementById("export-stud-map-button").href
     );
-    document.getElementById(
-        "export-stud-map-button"
-    ).href = window.URL.createObjectURL(
-        new Blob(
-            [
-                JSON.stringify({
-                    studMap: selectedStudMap,
-                    sortedStuds: Object.keys(selectedStudMap)
-                })
-            ],
-            {
-                type: "text/plain"
-            }
+    document.getElementById("export-stud-map-button").setAttribute(
+        "href",
+        window.URL.createObjectURL(
+            new Blob(
+                [
+                    JSON.stringify({
+                        studMap: selectedStudMap,
+                        sortedStuds: Object.keys(selectedStudMap)
+                    })
+                ],
+                {
+                    type: "text/plain"
+                }
+            )
         )
     );
 
