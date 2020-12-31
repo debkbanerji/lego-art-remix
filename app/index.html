@@ -53,11 +53,21 @@
     step-header-subtitle {
       margin-left: 2px;
     }
+
+    footer {
+      bottom: 0;
+      width: 100%;
+    }
+
+    .footer {
+      height: 50px;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-  <div style="margin: 10px; padding-bottom: 30px; overflow: hidden">
+  <div style="margin: 10px; padding-bottom: 30px; overflow: hidden; min-height: calc(100vh - 60px);">
     <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
     <div style="margin-bottom: 10px; margin-left: 6px">
       <small>
@@ -510,8 +520,8 @@
                             <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
                         </div>
                         <div style="padding-bottom: 10px">
-                          <a class="btn btn-info" type="button" id="export-stud-map-button" download="selected-studs.json" href=””>
-                            Export Selected Studs
+                          <a id="export-stud-map-button" download="selected-studs.json" href=””>
+                            <button class="btn btn-info" type="button">Export Selected Studs</button>
                           </a>
                         </div>
                         <div class="btn-group">
@@ -1012,6 +1022,12 @@
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <footer>
+    <small class="footer">
+      <p> This project is not affiliated with The Lego Group</p>
+    </small>
+  </footer>
 
 </body>
 
