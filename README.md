@@ -3,6 +3,8 @@ Easily remix Lego Art sets into custom mosaics using computer vision
 
 You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego-art-remix.debkbanerji.com/)
 
+This project is not affiliated with The Lego Group.
+
 Made with ♥ by Deb
 
 ### Media
@@ -22,8 +24,6 @@ These are some articles and videos featuring Lego Art Remix. Note that some were
 In 2020, The Lego Group released the [Lego Art](https://www.lego.com/en-us/campaigns/art) theme, which allows people to create a predetermined image using Lego studs.
 
 Lego Art Remix lets you upload your own image, and then uses computer vision to use the studs from a Lego Art set that you already have to recreate the image.
-
-This project is not affiliated with The Lego Group.
 
 ## Performance and Security
 The computer vision techniques used are pretty inexpensive (with the exception of optional depth map generation), and the resolutions being dealt with are naturally quite low, so as of the time of writing, the algorithm runs quite quickly. This allows for it to be run on the client, and on the machines that I tested, it ran in near real time.
