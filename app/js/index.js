@@ -2069,6 +2069,14 @@ function handleInputImage(e) {
                 SERIALIZE_EDGE_LENGTH,
                 SERIALIZE_EDGE_LENGTH
             );
+
+            // remove transparency
+            const inputImagePixels = getPixelArrayFromCanvas(inputCanvas);
+            for (var i = 3; i < inputImagePixels.length; i += 4) {
+                inputImagePixels[i] = 255;
+            }
+            drawPixelsOnCanvas(inputImagePixels, inputCanvas);
+
             inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
             inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
             inputDepthCanvasContext.fillStyle = "black";
