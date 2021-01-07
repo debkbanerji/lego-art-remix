@@ -3,7 +3,7 @@ Easily remix Lego Art sets into custom mosaics using computer vision
 
 You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego-art-remix.debkbanerji.com/)
 
-This project is not affiliated with The Lego Group.
+This project is not affiliated with The Lego Group
 
 Made with ♥ by Deb
 
