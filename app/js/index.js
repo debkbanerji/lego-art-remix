@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.1.6";
+const VERSION_NUMBER = "v2021.1.23";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -79,6 +79,13 @@ function enableInteraction() {
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(" disabled", ""))
     );
+}
+
+if (window.location.href.includes("forceUnsupportedDimensions")) {
+    ["height-slider", "width-slider"].forEach(id => {
+        document.getElementById(id).step = 1;
+        document.getElementById(id).type = "number";
+    });
 }
 
 const CNN_INPUT_IMAGE_WIDTH = 256;
