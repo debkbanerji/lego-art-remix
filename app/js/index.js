@@ -1574,11 +1574,15 @@ async function generateInstructions() {
 
         const titlePageCanvas = document.createElement("canvas");
         instructionsCanvasContainer.appendChild(titlePageCanvas);
+        const studMap = getUsedPixelsStudMap(resultImage);
+        const filteredAvailableStudHexList = selectedSortedStuds.filter(
+            pixelHex => (studMap[pixelHex] || 0) > 0
+        );
         generateInstructionTitlePage(
             resultImage,
             targetResolution[0],
             PLATE_WIDTH,
-            selectedSortedStuds,
+            filteredAvailableStudHexList,
             SCALING_FACTOR,
             step4CanvasUpscaled,
             titlePageCanvas,
@@ -1653,7 +1657,7 @@ async function generateInstructions() {
             generateInstructionPage(
                 subPixelArray,
                 PLATE_WIDTH,
-                selectedSortedStuds,
+                filteredAvailableStudHexList,
                 SCALING_FACTOR,
                 instructionPageCanvas,
                 i + 1,
