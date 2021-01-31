@@ -196,6 +196,18 @@ STUD_MAPS = {
             "#6a0e15": 96,
             "#330000": 76
         }
+    },
+    personalized_portrait: {
+        name: "Personalised Portrait (40179)",
+        officialName: "Personalised Mosaic Portrait (40179)",
+        sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
+        studMap: {
+            "#212121": 900,
+            "#595d60": 900,
+            "#afb5c7": 900,
+            "#ffffff": 900,
+            "#f7d117": 900
+        }
     }
 };
 
