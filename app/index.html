@@ -884,12 +884,19 @@
     <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <div id="image-input">
+          <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
             <button class="btn btn-success" type="button" id="input-image-selector" style="margin-top: 8px">
               Select Input Image
             </button>
-          </div>
+          </span>
+          <span class="btn-group" style="margin-top: 8px; margin-left: 8px;">
+            <button class="btn dropdown-toggle btn-info" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Input set
+            </button>
+            <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
+            </div>
+          </span>
           <canvas id="input-canvas" hidden></canvas>
           <canvas id="input-depth-canvas" hidden></canvas>
           <div style="margin-left: 4px; margin-top: 10px">
@@ -1016,7 +1023,7 @@
   <script src="js/bricklink-colors.js"></script>
   <script src="js/stud-maps.js?version=v2021.1.31"></script>
   <script src="js/algo.js?version=v2021.1.31"></script>
-  <script src="js/index.js?version=v2021.1.31"></script>
+  <script src="js/index.js?version=v2021.1.31.2"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

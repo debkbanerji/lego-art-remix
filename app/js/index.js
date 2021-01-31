@@ -428,6 +428,27 @@ Object.keys(STUD_MAPS)
         mixInStudMapOptions.appendChild(option);
     });
 
+Object.keys(STUD_MAPS)
+    .filter(key => key !== "rgb")
+    .forEach(studMap => {
+        const option = document.createElement("a");
+        option.className = "dropdown-item btn";
+        option.textContent = STUD_MAPS[studMap].name;
+        option.value = studMap;
+        option.addEventListener("click", () => {
+            customStudTableBody.innerHTML = "";
+            mixInStudMap(STUD_MAPS[studMap]);
+            document.getElementById(
+                "select-starting-custom-stud-map-button"
+            ).innerHTML = "Input Set: " + STUD_MAPS[studMap].name;
+        });
+        document
+            .getElementById("select-starting-custom-stud-map-options")
+            .appendChild(option);
+    });
+document.getElementById("select-starting-custom-stud-map-button").innerHTML =
+    "Input Set: " + STUD_MAPS[DEFAULT_STUD_MAP].name;
+
 const importOption = document.createElement("a");
 importOption.className = "dropdown-item btn";
 importOption.textContent = "Import From File";
