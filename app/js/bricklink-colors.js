@@ -1,4 +1,4 @@
-const ALL_BRICKLINK_SOLID_COLORS = [
+let ALL_BRICKLINK_SOLID_COLORS = [
     {
         name: "White",
         hex: "#ffffff",
@@ -570,7 +570,7 @@ const BRICKLINK_TILE_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter(color =>
 });
 
 const ADDITIONAL_COLORS = ["Very Light Gray"];
-const ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.sort((a, b) => {
+let ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.sort((a, b) => {
     return a.name > b.name ? 1 : -1;
 });
 // .filter(

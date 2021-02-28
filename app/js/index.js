@@ -301,7 +301,51 @@ document
         ).hidden = true;
     });
 
-const DEFAULT_STUD_MAP = "all_stud_colors";
+let DEFAULT_STUD_MAP = "all_stud_colors";
+let DEFAULT_COLOR = "#42c0fb";
+let DEFAULT_COLOR_NAME = "Medium Azure";
+
+try {
+    const match = window.location.href.match(
+        "[?&]" + "availableColors" + "=([^&]+)"
+    );
+    const availableColorsString = match ? match[1] : null;
+    let availableColors;
+    if (match == null) {
+        availableColors = [];
+    } else {
+        availableColors = availableColorsString
+            .split(",")
+            .map(color => color.toLowerCase())
+            .filter(color => color.match("^#(?:[0-9a-fA-F]{3}){1,2}$"));
+    }
+
+    if (availableColors.length > 0) {
+        DEFAULT_COLOR = availableColors[0];
+        DEFAULT_COLOR_NAME = availableColors[0];
+        ALL_VALID_BRICKLINK_COLORS = availableColors.map(color => {
+            return {name: color, hex: color};
+        });
+        ALL_BRICKLINK_SOLID_COLORS = ALL_VALID_BRICKLINK_COLORS;
+        const studMap = {};
+        availableColors.forEach(color => {
+            studMap[color] = 99999;
+        });
+        STUD_MAPS = {
+            url_colors: {
+                name: "Colors from URL",
+                officialName: "Colors from URL",
+                sortedStuds: availableColors,
+                studMap: studMap
+            }
+        };
+        DEFAULT_STUD_MAP = "url_colors";
+        document.getElementById("bricklink-export-card").hidden = true;
+    }
+} catch (_e) {
+    enableInteraction();
+}
+
 let selectedStudMap = STUD_MAPS[DEFAULT_STUD_MAP].studMap;
 let selectedFullSetName = STUD_MAPS[DEFAULT_STUD_MAP].officialName;
 let selectedSortedStuds = STUD_MAPS[DEFAULT_STUD_MAP].sortedStuds;
@@ -509,9 +553,6 @@ function getColorSquare(hex) {
 }
 
 function getColorSelectorDropdown() {
-    const DEFAULT_COLOR = "#42c0fb";
-    const DEFAULT_COLOR_NAME = "Medium Azure";
-
     const container = document.createElement("a");
     const id = "color-selector" + uuidv4();
 
