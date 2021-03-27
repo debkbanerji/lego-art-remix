@@ -138,6 +138,90 @@ STUD_MAPS = {
             "#6a0e15": 328,
             "#330000": 100
         }
+    },
+    harry_potter_hogwarts_crests: {
+        name: "Harry Potter (31201)",
+        officialName: "Harry Potter Hogwarts Crests (31201)",
+        sortedStuds: [
+            "#212121",
+            "#666660",
+            "#898788",
+            "#afb5c7",
+            "#42c0fb",
+            "#0057a6",
+            "#10cb31",
+            "#00642e",
+            "#b30006",
+            "#6a0e15",
+            "#e79500",
+            "#ffffff"
+        ],
+        studMap: {
+            "#212121": 593,
+            "#666660": 153,
+            "#898788": 630,
+            "#afb5c7": 236,
+            "#42c0fb": 10,
+            "#0057a6": 431,
+            "#10cb31": 4,
+            "#00642e": 499,
+            "#b30006": 15,
+            "#6a0e15": 503,
+            "#e79500": 604,
+            "#ffffff": 369
+        }
+    },
+    mickey_mouse: {
+        name: "Mickey Mouse (31202)",
+        officialName: "Disney's Mickey Mouse (31202)",
+        sortedStuds: [
+            "#212121",
+            "#595d60",
+            "#afb5c7",
+            "#143044",
+            "#ffffff",
+            "#dec69c",
+            "#b30006",
+            "#6a0e15",
+            "#330000"
+        ],
+        studMap: {
+            "#212121": 662,
+            "#595d60": 79,
+            "#afb5c7": 59,
+            "#143044": 409,
+            "#ffffff": 835,
+            "#dec69c": 32,
+            "#b30006": 213,
+            "#6a0e15": 96,
+            "#330000": 76
+        }
+    },
+    personalized_portrait_6000: {
+        name: "Personalised Portrait - New 6002 Piece Version (40179)",
+        officialName:
+            "Personalised Mosaic Portrait - 6002 Piece Version (40179)",
+        sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
+        studMap: {
+            "#212121": 1200,
+            "#595d60": 1200,
+            "#afb5c7": 1200,
+            "#ffffff": 1200,
+            "#f7d117": 1200
+        }
+    },
+    personalized_portrait_4502: {
+        name: "Personalised Portrait - Old 4502 Piece Version (40179)",
+        officialName:
+            "Personalised Mosaic Portrait - 4502 Piece Version (40179)",
+        sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
+        studMap: {
+            "#212121": 900,
+            "#595d60": 900,
+            "#afb5c7": 900,
+            "#ffffff": 900,
+            "#f7d117": 900
+        }
     }
 };
 
@@ -165,28 +249,39 @@ STUD_MAPS["all_tile_colors"] = {
     studMap: tileHexToCount
 };
 
+const availableSolidHexes = ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex);
+const solidHexToCount = {};
+availableSolidHexes.forEach(hex => {
+    solidHexToCount[hex] = 99999;
+});
+STUD_MAPS["all_solid_colors"] = {
+    name: "All Supported Colors",
+    officialName: "All Supported",
+    sortedStuds: availableSolidHexes,
+    studMap: solidHexToCount
+};
 
 const availablePickABrickStudHexes = [
-    '#ff7e14',
-    '#0057a6',
-    '#afb5c7',
-    '#595d60',
-    '#ffffff',
-    '#a6ca55',
-    '#10cb31',
-    '#f7d117',
-    '#b30006',
-    '#5f2683',
-    '#89351d',
-    '#dec69c',
-    '#ffbbff'
+    "#ff7e14",
+    "#0057a6",
+    "#afb5c7",
+    "#595d60",
+    "#ffffff",
+    "#a6ca55",
+    "#10cb31",
+    "#f7d117",
+    "#b30006",
+    "#5f2683",
+    "#89351d",
+    "#dec69c",
+    "#ffbbff"
 ];
 const pickABricStudkHexToCount = {};
 availablePickABrickStudHexes.forEach(hex => {
     pickABricStudkHexToCount[hex] = 99999;
 });
 STUD_MAPS["pick_a_brick"] = {
-    name: "Pick a Brick",
+    name: "All Pick a Brick Stud Colors",
     officialName: "Lego.com Pick a Brick",
     sortedStuds: availablePickABrickStudHexes,
     studMap: pickABricStudkHexToCount
