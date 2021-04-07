@@ -197,21 +197,21 @@ STUD_MAPS = {
             "#330000": 76
         }
     },
-    personalized_portrait_6000: {
-        name: "Personalised Portrait - New 6002 Piece Version (40179)",
-        officialName:
-            "Personalised Mosaic Portrait - 6002 Piece Version (40179)",
-        sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
-        studMap: {
-            "#212121": 1200,
-            "#595d60": 1200,
-            "#afb5c7": 1200,
-            "#ffffff": 1200,
-            "#f7d117": 1200
-        }
-    },
+    // personalized_portrait_6000: {
+    //     name: "Personalised Portrait - New 6002 Piece Version (40179)",
+    //     officialName:
+    //         "Personalised Mosaic Portrait - 6002 Piece Version (40179)",
+    //     sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
+    //     studMap: {
+    //         "#212121": 1200,
+    //         "#595d60": 1200,
+    //         "#afb5c7": 1200,
+    //         "#ffffff": 1200,
+    //         "#f7d117": 1200
+    //     }
+    // },
     personalized_portrait_4502: {
-        name: "Personalised Portrait - Old 4502 Piece Version (40179)",
+        name: "Personalised Portrait - 4502 Piece Version (40179)",
         officialName:
             "Personalised Mosaic Portrait - 4502 Piece Version (40179)",
         sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
