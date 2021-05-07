@@ -302,15 +302,39 @@
                   <div id="step-2-1-collapse" class="collapse" aria-labelledby="step-2-1-heading" data-parent="#step-2-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div>Hue adjustment: <span id="hue-text">0<span>&#176;</span></span></div>
+                        <div>Hue adjustment:
+                          <button class="btn btn-sm" id="hue-decrement">
+                            -
+                          </button>
+                          <span id="hue-text">0<span>&#176;</span></span>
+                          <button class="btn btn-sm" id="hue-increment">
+                            +
+                          </button>
+                        </div>
                         <input type="range" id="hue-slider" name="points" min="-180" max="180" style="width: 100%">
                       </div>
                       <div style="width: 100%">
-                        <div>Saturation adjustment: <span id="saturation-text">0%</span></div>
+                        <div>Saturation adjustment:
+                          <button class="btn btn-sm" id="saturation-decrement">
+                            -
+                          </button>
+                          <span id="saturation-text">0%</span>
+                          <button class="btn btn-sm" id="saturation-increment">
+                            +
+                          </button>
+                        </div>
                         <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="width: 100%">
                       </div>
                       <div style="width: 100%">
-                        <div>Value adjustment: <span id="value-text">0%</span></div>
+                        <div>Value adjustment:
+                          <button class="btn btn-sm" id="value-decrement">
+                            -
+                          </button>
+                          <span id="value-text">0%</span>
+                          <button class="btn btn-sm" id="value-increment">
+                            +
+                          </button>
+                        </div>
                         <input type="range" id="value-slider" name="points" min="-100" max="100" style="width: 100%">
                       </div>
                       <button class="btn btn-info" type="button" id="reset-colors-button">

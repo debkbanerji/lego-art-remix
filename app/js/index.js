@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.4.6";
+const VERSION_NUMBER = "v2021.5.6";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -644,32 +644,113 @@ document
         runCustomStudMap();
     });
 
-document.getElementById("hue-slider").addEventListener(
-    "change",
+const onHueChange = () => {
+    document.getElementById("hue-text").innerHTML =
+        document.getElementById("hue-slider").value + "<span>&#176;</span>";
+    runStep1();
+};
+document
+    .getElementById("hue-slider")
+    .addEventListener("change", onHueChange, false);
+document.getElementById("hue-increment").addEventListener(
+    "click",
     () => {
-        document.getElementById("hue-text").innerHTML =
-            document.getElementById("hue-slider").value + "<span>&#176;</span>";
-        runStep1();
+        if (
+            Number(document.getElementById("hue-slider").value) <
+            Number(document.getElementById("hue-slider").max)
+        ) {
+            document.getElementById("hue-slider").value =
+                Number(document.getElementById("hue-slider").value) + 1;
+            onHueChange();
+        }
+    },
+    false
+);
+document.getElementById("hue-decrement").addEventListener(
+    "click",
+    () => {
+        if (
+            Number(document.getElementById("hue-slider").value) >
+            Number(document.getElementById("hue-slider").min)
+        ) {
+            document.getElementById("hue-slider").value =
+                Number(document.getElementById("hue-slider").value) - 1;
+            onHueChange();
+        }
     },
     false
 );
 
-document.getElementById("saturation-slider").addEventListener(
-    "change",
+const onSaturationChange = () => {
+    document.getElementById("saturation-text").innerHTML =
+        document.getElementById("saturation-slider").value + "%";
+    runStep1();
+};
+document
+    .getElementById("saturation-slider")
+    .addEventListener("change", onSaturationChange, false);
+document.getElementById("saturation-increment").addEventListener(
+    "click",
     () => {
-        document.getElementById("saturation-text").innerHTML =
-            document.getElementById("saturation-slider").value + "%";
-        runStep1();
+        if (
+            Number(document.getElementById("saturation-slider").value) <
+            Number(document.getElementById("saturation-slider").max)
+        ) {
+            document.getElementById("saturation-slider").value =
+                Number(document.getElementById("saturation-slider").value) + 1;
+            onSaturationChange();
+        }
+    },
+    false
+);
+document.getElementById("saturation-decrement").addEventListener(
+    "click",
+    () => {
+        if (
+            Number(document.getElementById("saturation-slider").value) >
+            Number(document.getElementById("saturation-slider").min)
+        ) {
+            document.getElementById("saturation-slider").value =
+                Number(document.getElementById("saturation-slider").value) - 1;
+            onSaturationChange();
+        }
     },
     false
 );
 
-document.getElementById("value-slider").addEventListener(
-    "change",
+const onValueChange = () => {
+    document.getElementById("value-text").innerHTML =
+        document.getElementById("value-slider").value + "%";
+    runStep1();
+};
+document
+    .getElementById("value-slider")
+    .addEventListener("change", onValueChange, false);
+document.getElementById("value-increment").addEventListener(
+    "click",
     () => {
-        document.getElementById("value-text").innerHTML =
-            document.getElementById("value-slider").value + "%";
-        runStep1();
+        if (
+            Number(document.getElementById("value-slider").value) <
+            Number(document.getElementById("value-slider").max)
+        ) {
+            document.getElementById("value-slider").value =
+                Number(document.getElementById("value-slider").value) + 1;
+            onValueChange();
+        }
+    },
+    false
+);
+document.getElementById("value-decrement").addEventListener(
+    "click",
+    () => {
+        if (
+            Number(document.getElementById("value-slider").value) >
+            Number(document.getElementById("value-slider").min)
+        ) {
+            document.getElementById("value-slider").value =
+                Number(document.getElementById("value-slider").value) - 1;
+            onValueChange();
+        }
     },
     false
 );
