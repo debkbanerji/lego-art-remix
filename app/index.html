@@ -444,32 +444,34 @@
               <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 3</h4>
               <small className="step-header-subtitle">Align to closest pixel from available colors</small>
+              <br />
+              <small className="step-header-subtitle"><em>Click 'Adjust Pixels' if you want to change individual pixel colors</em></small>
               <div id="step-3-accordion">
 
                 <div class="card accordion-card">
                   <div class="card-header" id="step-3-1-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-1-collapse" aria-expanded="false" aria-controls="step-3-1-collapse">
-                        Edit Image
+                        Adjust Pixels
                       </button>
                     </h5>
                   </div>
                   <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px">
-                        Override color:
+                        'Paintbrush' color:
                         <span id="paintbrush-controls">
                         </span>
                         <button class="btn btn-warning" type="button" id="clear-overrides-button">
-                          Clear Overrides
+                          Clear Paintbrush Overrides
                         </button>
                       </div>
                       <small>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a pixel to override its color</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click an overridden pixel to restore it</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color for overrides</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a pixel to override its color with the selected paintbrush color</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a painted pixel to restore it</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color as the paintbrush color</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; The currently hovered on pixel is also highlighted in the step 4 color canvas</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your override color to 'Available Studs' below for it to show up in step 4</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Studs' below for it to show up in step 4</p>
                       </small>
                       <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
                         Expand Picture
@@ -518,7 +520,6 @@
                           <small>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many studs of each color you have available to create the image
                             </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; By default, this is set to all available bricklink stud colors </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
                             </p>
                             <p style="margin-left: 4px; margin-bottom: 8px; font-weight: 550">&#9679; If you're working with an existing set,
