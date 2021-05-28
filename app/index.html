@@ -480,40 +480,15 @@
                   </div>
                 </div>
 
-                <div class="card accordion-card hide-on-step-3-expansion">
+                <div class="card accordion-card">
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
-                        Bleedthrough
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
-                    <div class="card-body accordion-card-body">
-                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                        <label>
-                          <input type="checkbox" id="use-bleedthrough-check" checked>
-                          Account for round stud bleedthrough
-                        </label>
-                        <small>
-                          <p style="margin-top: 2px">This setting accounts for the fact that pixels represented by round pieces
-                            appear slightly darker due to the black background. Disable it if you're using square pieces for pixels.
-                          </p>
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-3-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
                         Available Studs
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
                         <div style="margin-bottom: 20px">
@@ -565,6 +540,32 @@
                         </div>
                         <br>
                         <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="card accordion-card hide-on-step-3-expansion">
+                  <div class="card-header" id="step-3-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
+                        Bleedthrough
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <label>
+                          <input type="checkbox" id="use-bleedthrough-check" checked>
+                          Account for round stud bleedthrough
+                        </label>
+                        <small>
+                          <p style="margin-top: 2px">This setting accounts for the fact that pixels represented by round pieces
+                            appear slightly darker due to the black background. Disable it if you're using square pieces for pixels.
+                          </p>
+                        </small>
                       </div>
                     </div>
                   </div>
