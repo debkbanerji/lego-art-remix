@@ -197,6 +197,34 @@ STUD_MAPS = {
             "#330000": 76
         }
     },
+    world_map: {
+        name: "World Map (31203)",
+        officialName: "World Map (31203)",
+        sortedStuds: [
+            "#ffffff",
+            "#143044",
+            "#42c0fb",
+            "#008a80",
+            "#10cb31",
+            "#a6ca55",
+            "#dec69c",
+            "#f7ba30",
+            "#ff7e14",
+            "#f88379"
+        ],
+        studMap: {
+            "#ffffff": 3064,
+            "#143044": 393,
+            "#42c0fb": 1607,
+            "#008a80": 1879,
+            "#10cb31": 601,
+            "#a6ca55": 1060,
+            "#dec69c": 725,
+            "#f7ba30": 599,
+            "#ff7e14": 601,
+            "#f88379": 601
+        }
+    },
     // personalized_portrait_6000: {
     //     name: "Personalised Portrait - New 6002 Piece Version (40179)",
     //     officialName:
