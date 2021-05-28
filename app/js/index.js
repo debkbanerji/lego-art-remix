@@ -478,9 +478,35 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
 
 const colorDistanceFunctionsInfo = {
     euclideanRGB: {name: "Euclidean RGB", func: RGBPixelDistanceSquared},
+    euclideanLAB: {
+        name: "Euclidean LAB",
+        func: d3ColorDistanceWrapper(d3.differenceEuclideanLab)
+    },
+    // HCL and HSL don't always work
+    // euclideanHCL: {
+    //     name: "Euclidean HCL",
+    //     func: d3ColorDistanceWrapper(d3.differenceEuclideanHCL)
+    // },
+    // euclideanHSL: {
+    //     name: "Euclidean HSL",
+    //     func: d3ColorDistanceWrapper(d3.differenceEuclideanHSL)
+    // },
+    // CMC sometimes looks odd (symmetry issues?)
+    // cmc: {
+    //     name: "CMC",
+    //     func: d3ColorDistanceWrapper(d3.differenceCmc)
+    // },
+    cie94: {
+        name: "CIE94",
+        func: d3ColorDistanceWrapper(d3.differenceCie94)
+    },
     ciede2000: {
         name: "CIEDE2000",
         func: d3ColorDistanceWrapper(d3.differenceCiede2000)
+    },
+    din99o: {
+        name: "DIN99o",
+        func: d3ColorDistanceWrapper(d3.differenceDin99o)
     }
 };
 
