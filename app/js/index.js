@@ -459,8 +459,6 @@ TIEBREAK_TECHNIQUES.forEach(technique => {
         .appendChild(option);
 });
 
-console.log(d3);
-
 // Color distance stuff
 function d3ColorDistanceWrapper(d3DistanceFunction) {
     return (c1, c2) =>
@@ -479,6 +477,29 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
 }
 
 let colorDistanceFunction = RGBPixelDistanceSquared;
+
+const colorDistanceFunctionsInfo = {
+    euclideanRGB: {name: "Euclidean RGB", func: RGBPixelDistanceSquared},
+    ciede2000: {
+        name: "CIEDE2000",
+        func: d3ColorDistanceWrapper(d3.differenceCiede2000)
+    }
+};
+
+Object.keys(colorDistanceFunctionsInfo).forEach(key => {
+    const distanceFunction = colorDistanceFunctionsInfo[key];
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = distanceFunction.name;
+    option.value = key;
+    option.addEventListener("click", () => {
+        document.getElementById("distance-function-button").innerHTML =
+            distanceFunction.name;
+        colorDistanceFunction = distanceFunction.func;
+        runStep3();
+    });
+    document.getElementById("distance-function-options").appendChild(option);
+});
 
 Object.keys(STUD_MAPS)
     .filter(key => key !== "rgb")
