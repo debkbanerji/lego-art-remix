@@ -459,6 +459,27 @@ TIEBREAK_TECHNIQUES.forEach(technique => {
         .appendChild(option);
 });
 
+console.log(d3);
+
+// Color distance stuff
+function d3ColorDistanceWrapper(d3DistanceFunction) {
+    return (c1, c2) =>
+        d3DistanceFunction(
+            d3.color(rgbToHex(c1[0], c1[1], c1[2])),
+            d3.color(rgbToHex(c2[0], c2[1], c2[2]))
+        );
+}
+
+function RGBPixelDistanceSquared(pixel1, pixel2) {
+    let sum = 0;
+    for (let i = 0; i < 3; i++) {
+        sum += Math.abs(pixel1[i] - pixel2[i]);
+    }
+    return sum;
+}
+
+let colorDistanceFunction = RGBPixelDistanceSquared;
+
 Object.keys(STUD_MAPS)
     .filter(key => key !== "rgb")
     .forEach(studMap => {
@@ -950,7 +971,8 @@ function runStep3() {
             : selectedStudMap,
         document.getElementById("use-bleedthrough-check").checked
             ? getDarkenedImage(overridePixelArray)
-            : overridePixelArray
+            : overridePixelArray,
+        colorDistanceFunction
     );
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
@@ -1597,7 +1619,8 @@ function runStep4(asyncCallback) {
                 ? getDarkenedImage(overridePixelArray)
                 : overridePixelArray,
             selectedTiebreakTechnique,
-            targetResolution[0]
+            targetResolution[0],
+            colorDistanceFunction
         );
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);

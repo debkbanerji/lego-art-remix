@@ -55,14 +55,6 @@ function studMapToSortedColorList(studMap) {
     return result;
 }
 
-function RGBPixelDistanceSquared(pixel1, pixel2) {
-    let sum = 0;
-    for (let i = 0; i < 3; i++) {
-        sum += Math.abs(pixel1[i] - pixel2[i]);
-    }
-    return sum;
-}
-
 function getDiscreteDepthPixels(pixels, thresholds) {
     const result = [];
     for (let i = 0; i < pixels.length; i++) {
@@ -110,7 +102,12 @@ function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
 
 // aligns each pixel in the input array to the closes pixel in the studMap, and adds in overrides
 // returns the resulting pixels
-function alignPixelsToStudMap(inputPixels, studMap, overridePixels) {
+function alignPixelsToStudMap(
+    inputPixels,
+    studMap,
+    overridePixels,
+    colorDistanceFunction
+) {
     const alignedPixels = [...inputPixels]; // initialize this way just so we keep 4th pixel values
     // note that 4th pixel values are ignored anyway because it's too much effort to use them
     const anchorPixels = studMapToSortedColorList(studMap).map(pixel =>
@@ -129,11 +126,11 @@ function alignPixelsToStudMap(inputPixels, studMap, overridePixels) {
             anchorPixelIndex++
         ) {
             if (
-                RGBPixelDistanceSquared(
+                colorDistanceFunction(
                     pixelToAlign,
                     anchorPixels[anchorPixelIndex]
                 ) <
-                RGBPixelDistanceSquared(
+                colorDistanceFunction(
                     pixelToAlign,
                     anchorPixels[closestAnchorPixel]
                 )
@@ -204,7 +201,8 @@ function correctPixelsForAvailableStuds(
     originalPixels,
     overridePixelArray,
     tieResolutionMethod,
-    imageWidth
+    imageWidth,
+    colorDistanceFunction
 ) {
     availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
@@ -296,8 +294,7 @@ function correctPixelsForAvailableStuds(
             originalRGB,
             alignedRGB,
             alignmentDistSquared:
-                RGBPixelDistanceSquared(originalRGB, alignedRGB) +
-                tiebreakFactor
+                colorDistanceFunction(originalRGB, alignedRGB) + tiebreakFactor
         });
     }
 
@@ -345,7 +342,7 @@ function correctPixelsForAvailableStuds(
         let replacement = possibleReplacements[0];
         possibleReplacements.forEach(possibleReplacement => {
             if (
-                (RGBPixelDistanceSquared(
+                (colorDistanceFunction(
                     problematicPixel.originalRGB,
                     hexToRgb(possibleReplacement)
                 ) < problematicPixel.originalRGB,
