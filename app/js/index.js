@@ -476,8 +476,6 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
     return sum;
 }
 
-let colorDistanceFunction = RGBPixelDistanceSquared;
-
 const colorDistanceFunctionsInfo = {
     euclideanRGB: {name: "Euclidean RGB", func: RGBPixelDistanceSquared},
     ciede2000: {
@@ -485,6 +483,12 @@ const colorDistanceFunctionsInfo = {
         func: d3ColorDistanceWrapper(d3.differenceCiede2000)
     }
 };
+
+const defaultDistanceFunctionKey = "ciede2000";
+let colorDistanceFunction =
+    colorDistanceFunctionsInfo[defaultDistanceFunctionKey].func;
+document.getElementById("distance-function-button").innerHTML =
+    colorDistanceFunctionsInfo[defaultDistanceFunctionKey].name;
 
 Object.keys(colorDistanceFunctionsInfo).forEach(key => {
     const distanceFunction = colorDistanceFunctionsInfo[key];
