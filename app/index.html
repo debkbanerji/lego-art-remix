@@ -54,6 +54,13 @@
       margin-left: 2px;
     }
 
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      padding: 2px
+    }
+
     footer {
       bottom: 0;
       width: 100%;
@@ -1069,6 +1076,30 @@
         </div>
       </div>
     </div>
+    <div class="card card-body" style="padding-bottom: 10px; margin-top: 10px" id="metrics-card" hidden>
+      <div class="row">
+        <div class="col-sm">
+          <h5>
+            <a data-toggle="collapse" href="#metrics" aria-expanded="false" aria-controls="metrics">
+              Usage Metrics
+            </a>
+          </h5>
+          <div class="collapse" id="metrics">
+            <small>
+              <p style="margin-bottom: 4px">Note: No user data is stored, so this is just aggregated info based on simple increments</p>
+            </small>
+            <div>
+              <table id="input-image-count-table">
+                <tr>
+                  <th>Date</th>
+                  <th>Images created</th>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Add firebase to log performance -->
@@ -1094,6 +1125,7 @@
   <script src="js/stud-maps.js?version=v2021.5.28"></script>
   <script src="js/algo.js?version=v2021.5.28"></script>
   <script src="js/index.js?version=v2021.5.28"></script>
+  <script src="js/metrics.js"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

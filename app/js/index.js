@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.5.28";
+const VERSION_NUMBER = "v2021.5.30";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
