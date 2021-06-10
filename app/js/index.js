@@ -2287,7 +2287,7 @@ document
     .addEventListener("click", triggerDepthMapGeneration);
 
 const SERIALIZE_EDGE_LENGTH = 512;
-function handleInputImage(e, dontClearDepth) {
+function handleInputImage(e, dontClearDepth, dontLog) {
     const reader = new FileReader();
     reader.onload = function(event) {
         inputImage = new Image();
@@ -2338,15 +2338,17 @@ function handleInputImage(e, dontClearDepth) {
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
 
-        perfLoggingDatabase
-            .ref("input-image-count/total")
-            .transaction(incrementTransaction);
-        const loggingTimestamp = Math.floor(
-            (Date.now() - (Date.now() % 8.64e7)) / 1000
-        ); // 8.64e+7 = ms in day
-        perfLoggingDatabase
-            .ref("input-image-count/per-day/" + loggingTimestamp)
-            .transaction(incrementTransaction);
+        if (!dontLog) {
+            perfLoggingDatabase
+                .ref("input-image-count/total")
+                .transaction(incrementTransaction);
+            const loggingTimestamp = Math.floor(
+                (Date.now() - (Date.now() % 8.64e7)) / 1000
+            ); // 8.64e+7 = ms in day
+            perfLoggingDatabase
+                .ref("input-image-count/per-day/" + loggingTimestamp)
+                .transaction(incrementTransaction);
+        }
     };
     reader.readAsDataURL(e.target.files[0]);
 }
@@ -2428,12 +2430,21 @@ document.getElementById("run-example-input").addEventListener("click", () => {
                                     files: [colorImage]
                                 }
                             };
-                            handleInputImage(e, true);
+                            handleInputImage(e, true, true);
                         });
                 }, 50); // TODO: find better way to check that input is finished
             };
             depthReader.readAsDataURL(depthImage);
         });
+    perfLoggingDatabase
+        .ref("trigger-random-example-input-count/total")
+        .transaction(incrementTransaction);
+    const loggingTimestamp = Math.floor(
+        (Date.now() - (Date.now() % 8.64e7)) / 1000
+    ); // 8.64e+7 = ms in day
+    perfLoggingDatabase
+        .ref("trigger-random-example-input-count/per-day/" + loggingTimestamp)
+        .transaction(incrementTransaction);
 });
 
 const imageSelectorHidden = document.getElementById(
