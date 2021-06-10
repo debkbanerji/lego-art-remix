@@ -2379,6 +2379,7 @@ const EXAMPLES_BASE_URL = "examples/";
 const EXAMPLES = [{colorFile: "lenna.png", depthFile: "lenna-depth.png"}];
 document.getElementById("run-example-input").addEventListener("click", () => {
     disableInteraction();
+    document.getElementById("run-example-input-spinner").hidden = false;
     const example = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
 
     // load in depth first, then trigger step 1
