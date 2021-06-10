@@ -17,7 +17,6 @@ try {
                     .then(snapshot => {
                         const exampleVal = snapshot.val();
                         if (exampleVal != null) {
-                          console.log({inputVal,exampleVal})
                             document.getElementById(
                                 "total-generated-count"
                             ).innerHTML = `<br/>${Number(inputVal) +
