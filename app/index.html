@@ -7,14 +7,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
   <link href="favicon.png" rel="icon" type="image/x-icon" />
 
   <title>Lego Art Remix</title>
 
   <meta property="og:title" content="Lego Art Remix" />
-  <meta property="og:description" content="Easily remix Lego Art sets into custom mosaics using computer vision" />
+  <meta property="og:description" content="Turn Lego Art Sets into Custom Mosaics Using Computer Vision" />
   <meta property="og:image" content="https://lego-art-remix.debkbanerji.com/favicon.png" />
 
   <style>
@@ -61,6 +60,23 @@
       padding: 2px
     }
 
+    .progress-bar.indeterminate {
+      position: relative;
+      animation: progress-indeterminate 3s linear infinite;
+    }
+
+    @keyframes progress-indeterminate {
+      from {
+        left: -50%;
+        width: 50%;
+      }
+
+      to {
+        left: 100%;
+        width: 50%;
+      }
+    }
+
     footer {
       bottom: 0;
       width: 100%;
@@ -78,9 +94,9 @@
     <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
     <div style="margin-bottom: 10px; margin-left: 6px">
       <small>
-        Easily remix Lego Art sets into custom mosaics using computer vision
+        Turn Lego Art Sets into Custom Mosaics Using Computer Vision
       </small>
-      <div style="margin-bottom: 10px;">
+      <div style="margin-bottom: 5px;">
         <small>
           <span>Made with ♥ by Deb</span> &bull;
           <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
@@ -88,6 +104,15 @@
       </div>
     </div>
     <canvas id="background-image-cache-canvas" hidden></canvas>
+
+    <div>
+      <div class="progress" style="height:8px; margin-bottom: 2px" id="universal-loading-progress" hidden>
+        <div class="progress-bar indeterminate style=" height:10px"">
+        </div>
+      </div>
+      <div style="height:8px; margin-bottom: 2px" id="universal-loading-progress-complement">
+      </div>
+    </div>
 
     <div class="row" id="steps-row" hidden>
       <div id="step-1" class="col-6 col-md-3 hide-on-step-3-expansion">
@@ -827,6 +852,7 @@
               <div id="step-4-canvas-3d-upscaled" style="width: 100%">
               </div>
               <h4 style="margin-top: 4px; padding-bottom: 4px;">3D Preview</h4>
+              <small className="step-header-subtitle">If you can't see the 3d effect when hovering your mouse over the image, check the input from depth step 1</small>
               <div id="step-4-depth-accordion">
 
                 <div class="card accordion-card">
@@ -958,9 +984,17 @@
         <div class="col-sm">
           <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
-            <button class="btn btn-success" type="button" id="input-image-selector" style="margin-top: 8px; margin-right: 8px;">
-              Select Input Image
-            </button>
+            <div style="margin-top: 8px;">
+              <button class="btn btn-success" type="button" id="input-image-selector">
+                Select Input Image
+              </button>
+              <span id="run-example-input-container">
+                <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
+                <button class="btn btn-success" type="button" id="run-example-input">
+                  See an Example
+                </button>
+              </span>
+            </div>
           </span>
           <span class="btn-group" style="margin-top: 8px;">
             <button class="btn dropdown-toggle btn-info" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1122,16 +1156,16 @@
   <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
   <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
-  <script src="js/stud-maps.js?version=v2021.5.28"></script>
-  <script src="js/algo.js?version=v2021.5.28"></script>
-  <script src="js/index.js?version=v2021.5.28"></script>
+  <script src="js/stud-maps.js?version=v2021.6.9"></script>
+  <script src="js/algo.js?version=v2021.6.9"></script>
+  <script src="js/index.js?version=v2021.6.9"></script>
   <script src="js/metrics.js"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   <footer>
     <small class="footer">

@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.5.30";
+const VERSION_NUMBER = "v2021.6.9";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -9,11 +9,20 @@ try {
         .ref("/input-image-count/total")
         .once("value")
         .then(snapshot => {
-            const val = snapshot.val();
-            if (val != null) {
-                document.getElementById(
-                    "total-generated-count"
-                ).innerHTML = `<br/>${val} images created to date`;
+            const inputVal = snapshot.val();
+            if (inputVal != null) {
+                perfLoggingDatabase
+                    .ref("/trigger-random-example-input-count/total")
+                    .once("value")
+                    .then(snapshot => {
+                        const exampleVal = snapshot.val();
+                        if (exampleVal != null) {
+                            document.getElementById(
+                                "total-generated-count"
+                            ).innerHTML = `<br/>${Number(inputVal) +
+                                Number(exampleVal)} images created to date`;
+                        }
+                    });
             }
         });
 } catch (_e) {
@@ -68,6 +77,10 @@ function disableInteraction() {
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className + " disabled")
     );
+    document.getElementById("universal-loading-progress").hidden = false;
+    document.getElementById(
+        "universal-loading-progress-complement"
+    ).hidden = true;
 }
 
 function enableInteraction() {
@@ -77,8 +90,12 @@ function enableInteraction() {
         button => (button.disabled = false)
     );
     [...document.getElementsByClassName("nav-link")].forEach(
-        link => (link.className = link.className.replace(" disabled", ""))
+        link => (link.className = link.className.replace(/ disabled/g, ""))
     );
+    document.getElementById("universal-loading-progress").hidden = true;
+    document.getElementById(
+        "universal-loading-progress-complement"
+    ).hidden = false;
 }
 
 if (window.location.href.includes("forceUnsupportedDimensions")) {
@@ -2279,7 +2296,7 @@ document
     .addEventListener("click", triggerDepthMapGeneration);
 
 const SERIALIZE_EDGE_LENGTH = 512;
-function handleInputImage(e) {
+function handleInputImage(e, dontClearDepth, dontLog) {
     const reader = new FileReader();
     reader.onload = function(event) {
         inputImage = new Image();
@@ -2305,15 +2322,17 @@ function handleInputImage(e) {
             }
             drawPixelsOnCanvas(inputImagePixels, inputCanvas);
 
-            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
-            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
-            inputDepthCanvasContext.fillStyle = "black";
-            inputDepthCanvasContext.fillRect(
-                0,
-                0,
-                inputDepthCanvas.width,
-                inputDepthCanvas.height
-            );
+            if (!dontClearDepth) {
+                inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+                inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
+                inputDepthCanvasContext.fillStyle = "black";
+                inputDepthCanvasContext.fillRect(
+                    0,
+                    0,
+                    inputDepthCanvas.width,
+                    inputDepthCanvas.height
+                );
+            }
         };
         inputImage.src = event.target.result;
         document.getElementById("steps-row").hidden = false;
@@ -2323,19 +2342,22 @@ function handleInputImage(e) {
             .getElementById("image-input-new")
             .appendChild(document.getElementById("image-input"));
         document.getElementById("image-input-card").hidden = true;
+        document.getElementById("run-example-input-container").hidden = true;
         setTimeout(() => {
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
 
-        perfLoggingDatabase
-            .ref("input-image-count/total")
-            .transaction(incrementTransaction);
-        const loggingTimestamp = Math.floor(
-            (Date.now() - (Date.now() % 8.64e7)) / 1000
-        ); // 8.64e+7 = ms in day
-        perfLoggingDatabase
-            .ref("input-image-count/per-day/" + loggingTimestamp)
-            .transaction(incrementTransaction);
+        if (!dontLog) {
+            perfLoggingDatabase
+                .ref("input-image-count/total")
+                .transaction(incrementTransaction);
+            const loggingTimestamp = Math.floor(
+                (Date.now() - (Date.now() % 8.64e7)) / 1000
+            ); // 8.64e+7 = ms in day
+            perfLoggingDatabase
+                .ref("input-image-count/per-day/" + loggingTimestamp)
+                .transaction(incrementTransaction);
+        }
     };
     reader.readAsDataURL(e.target.files[0]);
 }
@@ -2372,10 +2394,72 @@ function handleInputDepthMapImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
+const EXAMPLES_BASE_URL = "examples/";
+const EXAMPLES = [{colorFile: "lenna.png", depthFile: "lenna-depth.png"}];
+document.getElementById("run-example-input").addEventListener("click", () => {
+    disableInteraction();
+    const example = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
+
+    // load in depth first, then trigger step 1
+    fetch(EXAMPLES_BASE_URL + example.depthFile)
+        .then(response => response.blob())
+        .then(depthImage => {
+            enableDepth();
+            // use an object url to get around possible bad browser caching race conditions
+            const depthImageURL = URL.createObjectURL(depthImage);
+            const depthReader = new FileReader();
+            depthReader.onload = function(event) {
+                inputDepthImage = new Image();
+                inputDepthImage.onload = function() {
+                    inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+                    inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
+                    inputDepthCanvasContext.drawImage(
+                        inputDepthImage,
+                        0,
+                        0,
+                        inputDepthImage.width,
+                        inputDepthImage.height,
+                        0,
+                        0,
+                        SERIALIZE_EDGE_LENGTH,
+                        SERIALIZE_EDGE_LENGTH
+                    );
+                };
+                inputDepthImage.src = depthImageURL;
+                setTimeout(() => {
+                    fetch(EXAMPLES_BASE_URL + example.colorFile)
+                        .then(response => response.blob())
+                        .then(colorImage => {
+                            // use an object url to get around possible bad browser caching race conditions
+                            const colorImageURL = URL.createObjectURL(
+                                colorImage
+                            );
+                            const e = {
+                                target: {
+                                    files: [colorImage]
+                                }
+                            };
+                            handleInputImage(e, true, true);
+                        });
+                }, 50); // TODO: find better way to check that input is finished
+            };
+            depthReader.readAsDataURL(depthImage);
+        });
+    perfLoggingDatabase
+        .ref("trigger-random-example-input-count/total")
+        .transaction(incrementTransaction);
+    const loggingTimestamp = Math.floor(
+        (Date.now() - (Date.now() % 8.64e7)) / 1000
+    ); // 8.64e+7 = ms in day
+    perfLoggingDatabase
+        .ref("trigger-random-example-input-count/per-day/" + loggingTimestamp)
+        .transaction(incrementTransaction);
+});
+
 const imageSelectorHidden = document.getElementById(
     "input-image-selector-hidden"
 );
-imageSelectorHidden.addEventListener("change", handleInputImage, false);
+imageSelectorHidden.addEventListener("change", e => handleInputImage(e), false);
 document
     .getElementById("input-image-selector")
     .addEventListener("click", () => {
