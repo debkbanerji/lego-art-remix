@@ -2372,6 +2372,24 @@ function handleInputDepthMapImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
+const EXAMPLES_BASE_URL = "examples/";
+const EXAMPLE_PNGS = ["lenna"];
+document.getElementById("run-example-input").addEventListener("click", () => {
+    fetch(
+        EXAMPLES_BASE_URL +
+            EXAMPLE_PNGS[Math.floor(Math.random() * EXAMPLE_PNGS.length)] +
+            ".png"
+    )
+        .then(response => response.blob())
+        .then(image => {
+            // TODO: Add depth
+            // enableDepth();
+            const imageURL = URL.createObjectURL(image);
+            const e = {target: {files: [image]}};
+            handleInputImage(e);
+        });
+});
+
 const imageSelectorHidden = document.getElementById(
     "input-image-selector-hidden"
 );
