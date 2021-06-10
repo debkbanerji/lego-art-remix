@@ -9,11 +9,21 @@ try {
         .ref("/input-image-count/total")
         .once("value")
         .then(snapshot => {
-            const val = snapshot.val();
-            if (val != null) {
-                document.getElementById(
-                    "total-generated-count"
-                ).innerHTML = `<br/>${val} images created to date`;
+            const inputVal = snapshot.val();
+            if (inputVal != null) {
+                perfLoggingDatabase
+                    .ref("/trigger-random-example-input-count/total")
+                    .once("value")
+                    .then(snapshot => {
+                        const exampleVal = snapshot.val();
+                        if (exampleVal != null) {
+                          console.log({inputVal,exampleVal})
+                            document.getElementById(
+                                "total-generated-count"
+                            ).innerHTML = `<br/>${Number(inputVal) +
+                                Number(exampleVal)} images created to date`;
+                        }
+                    });
             }
         });
 } catch (_e) {
