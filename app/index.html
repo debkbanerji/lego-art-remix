@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="undefined" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
   <link href="favicon.png" rel="icon" type="image/x-icon" />
 
   <title>Lego Art Remix</title>
@@ -60,6 +60,23 @@
       padding: 2px
     }
 
+    .progress-bar.indeterminate {
+      position: relative;
+      animation: progress-indeterminate 3s linear infinite;
+    }
+
+    @keyframes progress-indeterminate {
+      from {
+        left: -50%;
+        width: 50%;
+      }
+
+      to {
+        left: 100%;
+        width: 50%;
+      }
+    }
+
     footer {
       bottom: 0;
       width: 100%;
@@ -79,7 +96,7 @@
       <small>
         Easily remix Lego Art sets into custom mosaics using computer vision
       </small>
-      <div style="margin-bottom: 10px;">
+      <div style="margin-bottom: 5px;">
         <small>
           <span>Made with ♥ by Deb</span> &bull;
           <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
@@ -87,6 +104,15 @@
       </div>
     </div>
     <canvas id="background-image-cache-canvas" hidden></canvas>
+
+    <div>
+      <div class="progress" style="height:8px; margin-bottom: 2px" id="universal-loading-progress" hidden>
+        <div class="progress-bar indeterminate style=" height:10px"">
+        </div>
+      </div>
+      <div style="height:8px; margin-bottom: 2px" id="universal-loading-progress-complement">
+      </div>
+    </div>
 
     <div class="row" id="steps-row" hidden>
       <div id="step-1" class="col-6 col-md-3 hide-on-step-3-expansion">
@@ -965,7 +991,7 @@
               <span id="run-example-input-container">
                 <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
                 <button class="btn btn-success" type="button" id="run-example-input">
-                  Run an Example <span class="spinner-border spinner-border-sm" role="status" id="run-example-input-spinner" hidden></span>
+                  Run an Example
                 </button>
               </span>
             </div>
@@ -1139,7 +1165,7 @@
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="undefined" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   <footer>
     <small class="footer">

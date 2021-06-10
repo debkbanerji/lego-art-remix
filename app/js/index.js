@@ -68,6 +68,10 @@ function disableInteraction() {
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className + " disabled")
     );
+    document.getElementById("universal-loading-progress").hidden = false;
+    document.getElementById(
+        "universal-loading-progress-complement"
+    ).hidden = true;
 }
 
 function enableInteraction() {
@@ -79,6 +83,10 @@ function enableInteraction() {
     [...document.getElementsByClassName("nav-link")].forEach(
         link => (link.className = link.className.replace(/ disabled/g, ""))
     );
+    document.getElementById("universal-loading-progress").hidden = true;
+    document.getElementById(
+        "universal-loading-progress-complement"
+    ).hidden = false;
 }
 
 if (window.location.href.includes("forceUnsupportedDimensions")) {
@@ -2379,7 +2387,6 @@ const EXAMPLES_BASE_URL = "examples/";
 const EXAMPLES = [{colorFile: "lenna.png", depthFile: "lenna-depth.png"}];
 document.getElementById("run-example-input").addEventListener("click", () => {
     disableInteraction();
-    document.getElementById("run-example-input-spinner").hidden = false;
     const example = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
 
     // load in depth first, then trigger step 1
