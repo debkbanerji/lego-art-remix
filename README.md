@@ -1,5 +1,5 @@
 # Lego Art Remix
-Easily remix Lego Art sets into custom mosaics using computer vision
+Turn Lego Art Sets into Custom Mosaics Using Computer Vision
 
 You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego-art-remix.debkbanerji.com/)
 
