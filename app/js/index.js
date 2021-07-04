@@ -69,8 +69,10 @@ const interactionSelectors = [
 const customStudTableBody = document.getElementById("custom-stud-table-body");
 
 function disableInteraction() {
-    customStudTableBody.hidden = true;
     interactionSelectors.forEach(button => (button.disabled = true));
+    [...document.getElementsByTagName("input")].forEach(
+        button => (button.disabled = true)
+    );
     [...document.getElementsByClassName("btn")].forEach(
         button => (button.disabled = true)
     );
@@ -84,8 +86,10 @@ function disableInteraction() {
 }
 
 function enableInteraction() {
-    customStudTableBody.hidden = false;
     interactionSelectors.forEach(button => (button.disabled = false));
+    [...document.getElementsByTagName("input")].forEach(
+        button => (button.disabled = false)
+    );
     [...document.getElementsByClassName("btn")].forEach(
         button => (button.disabled = false)
     );
