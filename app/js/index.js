@@ -247,7 +247,7 @@ function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
     let availableStuds = 0;
     Array.from(customStudTableBody.children).forEach(stud => {
-        availableStuds += parseInt(stud.children[1].children[0].value);
+        availableStuds += parseInt(stud.children[1].children[0].children[0].value);
     });
     const missingStuds = Math.max(requiredStuds - availableStuds, 0);
     document.getElementById("required-studs").innerHTML = requiredStuds;
@@ -380,7 +380,7 @@ function populateCustomStudSelectors(studMap, shouldRunAfterPopulation) {
             "title",
             HEX_TO_COLOR_NAME[stud] || stud
         );
-        studRow.children[1].children[0].value = studMap.studMap[stud];
+        studRow.children[1].children[0].children[0].value = studMap.studMap[stud];
         customStudTableBody.appendChild(studRow);
     });
     if (shouldRunAfterPopulation) {
@@ -413,11 +413,11 @@ function mixInStudMap(studMap) {
                 "title",
                 HEX_TO_COLOR_NAME[stud] || stud
             );
-            newStudRow.children[1].children[0].value = studMap.studMap[stud];
+            newStudRow.children[1].children[0].children[0].value = studMap.studMap[stud];
             customStudTableBody.appendChild(newStudRow);
         } else {
-            existingRow.children[1].children[0].value = Math.min(
-                parseInt(existingRow.children[1].children[0].value) +
+            existingRow.children[1].children[0].children[0].value = Math.min(
+                parseInt(existingRow.children[1].children[0].children[0].value) +
                     studMap.studMap[stud],
                 99999
             );
@@ -626,7 +626,7 @@ function runCustomStudMap() {
             .map(shade => parseInt(shade));
         const studHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
         customSortedStuds.push(studHex);
-        const numStuds = parseInt(stud.children[1].children[0].value);
+        const numStuds = parseInt(stud.children[1].children[0].children[0].value);
         customStudMap[studHex] = (customStudMap[studHex] || 0) + numStuds;
     });
     if (customSortedStuds.length > 0) {
@@ -711,6 +711,7 @@ function getNewCustomStudRow() {
     studRow.appendChild(colorCell);
 
     const numberCell = document.createElement("td");
+    const numberCellChild = document.createElement("div");
     const numberInput = document.createElement("input");
     numberInput.style = "max-width: 80px";
     numberInput.type = "number";
@@ -721,9 +722,10 @@ function getNewCustomStudRow() {
         );
         runCustomStudMap();
     });
-    numberCell.style = "display: flex; flex-direction: horizontal; width: 100%";
-    numberCell.appendChild(numberInput);
-    numberCell.appendChild(removeButton);
+    numberCellChild.style = "display: flex; flex-direction: horizontal;";
+    numberCellChild.appendChild(numberInput);
+    numberCellChild.appendChild(removeButton);
+    numberCell.appendChild(numberCellChild);
     studRow.appendChild(numberCell);
     return studRow;
 }
