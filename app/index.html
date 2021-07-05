@@ -501,8 +501,8 @@
                   <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px">
-                        <div style="margin-bottom: 4px; display: flex; flex-direction: row;">
-                          'Paintbrush' color: &nbsp;
+                        <div style="margin-bottom: 4px; display: flex; flex-direction: row; align-items: center;">
+                          <span style="font-weight: 600">'Paintbrush' color: &nbsp;</span>
                           <span id="paintbrush-controls">
                           </span>
                         </div>
@@ -1151,7 +1151,7 @@
     function rgbToHex(r, g, b) {
         return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
-    
+
     const canvas = document.getElementById("background-image-cache-canvas");
     const ctx = canvas.getContext("2d");
 
