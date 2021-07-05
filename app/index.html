@@ -114,11 +114,11 @@
     <canvas id="background-image-cache-canvas" hidden></canvas>
 
     <div>
-      <div class="progress" style="height:8px; margin-bottom: 2px" id="universal-loading-progress" hidden>
+      <div class="progress" style="height:8px; margin-bottom: 2px" id="universal-loading-progress">
         <div class="progress-bar indeterminate style=" height:10px"">
         </div>
       </div>
-      <div style="height:8px; margin-bottom: 2px" id="universal-loading-progress-complement">
+      <div style="height:8px; margin-bottom: 2px" id="universal-loading-progress-complement" hidden>
       </div>
     </div>
 
@@ -995,19 +995,19 @@
           <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
             <div style="margin-top: 8px;">
-              <button class="btn btn-success" type="button" id="input-image-selector">
+              <button class="btn btn-success" type="button" id="input-image-selector" disabled>
                 Select Input Image
               </button>
               <span id="run-example-input-container">
                 <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
-                <button class="btn btn-success" type="button" id="run-example-input">
+                <button class="btn btn-success" type="button" id="run-example-input" disabled>
                   See an Example
                 </button>
               </span>
             </div>
           </span>
           <span class="btn-group" style="margin-top: 8px;">
-            <button class="btn dropdown-toggle btn-info" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn dropdown-toggle btn-info" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
               Input set
             </button>
             <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
@@ -1145,6 +1145,46 @@
       </div>
     </div>
   </div>
+
+  <script>
+    // add background generation code inline so it loads in before other logic
+    function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+    
+    const canvas = document.getElementById("background-image-cache-canvas");
+    const ctx = canvas.getContext("2d");
+
+    const CIRCLE_RADIUS = 10;
+    const WIDTH_COUNT = 40;
+    const HEIGHT_COUNT = 20;
+    const MIN_CIRCLE_BRIGHTNESS = 245;
+
+    canvas.width = CIRCLE_RADIUS * WIDTH_COUNT;
+    canvas.height = CIRCLE_RADIUS * HEIGHT_COUNT;
+
+    for (var i = 0; i < HEIGHT_COUNT; i++) {
+      for (var j = 0; j < WIDTH_COUNT; j++) {
+        ctx.beginPath();
+        ctx.arc(
+          CIRCLE_RADIUS + 2 * i * CIRCLE_RADIUS,
+          CIRCLE_RADIUS + 2 * j * CIRCLE_RADIUS,
+          CIRCLE_RADIUS,
+          0,
+          2 * Math.PI
+        );
+        const brightness =
+          MIN_CIRCLE_BRIGHTNESS +
+          Math.floor(Math.random() * (255 - MIN_CIRCLE_BRIGHTNESS));
+        ctx.fillStyle = rgbToHex(brightness, brightness, brightness);
+        ctx.fill();
+      }
+    }
+
+    const dataURL = canvas.toDataURL("image/png", 1.0);
+
+    document.body.style.backgroundImage = `url('${dataURL}')`;
+  </script>
 
   <!-- Add firebase to log performance -->
   <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
