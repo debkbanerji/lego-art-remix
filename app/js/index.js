@@ -701,7 +701,7 @@ function getNewCustomStudRow() {
 
     const removeButton = document.createElement("button");
     removeButton.className = "btn btn-danger";
-    removeButton.style = "padding: 2px";
+    removeButton.style = "padding: 2px; margin-left: 4px;";
     removeButton.innerHTML = "X";
     removeButton.addEventListener("click", () => {
         customStudTableBody.removeChild(studRow);
@@ -719,6 +719,7 @@ function getNewCustomStudRow() {
     numberInput.style = "max-width: 80px";
     numberInput.type = "number";
     numberInput.value = 10;
+    numberInput.className = "form-control form-control-sm";
     numberInput.addEventListener("change", v => {
         numberInput.value = Math.round(
             Math.min(Math.max(parseFloat(numberInput.value) || 0, 0), 99999)
