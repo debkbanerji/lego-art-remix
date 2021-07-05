@@ -683,7 +683,7 @@ function getColorSelectorDropdown() {
     });
 
     container.setAttribute("data-toggle", "tooltip");
-    container.setAttribute("data-placement", "top");
+    container.setAttribute("data-placement", "left");
     container.setAttribute("title", DEFAULT_COLOR_NAME);
     container.appendChild(button);
     container.appendChild(dropdown);
