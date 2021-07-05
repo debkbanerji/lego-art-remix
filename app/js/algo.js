@@ -342,11 +342,13 @@ function correctPixelsForAvailableStuds(
         let replacement = possibleReplacements[0];
         possibleReplacements.forEach(possibleReplacement => {
             if (
-                (colorDistanceFunction(
+                colorDistanceFunction(
                     problematicPixel.originalRGB,
                     hexToRgb(possibleReplacement)
-                ) < problematicPixel.originalRGB,
-                hexToRgb(replacement))
+                ) < colorDistanceFunction(
+                    problematicPixel.originalRGB,
+                    hexToRgb(replacement)
+                )
             ) {
                 replacement = possibleReplacement;
             }
