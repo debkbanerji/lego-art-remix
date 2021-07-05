@@ -650,7 +650,7 @@ function getColorSelectorDropdown() {
     const id = "color-selector" + uuidv4();
 
     const button = document.createElement("button");
-    button.className = "btn ";
+    button.className = "btn btn-light";
     button.type = "button";
     button.setAttribute("data-toggle", "dropdown");
     button.setAttribute("aria-haspopup", "true");
@@ -677,6 +677,8 @@ function getColorSelectorDropdown() {
             button.innerHTML = "";
             button.appendChild(getColorSquare(color.hex));
             container.setAttribute("title", color.name);
+            $('[data-toggle="tooltip"]').tooltip('dispose');
+            $('[data-toggle="tooltip"]').tooltip({title: color.name});
             runCustomStudMap();
         });
         dropdown.appendChild(option);
@@ -685,6 +687,7 @@ function getColorSelectorDropdown() {
     container.setAttribute("data-toggle", "tooltip");
     container.setAttribute("data-placement", "left");
     container.setAttribute("title", DEFAULT_COLOR_NAME);
+    setTimeout(() => $('[data-toggle="tooltip"]').tooltip(), 10);
     container.appendChild(button);
     container.appendChild(dropdown);
     return container;
