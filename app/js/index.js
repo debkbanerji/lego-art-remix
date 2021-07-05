@@ -646,7 +646,7 @@ function getColorSquare(hex) {
 }
 
 function getColorSelectorDropdown() {
-    const container = document.createElement("a");
+    const container = document.createElement("div");
     const id = "color-selector" + uuidv4();
 
     const button = document.createElement("button");
