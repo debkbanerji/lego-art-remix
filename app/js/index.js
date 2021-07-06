@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.7.4";
+const VERSION_NUMBER = "v2021.7.5";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 // TODO: Display these values at the top of the page if they are large enough
@@ -678,7 +678,7 @@ function getColorSelectorDropdown() {
             button.appendChild(getColorSquare(color.hex));
             container.setAttribute("title", color.name);
             $('[data-toggle="tooltip"]').tooltip('dispose');
-            $('[data-toggle="tooltip"]').tooltip({title: color.name});
+            $('[data-toggle="tooltip"]').tooltip();
             runCustomStudMap();
         });
         dropdown.appendChild(option);
@@ -1306,6 +1306,8 @@ function onCherryPickColor(row, col) {
     document
         .getElementById("paintbrush-controls")
         .children[0].setAttribute("title", hexName);
+    $('[data-toggle="tooltip"]').tooltip('dispose');
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 step3CanvasUpscaled.addEventListener(
