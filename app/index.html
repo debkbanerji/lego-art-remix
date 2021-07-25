@@ -1149,7 +1149,7 @@
   <script>
     // add background generation code inline so it loads in before other logic
     function rgbToHex(r, g, b) {
-        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
 
     const canvas = document.getElementById("background-image-cache-canvas");

@@ -192,6 +192,7 @@ window.addEventListener("resize", () => {
 });
 
 let depthEnabled = false;
+
 function enableDepth() {
     [...document.getElementsByClassName("3d-selector-tabs")].forEach(
         tabsList => (tabsList.hidden = false)
@@ -345,7 +346,10 @@ try {
         DEFAULT_COLOR = availableColors[0];
         DEFAULT_COLOR_NAME = availableColors[0];
         ALL_VALID_BRICKLINK_COLORS = availableColors.map(color => {
-            return {name: color, hex: color};
+            return {
+                name: color,
+                hex: color
+            };
         });
         ALL_BRICKLINK_SOLID_COLORS = ALL_VALID_BRICKLINK_COLORS;
         const studMap = {};
@@ -418,7 +422,7 @@ function mixInStudMap(studMap) {
         } else {
             existingRow.children[1].children[0].children[0].value = Math.min(
                 parseInt(existingRow.children[1].children[0].children[0].value) +
-                    studMap.studMap[stud],
+                studMap.studMap[stud],
                 99999
             );
         }
@@ -450,19 +454,54 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
 });
 
 let selectedTiebreakTechnique = "none";
-const TIEBREAK_TECHNIQUES = [
-    {name: "None", value: "none"},
-    {name: "Random", value: "random"},
-    {name: "Mod 2", value: "mod2"},
-    {name: "Mod 3", value: "mod3"},
-    {name: "Mod 4", value: "mod4"},
-    {name: "Mod 5", value: "mod5"},
-    {name: "Noisy Mod 2", value: "noisymod2"},
-    {name: "Noisy Mod 3", value: "noisymod3"},
-    {name: "Noisy Mod 4", value: "noisymod4"},
-    {name: "Noisy Mod 5", value: "noisymod5"},
-    {name: "Cascading Mod", value: "cascadingmod"},
-    {name: "Cascading Noisy Mod", value: "cascadingnoisymod"}
+const TIEBREAK_TECHNIQUES = [{
+        name: "None",
+        value: "none"
+    },
+    {
+        name: "Random",
+        value: "random"
+    },
+    {
+        name: "Mod 2",
+        value: "mod2"
+    },
+    {
+        name: "Mod 3",
+        value: "mod3"
+    },
+    {
+        name: "Mod 4",
+        value: "mod4"
+    },
+    {
+        name: "Mod 5",
+        value: "mod5"
+    },
+    {
+        name: "Noisy Mod 2",
+        value: "noisymod2"
+    },
+    {
+        name: "Noisy Mod 3",
+        value: "noisymod3"
+    },
+    {
+        name: "Noisy Mod 4",
+        value: "noisymod4"
+    },
+    {
+        name: "Noisy Mod 5",
+        value: "noisymod5"
+    },
+    {
+        name: "Cascading Mod",
+        value: "cascadingmod"
+    },
+    {
+        name: "Cascading Noisy Mod",
+        value: "cascadingnoisymod"
+    }
 ];
 TIEBREAK_TECHNIQUES.forEach(technique => {
     const option = document.createElement("a");
@@ -471,7 +510,8 @@ TIEBREAK_TECHNIQUES.forEach(technique => {
     option.value = technique.value;
     option.addEventListener("click", () => {
         document.getElementById("color-ties-resolution-button").innerHTML =
-            /*"Color Tie Resolution: " +*/ technique.name;
+            /*"Color Tie Resolution: " +*/
+            technique.name;
         selectedTiebreakTechnique = technique.value;
         runStep1();
     });
@@ -498,7 +538,10 @@ function RGBPixelDistanceSquared(pixel1, pixel2) {
 }
 
 const colorDistanceFunctionsInfo = {
-    euclideanRGB: {name: "Euclidean RGB", func: RGBPixelDistanceSquared},
+    euclideanRGB: {
+        name: "Euclidean RGB",
+        func: RGBPixelDistanceSquared
+    },
     euclideanLAB: {
         name: "Euclidean LAB",
         func: d3ColorDistanceWrapper(d3.differenceEuclideanLab)
@@ -939,8 +982,7 @@ function runStep1() {
                         studMap: selectedStudMap,
                         sortedStuds: Object.keys(selectedStudMap)
                     })
-                ],
-                {
+                ], {
                     type: "text/plain"
                 }
             )
@@ -1009,7 +1051,7 @@ function runStep2() {
         inputDepthPixelArray,
         [
             ...document.getElementById("depth-threshold-sliders-containers")
-                .children
+            .children
         ].map(slider => Number(slider.value))
     );
     drawPixelsOnCanvas(discreteDepthPixels, step2DepthCanvas);
@@ -1044,12 +1086,12 @@ function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
     const alignedPixelArray = alignPixelsToStudMap(
         fiteredPixelArray,
-        document.getElementById("use-bleedthrough-check").checked
-            ? getDarkenedStudMap(selectedStudMap)
-            : selectedStudMap,
-        document.getElementById("use-bleedthrough-check").checked
-            ? getDarkenedImage(overridePixelArray)
-            : overridePixelArray,
+        document.getElementById("use-bleedthrough-check").checked ?
+        getDarkenedStudMap(selectedStudMap) :
+        selectedStudMap,
+        document.getElementById("use-bleedthrough-check").checked ?
+        getDarkenedImage(overridePixelArray) :
+        overridePixelArray,
         colorDistanceFunction
     );
     step3Canvas.width = targetResolution[0];
@@ -1075,14 +1117,14 @@ function runStep3() {
         }
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
-            document.getElementById("use-bleedthrough-check").checked
-                ? revertDarkenedImage(
-                      alignedPixelArray,
-                      getDarkenedStudsToStuds(
-                          ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
-                      )
-                  )
-                : alignedPixelArray,
+            document.getElementById("use-bleedthrough-check").checked ?
+            revertDarkenedImage(
+                alignedPixelArray,
+                getDarkenedStudsToStuds(
+                    ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                )
+            ) :
+            alignedPixelArray,
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled
@@ -1156,17 +1198,17 @@ function onPixelOverride(row, col, colorHex) {
     if (isStep3ViewExpanded) {
         // do stuff directly on the canvas for perf
         const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
-        const pixelHex = isAlreadySet
-            ? rgbToHex(
-                  step3PixelArray[pixelIndex],
-                  step3PixelArray[pixelIndex + 1],
-                  step3PixelArray[pixelIndex + 2]
-              )
-            : rgbToHex(
-                  overridePixelArray[pixelIndex],
-                  overridePixelArray[pixelIndex + 1],
-                  overridePixelArray[pixelIndex + 2]
-              );
+        const pixelHex = isAlreadySet ?
+            rgbToHex(
+                step3PixelArray[pixelIndex],
+                step3PixelArray[pixelIndex + 1],
+                step3PixelArray[pixelIndex + 2]
+            ) :
+            rgbToHex(
+                overridePixelArray[pixelIndex],
+                overridePixelArray[pixelIndex + 1],
+                overridePixelArray[pixelIndex + 2]
+            );
         const radius = SCALING_FACTOR / 2;
         const i = pixelIndex / 4;
         const ctx = step3CanvasUpscaledContext;
@@ -1189,6 +1231,7 @@ function onPixelOverride(row, col, colorHex) {
 function onDepthOverrideDecrease(row, col) {
     onDepthOverrideChange(row, col, false);
 }
+
 function onDepthOverrideIncrease(row, col) {
     onDepthOverrideChange(row, col, true);
 }
@@ -1196,17 +1239,17 @@ function onDepthOverrideIncrease(row, col) {
 function onDepthOverrideChange(row, col, isIncrease) {
     if (
         !document
-            .getElementById("step-3-depth-1-collapse")
-            .className.includes("show")
+        .getElementById("step-3-depth-1-collapse")
+        .className.includes("show")
     ) {
         return; // only override if the refine depth section is expanded
     }
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const step2DepthImagePixels = getPixelArrayFromCanvas(step2DepthCanvas);
     const currentVal =
-        overrideDepthPixelArray[pixelIndex] != null
-            ? overrideDepthPixelArray[pixelIndex]
-            : step2DepthImagePixels[pixelIndex];
+        overrideDepthPixelArray[pixelIndex] != null ?
+        overrideDepthPixelArray[pixelIndex] :
+        step2DepthImagePixels[pixelIndex];
 
     let newVal = currentVal;
     if (isIncrease) {
@@ -1231,9 +1274,9 @@ function onDepthOverrideChange(row, col, isIncrease) {
         const upscaledPixelDisplayVal = Math.round(
             Math.min(
                 (255 * (pixelDisplayVal + 1)) /
-                    Number(
-                        document.getElementById("num-depth-levels-slider").value
-                    ),
+                Number(
+                    document.getElementById("num-depth-levels-slider").value
+                ),
                 255
             )
         );
@@ -1277,26 +1320,26 @@ function onCherryPickColor(row, col) {
         overridePixelArray[pixelIndex + 2] !== null;
 
     const step3PixelArray = document.getElementById("use-bleedthrough-check")
-        .checked
-        ? revertDarkenedImage(
-              getPixelArrayFromCanvas(step3Canvas),
-              getDarkenedStudsToStuds(
-                  ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
-              )
-          )
-        : getPixelArrayFromCanvas(step3Canvas);
+        .checked ?
+        revertDarkenedImage(
+            getPixelArrayFromCanvas(step3Canvas),
+            getDarkenedStudsToStuds(
+                ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+            )
+        ) :
+        getPixelArrayFromCanvas(step3Canvas);
 
-    const colorHex = isOverridden
-        ? rgbToHex(
-              overridePixelArray[pixelIndex],
-              overridePixelArray[pixelIndex + 1],
-              overridePixelArray[pixelIndex + 2]
-          )
-        : rgbToHex(
-              step3PixelArray[pixelIndex],
-              step3PixelArray[pixelIndex + 1],
-              step3PixelArray[pixelIndex + 2]
-          );
+    const colorHex = isOverridden ?
+        rgbToHex(
+            overridePixelArray[pixelIndex],
+            overridePixelArray[pixelIndex + 1],
+            overridePixelArray[pixelIndex + 2]
+        ) :
+        rgbToHex(
+            step3PixelArray[pixelIndex],
+            step3PixelArray[pixelIndex + 1],
+            step3PixelArray[pixelIndex + 2]
+        );
     document.getElementById(
         "paintbrush-controls"
     ).children[0].children[0].children[0].style.backgroundColor = colorHex;
@@ -1376,11 +1419,11 @@ step3DepthCanvasUpscaled.addEventListener(
             step3DepthCanvasUpscaled.offsetWidth / targetResolution[0] / 2;
         const row = Math.round(
             (rawRow * targetResolution[1]) /
-                step3DepthCanvasUpscaled.offsetHeight
+            step3DepthCanvasUpscaled.offsetHeight
         );
         const col = Math.round(
             (rawCol * targetResolution[0]) /
-                step3DepthCanvasUpscaled.offsetWidth
+            step3DepthCanvasUpscaled.offsetWidth
         );
         onDepthOverrideDecrease(row, col);
     },
@@ -1400,11 +1443,11 @@ step3DepthCanvasUpscaled.addEventListener(
             step3DepthCanvasUpscaled.offsetWidth / targetResolution[0] / 2;
         const row = Math.round(
             (rawRow * targetResolution[1]) /
-                step3DepthCanvasUpscaled.offsetHeight
+            step3DepthCanvasUpscaled.offsetHeight
         );
         const col = Math.round(
             (rawCol * targetResolution[0]) /
-                step3DepthCanvasUpscaled.offsetWidth
+            step3DepthCanvasUpscaled.offsetWidth
         );
         onDepthOverrideIncrease(row, col);
     },
@@ -1415,13 +1458,13 @@ let step3CanvasHoveredPixel = null;
 [step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
     toHoverCanvas.addEventListener("mousemove", function(event) {
         if (
-            toHoverCanvas == step3CanvasUpscaled
-                ? !document
-                      .getElementById("step-3-1-collapse")
-                      .className.includes("show")
-                : !document
-                      .getElementById("step-3-depth-1-collapse")
-                      .className.includes("show")
+            toHoverCanvas == step3CanvasUpscaled ?
+            !document
+            .getElementById("step-3-1-collapse")
+            .className.includes("show") :
+            !document
+            .getElementById("step-3-depth-1-collapse")
+            .className.includes("show")
         ) {
             return; // only highlight if the refine section is expanded
         }
@@ -1453,21 +1496,21 @@ let step3CanvasHoveredPixel = null;
             [
                 pixelRow * SCALING_FACTOR + highlightCircleRadius,
                 pixelRow * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
+                circleCircumferance -
+                highlightCircleRadius
             ].forEach(row => {
                 [
                     pixelCol * SCALING_FACTOR + highlightCircleRadius,
                     pixelCol * SCALING_FACTOR +
-                        circleCircumferance -
-                        highlightCircleRadius
+                    circleCircumferance -
+                    highlightCircleRadius
                 ].forEach(col => {
                     ctx.beginPath();
                     ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
                     ctx.fillStyle =
-                        toHoverCanvas == step3CanvasUpscaled
-                            ? "#FFFFFF"
-                            : "#E83E8C";
+                        toHoverCanvas == step3CanvasUpscaled ?
+                        "#FFFFFF" :
+                        "#E83E8C";
                     ctx.fill();
 
                     step4CanvasUpscaledContext.beginPath();
@@ -1486,17 +1529,17 @@ let step3CanvasHoveredPixel = null;
             if (step3CanvasHoveredPixel != null) {
                 [
                     step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                        highlightCircleRadius,
+                    highlightCircleRadius,
                     step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                        circleCircumferance -
-                        highlightCircleRadius
+                    circleCircumferance -
+                    highlightCircleRadius
                 ].forEach(row => {
                     [
                         step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                            highlightCircleRadius,
+                        highlightCircleRadius,
                         step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                            circleCircumferance -
-                            highlightCircleRadius
+                        circleCircumferance -
+                        highlightCircleRadius
                     ].forEach(col => {
                         ctx.beginPath();
                         ctx.arc(
@@ -1534,17 +1577,17 @@ let step3CanvasHoveredPixel = null;
         if (step3CanvasHoveredPixel != null) {
             [
                 step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    highlightCircleRadius,
+                highlightCircleRadius,
                 step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
+                circleCircumferance -
+                highlightCircleRadius
             ].forEach(row => {
                 [
                     step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        highlightCircleRadius,
+                    highlightCircleRadius,
                     step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        circleCircumferance -
-                        highlightCircleRadius
+                    circleCircumferance -
+                    highlightCircleRadius
                 ].forEach(col => {
                     ctx.beginPath();
                     ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
@@ -1569,6 +1612,7 @@ let step3CanvasHoveredPixel = null;
 });
 
 window.depthPreviewOptions = {};
+
 function create3dPreview() {
     const app = new PIXI.Application({
         resizeTo: step4Canvas3dUpscaled,
@@ -1619,7 +1663,11 @@ function depthPreviewResize() {
         // for perf
         document.getElementById("step-4-depth-tab").className.includes("active")
     ) {
-        const {app, img, depthMap} = window.depthPreviewOptions;
+        const {
+            app,
+            img,
+            depthMap
+        } = window.depthPreviewOptions;
         const targetWidth = step4Canvas3dUpscaled.clientWidth;
         const targetHeight =
             (targetWidth * targetResolution[1]) / targetResolution[0];
@@ -1639,7 +1687,10 @@ step4Canvas3dUpscaled.addEventListener("mousemove", function(e) {
         // for perf
         document.getElementById("step-4-depth-tab").className.includes("active")
     ) {
-        const {img, displacementFilter} = window.depthPreviewOptions;
+        const {
+            img,
+            displacementFilter
+        } = window.depthPreviewOptions;
         const displacementScale = Number(
             document.getElementById("3d-effect-intensity").value
         );
@@ -1657,7 +1708,9 @@ step4Canvas3dUpscaled.addEventListener("mouseleave", function(e) {
         // for perf
         document.getElementById("step-4-depth-tab").className.includes("active")
     ) {
-        const {displacementFilter} = window.depthPreviewOptions;
+        const {
+            displacementFilter
+        } = window.depthPreviewOptions;
         displacementFilter.scale.x = 0;
         displacementFilter.scale.y = 0;
     }
@@ -1691,13 +1744,13 @@ function runStep4(asyncCallback) {
 
         const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
             step3PixelArray,
-            document.getElementById("use-bleedthrough-check").checked
-                ? getDarkenedStudMap(selectedStudMap)
-                : selectedStudMap,
+            document.getElementById("use-bleedthrough-check").checked ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
             step2PixelArray,
-            document.getElementById("use-bleedthrough-check").checked
-                ? getDarkenedImage(overridePixelArray)
-                : overridePixelArray,
+            document.getElementById("use-bleedthrough-check").checked ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
             selectedTiebreakTechnique,
             targetResolution[0],
             colorDistanceFunction
@@ -1707,34 +1760,34 @@ function runStep4(asyncCallback) {
         setTimeout(async () => {
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked
-                    ? revertDarkenedImage(
-                          availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(
-                              ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
-                          )
-                      )
-                    : availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked ?
+                revertDarkenedImage(
+                    availabilityCorrectedPixelArray,
+                    getDarkenedStudsToStuds(
+                        ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                    )
+                ) :
+                availabilityCorrectedPixelArray,
                 bricklinkCacheCanvas
             );
 
             drawStudImageOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked
-                    ? revertDarkenedImage(
-                          availabilityCorrectedPixelArray,
-                          getDarkenedStudsToStuds(
-                              ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
-                          )
-                      )
-                    : availabilityCorrectedPixelArray,
+                document.getElementById("use-bleedthrough-check").checked ?
+                revertDarkenedImage(
+                    availabilityCorrectedPixelArray,
+                    getDarkenedStudsToStuds(
+                        ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                    )
+                ) :
+                availabilityCorrectedPixelArray,
                 targetResolution[0],
                 SCALING_FACTOR,
                 step4CanvasUpscaled
             );
             if (
                 document
-                    .getElementById("step-4-depth-tab")
-                    .className.includes("active")
+                .getElementById("step-4-depth-tab")
+                .className.includes("active")
             ) {
                 setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
             }
@@ -1809,14 +1862,14 @@ async function generateInstructions() {
         ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
         const resultImage = document.getElementById("use-bleedthrough-check")
-            .checked
-            ? revertDarkenedImage(
-                  step4PixelArray,
-                  getDarkenedStudsToStuds(
-                      ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
-                  )
-              )
-            : step4PixelArray;
+            .checked ?
+            revertDarkenedImage(
+                step4PixelArray,
+                getDarkenedStudsToStuds(
+                    ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                )
+            ) :
+            step4PixelArray;
 
         const titlePageCanvas = document.createElement("canvas");
         instructionsCanvasContainer.appendChild(titlePageCanvas);
@@ -1839,8 +1892,7 @@ async function generateInstructions() {
         const imgData = titlePageCanvas.toDataURL("image/png", 1.0);
 
         let pdf = new jsPDF({
-            orientation:
-                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            orientation: titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
             unit: "mm",
             format: [titlePageCanvas.width, titlePageCanvas.height]
         });
@@ -1875,10 +1927,9 @@ async function generateInstructions() {
                 pdf.save(`Lego-Art-Remix-Instructions-Part-${numParts}.pdf`);
                 numParts++;
                 pdf = new jsPDF({
-                    orientation:
-                        titlePageCanvas.width < titlePageCanvas.height
-                            ? "p"
-                            : "l",
+                    orientation: titlePageCanvas.width < titlePageCanvas.height ?
+                        "p" :
+                        "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
@@ -1923,15 +1974,15 @@ async function generateInstructions() {
                 0,
                 pdfWidth,
                 (pdfWidth * instructionPageCanvas.height) /
-                    instructionPageCanvas.width
+                instructionPageCanvas.width
             );
         }
 
         addWaterMark(pdf, isHighQuality);
         pdf.save(
-            numParts > 1
-                ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
-                : "Lego-Art-Remix-Instructions.pdf"
+            numParts > 1 ?
+            `Lego-Art-Remix-Instructions-Part-${numParts}.pdf` :
+            "Lego-Art-Remix-Instructions.pdf"
         );
         document.getElementById("pdf-progress-container").hidden = true;
         document.getElementById("download-instructions-button").hidden = false;
@@ -1951,8 +2002,8 @@ async function generateInstructions() {
 
 function getUsedPlateMatrices(depthPixelArray) {
     const availableParts = [
-        ...document.getElementById("depth-plates-container").children
-    ]
+            ...document.getElementById("depth-plates-container").children
+        ]
         .map(div => div.children[0])
         .map(label => label.children[0])
         .filter(input => input.checked)
@@ -1995,8 +2046,7 @@ function getUsedPlateMatrices(depthPixelArray) {
                 Number(
                     document.getElementById("num-depth-levels-slider").value
                 ) -
-                    1;
-                depthLevel++
+                1; depthLevel++
             ) {
                 perDepthLevelMatrices.push(
                     getRequiredPartMatrixFromDepthMatrix(
@@ -2051,8 +2101,7 @@ async function generateDepthInstructions() {
         const imgData = titlePageCanvas.toDataURL(`image_title/jpeg`, 1.0);
 
         let pdf = new jsPDF({
-            orientation:
-                titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
+            orientation: titlePageCanvas.width < titlePageCanvas.height ? "p" : "l",
             unit: "mm",
             format: [titlePageCanvas.width, titlePageCanvas.height]
         });
@@ -2080,10 +2129,9 @@ async function generateDepthInstructions() {
                     numParts++;
                 }
                 pdf = new jsPDF({
-                    orientation:
-                        titlePageCanvas.width < titlePageCanvas.height
-                            ? "p"
-                            : "l",
+                    orientation: titlePageCanvas.width < titlePageCanvas.height ?
+                        "p" :
+                        "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
@@ -2126,9 +2174,9 @@ async function generateDepthInstructions() {
 
         addWaterMark(pdf, isHighQuality);
         pdf.save(
-            numParts > 1
-                ? `Lego-Art-Remix-Instructions-Part-${numParts}.pdf`
-                : "Lego-Art-Remix-Instructions.pdf"
+            numParts > 1 ?
+            `Lego-Art-Remix-Instructions-Part-${numParts}.pdf` :
+            "Lego-Art-Remix-Instructions.pdf"
         );
         document.getElementById("depth-pdf-progress-container").hidden = true;
         document.getElementById(
@@ -2162,7 +2210,7 @@ document
         perfLoggingDatabase
             .ref(
                 "examples-click-count/hogwarts-crest-instructions/per-day/" +
-                    loggingTimestamp
+                loggingTimestamp
             )
             .transaction(incrementTransaction);
     });
@@ -2179,7 +2227,7 @@ document
         perfLoggingDatabase
             .ref(
                 "examples-click-count/31201-lego-website-link/per-day/" +
-                    loggingTimestamp
+                loggingTimestamp
             )
             .transaction(incrementTransaction);
     });
@@ -2263,10 +2311,15 @@ function triggerDepthMapGeneration() {
     );
     setTimeout(() => {
         const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
-        worker.postMessage({inputPixelArray});
+        worker.postMessage({
+            inputPixelArray
+        });
 
         worker.addEventListener("message", e => {
-            const {result, loadingMessage} = e.data;
+            const {
+                result,
+                loadingMessage
+            } = e.data;
             if (result != null) {
                 webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
                 webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
@@ -2308,6 +2361,7 @@ document
     .addEventListener("click", triggerDepthMapGeneration);
 
 const SERIALIZE_EDGE_LENGTH = 512;
+
 function handleInputImage(e, dontClearDepth, dontLog) {
     const reader = new FileReader();
     reader.onload = function(event) {
@@ -2407,7 +2461,10 @@ function handleInputDepthMapImage(e) {
 }
 
 const EXAMPLES_BASE_URL = "examples/";
-const EXAMPLES = [{colorFile: "lenna.png", depthFile: "lenna-depth.png"}];
+const EXAMPLES = [{
+    colorFile: "lenna.png",
+    depthFile: "lenna-depth.png"
+}];
 document.getElementById("run-example-input").addEventListener("click", () => {
     disableInteraction();
     const example = EXAMPLES[Math.floor(Math.random() * EXAMPLES.length)];
