@@ -774,6 +774,28 @@ function getNewCustomStudRow() {
     numberCellChild.appendChild(removeButton);
     numberCell.appendChild(numberCellChild);
     studRow.appendChild(numberCell);
+
+    const priceCell = document.createElement("td");
+    const priceCellChild = document.createElement("div");
+    const priceInput = document.createElement("input");
+    priceInput.style = "max-width: 80px";
+    priceInput.type = "number";
+    const GRANULARITY = 0.001
+    priceInput.value = 0.05;
+    priceInput.className = "form-control form-control-sm";
+    priceInput.step = GRANULARITY
+    priceInput.addEventListener("change", v => {
+        priceInput.value =
+            Math.min(Math.max(
+                Math.round((parseFloat(priceInput.value) / GRANULARITY || 0)) * GRANULARITY,
+                0), 0.5);
+        runCustomStudMap();
+    });
+    priceCellChild.style = "display: flex; flex-direction: horizontal;";
+    priceCellChild.appendChild(priceInput);
+    priceCell.appendChild(priceCellChild);
+    studRow.appendChild(priceCell);
+
     return studRow;
 }
 
@@ -1928,8 +1950,7 @@ async function generateInstructions() {
                 numParts++;
                 pdf = new jsPDF({
                     orientation: titlePageCanvas.width < titlePageCanvas.height ?
-                        "p" :
-                        "l",
+                        "p" : "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
@@ -2130,8 +2151,7 @@ async function generateDepthInstructions() {
                 }
                 pdf = new jsPDF({
                     orientation: titlePageCanvas.width < titlePageCanvas.height ?
-                        "p" :
-                        "l",
+                        "p" : "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
