@@ -13,7 +13,7 @@
   <title>Lego Art Remix</title>
 
   <meta property="og:title" content="Lego Art Remix" />
-  <meta property="og:description" content="Turn Lego Art Sets into Custom Mosaics Using Computer Vision" />
+  <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
   <meta property="og:image" content="https://lego-art-remix.debkbanerji.com/favicon.png" />
 
   <style>
@@ -102,7 +102,7 @@
     <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
     <div style="margin-bottom: 10px; margin-left: 6px">
       <small>
-        Turn Lego Art Sets into Custom Mosaics Using Computer Vision
+        The Intelligent, Easy to Use Lego Mosaic Maker
       </small>
       <div style="margin-bottom: 5px;">
         <small>
@@ -515,7 +515,7 @@
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a painted pixel to restore it</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color as the paintbrush color</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; The currently hovered on pixel is also highlighted in the step 4 color canvas</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Studs' below for it to show up in step 4</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4</p>
                       </small>
                       <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
                         Expand Picture
@@ -559,7 +559,7 @@
                   <div class="card-header" id="step-3-3-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
-                        Available Studs
+                        Available Colors
                       </button>
                     </h5>
                   </div>
@@ -1017,13 +1017,14 @@
           <canvas id="input-depth-canvas" hidden></canvas>
           <div style="margin-left: 4px; margin-top: 10px">
             <small>
+              <p style="margin-bottom: 4px">If you select an input set, Lego Art Remix will intelligently limit the pieces used to those in the set</p>
               <p style="margin-bottom: 4px">You can also change the available piece count after selecting the input image</p>
             </small>
-            <small>
+            <small hidden>
               <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
               <p>Due to the nature of the Lego Art sets, images with transparency aren't fully supported</p>
             </small>
-            <small><a target="_blank" id="hogwarts-crest-example-instructions-link" href="examples/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
+            <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="examples/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
                 Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
               <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
           </div>
