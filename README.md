@@ -1,7 +1,7 @@
 # Lego Art Remix
 The Intelligent, Easy to Use Lego Mosaic Maker
 
-You can find a deployed version at [lego-art-remix.debkbanerji.com](https://lego-art-remix.debkbanerji.com/)
+You can find a deployed version at [lego-art-remix.com](https://lego-art-remix.com/)
 
 This project is not affiliated with The Lego Group
 
