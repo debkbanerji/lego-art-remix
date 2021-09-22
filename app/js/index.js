@@ -452,7 +452,7 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     bricklinkPieceOptions.appendChild(option);
 });
 
-let selectedTiebreakTechnique = "alternatingmod";
+let selectedTiebreakTechnique = "alternatingnoisymod";
 const TIEBREAK_TECHNIQUES = [{
         name: "None",
         value: "none"
