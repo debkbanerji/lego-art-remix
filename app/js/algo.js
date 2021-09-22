@@ -288,6 +288,24 @@ function correctPixelsForAvailableStuds(
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "alternatingmod") {
+            tiebreakFactor *=
+                ((row + col) % 2) +
+                ((row + imageWidth - col) % 3) * TIEBREAKER_RATIO +
+                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                ((row + imageWidth - col) % 5) *
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO;
+        } else if (tieResolutionMethod === "alternatingnoisymod") {
+            tiebreakFactor *=
+                ((row + col) % 2) +
+                ((row + imageWidth - col) % 3) * TIEBREAKER_RATIO +
+                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                Math.random() *
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO;
         }
         problematicPixelsMap[alignedHex].push({
             index: i,

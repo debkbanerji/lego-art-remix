@@ -1,7 +1,6 @@
-const VERSION_NUMBER = "v2021.9.18";
+const VERSION_NUMBER = "v2021.9.21";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
-// TODO: Display these values at the top of the page if they are large enough
 let perfLoggingDatabase;
 try {
     perfLoggingDatabase = firebase.database();
@@ -453,7 +452,7 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     bricklinkPieceOptions.appendChild(option);
 });
 
-let selectedTiebreakTechnique = "none";
+let selectedTiebreakTechnique = "alternatingmod";
 const TIEBREAK_TECHNIQUES = [{
         name: "None",
         value: "none"
@@ -501,6 +500,14 @@ const TIEBREAK_TECHNIQUES = [{
     {
         name: "Cascading Noisy Mod",
         value: "cascadingnoisymod"
+    },
+    {
+        name: "Alternating Mod",
+        value: "alternatingmod"
+    },
+    {
+        name: "Alternating Noisy Mod",
+        value: "alternatingnoisymod"
     }
 ];
 TIEBREAK_TECHNIQUES.forEach(technique => {
