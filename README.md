@@ -32,7 +32,7 @@ The most computationally expensive part of the process, apart from depth map gen
 
 Since it runs almost entirely within the browser, no image data is sent to a server and so it's very secure. This also makes it much easier for me to maintain and host. The only server code consists of simple increments to anonymously estimate usage, for the purposes for tracking performance in case the static deployment needs to be scaled up, and for the counter in the about section.
 
-Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of [ONNX.js](https://github.com/microsoft/onnxjs). I've compiled a version of the library based on [this](https://github.com/microsoft/onnxjs/pull/228) pull request, with a small additional change I made to support the resize operation in v10. The model used is [MiDaS](https://github.com/intel-isl/MiDaS) - more specifically, the small ONNX version which can be found [here](https://github.com/intel-isl/MiDaS/releases/tag/v2_1). It's incredible that ONNX.js allows us to use amazing work such as this within a web browser.
+Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of [ONNX.js](https://github.com/microsoft/onnxjs). I've compiled a version of the library based on [this](https://github.com/microsoft/onnxjs/pull/228) pull request, with a small additional change I made to support the resize operation in v10. The model used is [MiDaS](https://github.com/intel-isl/MiDaS) - more specifically, the small ONNX version which can be found [here](https://github.com/intel-isl/MiDaS/releases/tag/v2_1).
 
 ### Citation for model used
 

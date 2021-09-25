@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.9.21";
+const VERSION_NUMBER = "v2021.9.24";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -1935,8 +1935,7 @@ async function generateInstructions() {
                 numParts++;
                 pdf = new jsPDF({
                     orientation: titlePageCanvas.width < titlePageCanvas.height ?
-                        "p" :
-                        "l",
+                        "p" : "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
@@ -2137,8 +2136,7 @@ async function generateDepthInstructions() {
                 }
                 pdf = new jsPDF({
                     orientation: titlePageCanvas.width < titlePageCanvas.height ?
-                        "p" :
-                        "l",
+                        "p" : "l",
                     unit: "mm",
                     format: [titlePageCanvas.width, titlePageCanvas.height]
                 });
@@ -2531,6 +2529,28 @@ document.getElementById("run-example-input").addEventListener("click", () => {
         .ref("trigger-random-example-input-count/per-day/" + loggingTimestamp)
         .transaction(incrementTransaction);
 });
+
+const imageURLMatch = window.location.href.match(/image=(https?:\/\/)?([-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?)/gi) ?? [];
+const imageURL = imageURLMatch.length > 0 ? imageURLMatch[0].replace(/image=(https?:\/\/)?/gi, '') : null;
+
+if (imageURL != null) {
+    setTimeout(() => {
+        fetch('https://' + imageURL)
+            .then(response => response.blob())
+            .then(colorImage => {
+                // use an object url to get around possible bad browser caching race conditions
+                const colorImageURL = URL.createObjectURL(
+                    colorImage
+                );
+                const e = {
+                    target: {
+                        files: [colorImage]
+                    }
+                };
+                handleInputImage(e, true, true);
+            });
+    }, 50); // TODO: find better way to check that input is finished
+}
 
 const imageSelectorHidden = document.getElementById(
     "input-image-selector-hidden"
