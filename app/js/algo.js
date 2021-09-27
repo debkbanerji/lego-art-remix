@@ -1281,3 +1281,30 @@ function getWantedListXML(studMap, partID) {
     \n${items.join("\n")}\n
   </INVENTORY>`;
 }
+
+function getUsedPixelsStudMatrix(inputPixels) {
+    let result = [];
+    for (let i = 0; i < inputPixels.length / 4; i++) {
+        const targetPixelX = i % targetResolution[0];
+        const targetPixelY = Math.floor(i / targetResolution[0]);
+
+        const targetPixelIndex = i * 4;
+        const pixelHexVal = rgbToHex(
+            inputPixels[targetPixelIndex],
+            inputPixels[targetPixelIndex + 1],
+            inputPixels[targetPixelIndex + 2]
+        );
+        result.push({x: targetPixelX, y: targetPixelY, hex: (pixelHexVal || 0)});
+    }
+    return result;
+}
+
+function getLdrawFile(studs, partID) {
+    let items = [];
+    for (let i = 0; i < studs.length; i++) {
+        const ldrX = -10 + (20*studs[i].y)
+		const ldrZ = -10 + (20*studs[i].x)
+        items.push(`1 ${COLOR_NAME_TO_LDRAW_ID[HEX_TO_COLOR_NAME[studs[i].hex]]} ${ldrX} 0 ${ldrZ} 1 0 0 0 1 0 0 0 1 ${partID}.dat`);
+    }
+    return `0 Untitled Model\r\n0 Name: Untitled\r\n0 Author: Auto_created_by_zzjin\r\n${items.join("\r\n")}\r\n`;
+}
