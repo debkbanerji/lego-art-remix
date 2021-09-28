@@ -1749,7 +1749,16 @@ function runStep4(asyncCallback) {
             targetResolution[1] * SCALING_FACTOR
         );
 
-        const availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
+        // save perf by sidestepping step 4 if every available color could
+        // theoretically fill the entire image on its owwn
+        let shouldSideStepStep4 = true;
+        Object.values(selectedStudMap).forEach((count) => {
+            if (count < targetResolution[0] * targetResolution[1]) {
+                shouldSideStepStep4 = false;
+            }
+        });
+
+        const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
             step3PixelArray,
             document.getElementById("use-bleedthrough-check").checked ?
             getDarkenedStudMap(selectedStudMap) :
