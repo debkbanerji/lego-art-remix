@@ -2538,16 +2538,23 @@ if (imageURL != null) {
         fetch('https://' + decodeURIComponent(imageURL))
             .then(response => response.blob())
             .then(colorImage => {
-                // use an object url to get around possible bad browser caching race conditions
-                const colorImageURL = URL.createObjectURL(
-                    colorImage
-                );
-                const e = {
-                    target: {
-                        files: [colorImage]
-                    }
-                };
-                handleInputImage(e, true, true);
+                try {
+                    // use an object url to get around possible bad browser caching race conditions
+                    const colorImageURL = URL.createObjectURL(
+                        colorImage
+                    );
+                    const e = {
+                        target: {
+                            files: [colorImage]
+                        }
+                    };
+                    handleInputImage(e, true, true);
+                } catch (e) {
+                    enableInteraction();
+                }
+            })
+            .catch(err => {
+                enableInteraction();
             });
     }, 50); // TODO: find better way to check that input is finished
 }
