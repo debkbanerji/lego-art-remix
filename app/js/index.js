@@ -1883,7 +1883,9 @@ async function generateInstructions() {
         const studMap = getUsedPixelsStudMap(resultImage);
         const filteredAvailableStudHexList = selectedSortedStuds.filter(
             pixelHex => (studMap[pixelHex] || 0) > 0
-        );
+        ).filter(function(item, pos, self) {
+            return self.indexOf(item) === pos; // remove duplicates
+        });
         generateInstructionTitlePage(
             resultImage,
             targetResolution[0],
