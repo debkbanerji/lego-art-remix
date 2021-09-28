@@ -2530,12 +2530,12 @@ document.getElementById("run-example-input").addEventListener("click", () => {
         .transaction(incrementTransaction);
 });
 
-const imageURLMatch = window.location.href.match(/image=(https?:\/\/)?([-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?)/gi) ?? [];
-const imageURL = imageURLMatch.length > 0 ? imageURLMatch[0].replace(/image=(https?:\/\/)?/gi, '') : null;
+const imageURLMatch = window.location.href.match(/image=(https?((:\/\/)|(%3A%2F%2F)))?([-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?)/gi) ?? [];
+const imageURL = imageURLMatch.length > 0 ? imageURLMatch[0].replace(/image=(https?((:\/\/)|(%3A%2F%2F)))?/gi, '') : null;
 
 if (imageURL != null) {
     setTimeout(() => {
-        fetch('https://' + imageURL)
+        fetch('https://' + decodeURIComponent(imageURL))
             .then(response => response.blob())
             .then(colorImage => {
                 // use an object url to get around possible bad browser caching race conditions
