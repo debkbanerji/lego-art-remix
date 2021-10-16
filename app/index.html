@@ -833,7 +833,12 @@
                   </div>
                   <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
-                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
+                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
+                      <br />
+                      <button type="button" id="export-to-ldraw-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 8px;">
+                        Save Ldraw Format File
+                      </button>
+                      <br />
                       <div class="btn-group">
                         <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Bricklink Pixel Piece
@@ -1212,6 +1217,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v5.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
   <script src="js/pixi.min.js"></script>

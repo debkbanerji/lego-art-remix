@@ -49,6 +49,7 @@ const interactionSelectors = [
     "download-instructions-button",
     "add-custom-stud-button",
     "export-to-bricklink-button",
+    "export-to-ldraw-button",
     "export-stud-map-button",
     "import-stud-map-file-input",
     "bricklink-piece-button",
@@ -2312,6 +2313,21 @@ document
                     console.error("Async: Could not copy text: ", err);
                 }
             );
+    });
+
+document
+    .getElementById("export-to-ldraw-button")
+    .addEventListener("click", () => {
+        disableInteraction();
+        const modelContent = getLdrawFile(
+            getUsedPixelsStudMatrix(
+                getPixelArrayFromCanvas(bricklinkCacheCanvas)
+            ),
+            selectedPixelPartNumber
+        )
+        const blob = new Blob([modelContent], {type: "text/plain;charset=utf-8"});
+        window.saveAs(blob, "model.ldr"); // FileSaver.saveAs
+        enableInteraction();
     });
 
 function triggerDepthMapGeneration() {
