@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.9.27";
+const VERSION_NUMBER = "v2021.10.15";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -322,6 +322,16 @@ document
         ).hidden = true;
     });
 
+document.getElementById("color-tie-grouping-factor-slider").addEventListener(
+    "change",
+    () => {
+        document.getElementById(
+            "color-tie-grouping-factor-text"
+        ).innerHTML = document.getElementById("color-tie-grouping-factor-slider").value;
+        runStep4();
+    }
+);
+
 let DEFAULT_STUD_MAP = "all_stud_colors";
 let DEFAULT_COLOR = "#42c0fb";
 let DEFAULT_COLOR_NAME = "Medium Azure";
@@ -452,7 +462,7 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     bricklinkPieceOptions.appendChild(option);
 });
 
-let selectedTiebreakTechnique = "alternatingnoisymod";
+let selectedTiebreakTechnique = "alternatingmod";
 const TIEBREAK_TECHNIQUES = [{
         name: "None",
         value: "none"
@@ -518,7 +528,7 @@ TIEBREAK_TECHNIQUES.forEach(technique => {
     option.addEventListener("click", () => {
         document.getElementById("color-ties-resolution-button").innerHTML =
             /*"Color Tie Resolution: " +*/
-            technique.name;
+            'Strategy: ' + technique.name;
         selectedTiebreakTechnique = technique.value;
         runStep1();
     });
@@ -1768,6 +1778,7 @@ function runStep4(asyncCallback) {
             getDarkenedImage(overridePixelArray) :
             overridePixelArray,
             selectedTiebreakTechnique,
+            document.getElementById("color-tie-grouping-factor-slider").value,
             targetResolution[0],
             colorDistanceFunction
         );

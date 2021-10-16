@@ -15,13 +15,13 @@ function inverseHex(hex) {
     return (
         "#" +
         hex
-            .match(/[a-f0-9]{2}/gi)
-            .map(e =>
-                ((255 - parseInt(e, 16)) | 0)
-                    .toString(16)
-                    .replace(/^([a-f0-9])$/, "0$1")
-            )
-            .join("")
+        .match(/[a-f0-9]{2}/gi)
+        .map(e =>
+            ((255 - parseInt(e, 16)) | 0)
+            .toString(16)
+            .replace(/^([a-f0-9])$/, "0$1")
+        )
+        .join("")
     );
 }
 
@@ -121,9 +121,7 @@ function alignPixelsToStudMap(
         }
         let closestAnchorPixel = 0;
         for (
-            let anchorPixelIndex = 1;
-            anchorPixelIndex < anchorPixels.length;
-            anchorPixelIndex++
+            let anchorPixelIndex = 1; anchorPixelIndex < anchorPixels.length; anchorPixelIndex++
         ) {
             if (
                 colorDistanceFunction(
@@ -201,6 +199,7 @@ function correctPixelsForAvailableStuds(
     originalPixels,
     overridePixelArray,
     tieResolutionMethod,
+    colorTieGroupingFactor,
     imageWidth,
     colorDistanceFunction
 ) {
@@ -232,13 +231,11 @@ function correctPixelsForAvailableStuds(
             overridePixelArray[i] != null &&
             overridePixelArray[i + 1] != null &&
             overridePixelArray[i + 2] != null;
-        const originalRGB = wasOverridden
-            ? [
-                  overridePixelArray[i],
-                  overridePixelArray[i + 1],
-                  overridePixelArray[i + 2]
-              ]
-            : [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
+        const originalRGB = wasOverridden ? [
+            overridePixelArray[i],
+            overridePixelArray[i + 1],
+            overridePixelArray[i + 2]
+        ] : [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
         const alignedRGB = [
             anchorAlignedPixels[i],
             anchorAlignedPixels[i + 1],
@@ -247,9 +244,9 @@ function correctPixelsForAvailableStuds(
         const adjustedIndex = i / 4;
         const row = Math.floor(adjustedIndex / imageWidth);
         const col = adjustedIndex % imageWidth;
-        const colorTieGroupingFactor = 1;
         const adjustedRow = Math.floor(row / colorTieGroupingFactor);
         const adjustedCol = Math.floor(col / colorTieGroupingFactor);
+        const adjustedImageWidth = Math.floor(imageWidth / colorTieGroupingFactor);
         let tiebreakFactor = TIEBREAKER_RATIO; // 'none'
         if (tieResolutionMethod === "random") {
             tiebreakFactor *= Math.random();
@@ -279,43 +276,42 @@ function correctPixelsForAvailableStuds(
                 ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 5) *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO;
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingnoisymod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
                 ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 Math.random() *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO;
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingmod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
-                ((adjustedRow + imageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedImageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                ((adjustedRow + imageWidth - adjustedCol) % 5) *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedImageWidth - adjustedCol) % 5) *
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingnoisymod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
-                ((adjustedRow + imageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedImageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 Math.random() *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO *
-                    TIEBREAKER_RATIO;
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO *
+                TIEBREAKER_RATIO;
         }
         problematicPixelsMap[alignedHex].push({
             index: i,
             originalRGB,
             alignedRGB,
-            alignmentDistSquared:
-                colorDistanceFunction(originalRGB, alignedRGB) + tiebreakFactor
+            alignmentDistSquared: colorDistanceFunction(originalRGB, alignedRGB) + tiebreakFactor
         });
     }
 
@@ -667,8 +663,8 @@ function generateInstructionTitlePage(
         finalImageCanvas.width,
         finalImageCanvas.height,
         legendHorizontalOffset +
-            legendSquareSide / 4 +
-            (legendSquareSide * width) / plateWidth,
+        legendSquareSide / 4 +
+        (legendSquareSide * width) / plateWidth,
         legendVerticalOffset,
         (legendSquareSide * width) / plateWidth,
         legendSquareSide * ((numPlates * plateWidth) / width)
@@ -780,9 +776,9 @@ function generateInstructionPage(
             ctx.fillText(
                 studToNumber[pixelHex],
                 x -
-                    (scalingFactor *
-                        (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
-                        8,
+                (scalingFactor *
+                    (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
+                8,
                 y + scalingFactor / 8
             );
         }
@@ -854,10 +850,10 @@ function getRequiredPartMatrixFromDepthMatrix(
         // sort in decreasing order of area
         // break ties on the second dimension
         (part1, part2) =>
-            part2[0] * part2[1] -
-            part2[0] * 0.01 -
-            part1[0] * part1[1] +
-            part1[0] * 0.01
+        part2[0] * part2[1] -
+        part2[0] * 0.01 -
+        part1[0] * part1[1] +
+        part1[0] * 0.01
     );
     for (let i = 0; i < partDimensions.length; i++) {
         const part = partDimensions[i];
@@ -865,16 +861,12 @@ function getRequiredPartMatrixFromDepthMatrix(
         // place the part as many times as we can
         for (let row = 0; row < depthMatrix.length - part[0] + 1; row++) {
             for (
-                let col = 0;
-                col < depthMatrix[0].length - part[1] + 1;
-                col++
+                let col = 0; col < depthMatrix[0].length - part[1] + 1; col++
             ) {
                 let canPlacePiece = true;
                 for (let pRow = 0; pRow < part[0] && canPlacePiece; pRow++) {
                     for (
-                        let pCol = 0;
-                        pCol < part[1] && canPlacePiece;
-                        pCol++
+                        let pCol = 0; pCol < part[1] && canPlacePiece; pCol++
                     ) {
                         canPlacePiece =
                             canPlacePiece &&
@@ -1001,10 +993,10 @@ function generateDepthInstructionTitlePage(
     const betweenLevelPicturePadding = pictureHeight * 0.2;
     canvas.height = Math.max(
         pictureHeight * 1.5 +
-            (pictureHeight + betweenLevelPicturePadding) *
-                (usedPlatesMatrices[0].length - 1),
+        (pictureHeight + betweenLevelPicturePadding) *
+        (usedPlatesMatrices[0].length - 1),
         pictureHeight * 0.4 +
-            sortedDepthParts.length * (scalingFactor / 2) * 2.5
+        sortedDepthParts.length * (scalingFactor / 2) * 2.5
     );
     canvas.width = pictureWidth * 2;
 
@@ -1044,8 +1036,8 @@ function generateDepthInstructionTitlePage(
         finalDepthImageCanvas.width,
         finalDepthImageCanvas.height,
         legendHorizontalOffset +
-            legendSquareSide / 4 +
-            (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendSquareSide / 4 +
+        (legendSquareSide * targetResolution[0]) / plateWidth,
         legendVerticalOffset,
         (legendSquareSide * targetResolution[0]) / plateWidth,
         legendSquareSide * ((numPlates * plateWidth) / targetResolution[0])
@@ -1101,8 +1093,8 @@ function generateDepthInstructionPage(
     const betweenLevelPicturePadding = pictureHeight * 0.2;
     canvas.height = Math.max(
         pictureHeight * 1.5 +
-            (pictureHeight + betweenLevelPicturePadding) *
-                (perDepthLevelMatrices.length - 1),
+        (pictureHeight + betweenLevelPicturePadding) *
+        (perDepthLevelMatrices.length - 1),
         pictureHeight * 0.4 + sortedDepthParts.length * radius * 2.5
     );
     canvas.width = pictureWidth * 2;
@@ -1126,9 +1118,7 @@ function generateDepthInstructionPage(
     ctx.font = `${scalingFactor * 0.75}px Arial`;
 
     for (
-        let depthIndex = 0;
-        depthIndex < perDepthLevelMatrices.length;
-        depthIndex++
+        let depthIndex = 0; depthIndex < perDepthLevelMatrices.length; depthIndex++
     ) {
         const horizontalOffset = pictureWidth * 0.75;
         const verticalOffset =
@@ -1220,10 +1210,11 @@ function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
 }
 
 const DEPTH_SEPERATOR = " X ";
+
 function getDepthPlateString(part) {
-    return part[0] < part[1]
-        ? `${part[0]}${DEPTH_SEPERATOR}${part[1]}`
-        : `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+    return part[0] < part[1] ?
+        `${part[0]}${DEPTH_SEPERATOR}${part[1]}` :
+        `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
 }
 
 const DEPTH_PLATE_TO_PART_ID = {
@@ -1256,7 +1247,7 @@ Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
 function getDepthWantedListXML(depthPartsMap) {
     const items = Object.keys(depthPartsMap).map(
         part =>
-            `<ITEM>
+        `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
       <ITEMID>${DEPTH_PLATE_TO_PART_ID[part]}</ITEMID>
       <COLOR>11</COLOR>
@@ -1272,7 +1263,7 @@ function getDepthWantedListXML(depthPartsMap) {
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(
         stud =>
-            `<ITEM>
+        `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
       <ITEMID>${partID}</ITEMID>
       <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[stud]]}</COLOR>

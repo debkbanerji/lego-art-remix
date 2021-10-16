@@ -15,7 +15,7 @@
   <meta property="og:title" content="Lego Art Remix" />
   <meta property="og:image" content="https://lego-art-remix.com/favicon.png" />
   <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
-  <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker" >
+  <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
@@ -764,16 +764,20 @@
                       <small>
                         <b style="margin-left: 4px; margin-bottom: 2px">Color Tie Resolution Strategy
                         </b>
-                        <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have an image
-                          with a large completely uniform background but not enough pixels to fill that background
+                        <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have a large background
+                          but not enough studs to fill it out uniformly
                         </p>
                       </small>
                       <div class="btn-group">
                         <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-                          Alternating Noisy Mod
+                          Strategy: Alternating Mod
                         </button>
                         <div class="dropdown-menu" id="color-ties-resolution-options">
                         </div>
+                      </div>
+                      <div style="padding-left: 12px; padding-top: 4px; padding-right: 12px; width: 100%">
+                        <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
+                        <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
                       </div>
                     </div>
                   </div>
