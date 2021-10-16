@@ -247,61 +247,64 @@ function correctPixelsForAvailableStuds(
         const adjustedIndex = i / 4;
         const row = Math.floor(adjustedIndex / imageWidth);
         const col = adjustedIndex % imageWidth;
+        const colorTieGroupingFactor = 1;
+        const adjustedRow = Math.floor(row / colorTieGroupingFactor);
+        const adjustedCol = Math.floor(col / colorTieGroupingFactor);
         let tiebreakFactor = TIEBREAKER_RATIO; // 'none'
         if (tieResolutionMethod === "random") {
             tiebreakFactor *= Math.random();
         } else if (tieResolutionMethod === "mod2") {
-            tiebreakFactor *= (row + col) % 2;
+            tiebreakFactor *= (adjustedRow + adjustedCol) % 2;
         } else if (tieResolutionMethod === "mod3") {
-            tiebreakFactor *= (row + col) % 3;
+            tiebreakFactor *= (adjustedRow + adjustedCol) % 3;
         } else if (tieResolutionMethod === "mod4") {
-            tiebreakFactor *= (row + col) % 4;
+            tiebreakFactor *= (adjustedRow + adjustedCol) % 4;
         } else if (tieResolutionMethod === "mod5") {
-            tiebreakFactor *= (row + col) % 5;
+            tiebreakFactor *= (adjustedRow + adjustedCol) % 5;
         } else if (tieResolutionMethod === "noisymod2") {
             tiebreakFactor *=
-                ((row + col) % 2) + Math.random() * TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedCol) % 2) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod3") {
             tiebreakFactor *=
-                ((row + col) % 3) + Math.random() * TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedCol) % 3) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod4") {
             tiebreakFactor *=
-                ((row + col) % 4) + Math.random() * TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedCol) % 4) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod5") {
             tiebreakFactor *=
-                ((row + col) % 5) + Math.random() * TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedCol) % 5) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingmod") {
             tiebreakFactor *=
-                ((row + col) % 2) +
-                ((row + col) % 3) * TIEBREAKER_RATIO +
-                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                ((row + col) % 5) *
+                ((adjustedRow + adjustedCol) % 2) +
+                ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 5) *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingnoisymod") {
             tiebreakFactor *=
-                ((row + col) % 2) +
-                ((row + col) % 3) * TIEBREAKER_RATIO +
-                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 2) +
+                ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 Math.random() *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingmod") {
             tiebreakFactor *=
-                ((row + col) % 2) +
-                ((row + imageWidth - col) % 3) * TIEBREAKER_RATIO +
-                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                ((row + imageWidth - col) % 5) *
+                ((adjustedRow + adjustedCol) % 2) +
+                ((adjustedRow + imageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                ((adjustedRow + imageWidth - adjustedCol) % 5) *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingnoisymod") {
             tiebreakFactor *=
-                ((row + col) % 2) +
-                ((row + imageWidth - col) % 3) * TIEBREAKER_RATIO +
-                ((row + col) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 2) +
+                ((adjustedRow + imageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
+                ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 Math.random() *
                     TIEBREAKER_RATIO *
                     TIEBREAKER_RATIO *
