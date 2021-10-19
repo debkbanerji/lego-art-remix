@@ -517,8 +517,8 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
     ctx.strokeStyle = strokeHex;
     ctx.stroke();
     if ([
-            PIXEL_TYPE_OPTIONS[0].number,
-            PIXEL_TYPE_OPTIONS[2].number,
+            PIXEL_TYPE_OPTIONS[1].number,
+            PIXEL_TYPE_OPTIONS[3].number,
             PIXEL_TYPE_OPTIONS[4].number
         ].includes(pixelType)) {
         // draw a circle on top of the piece to represent a stud

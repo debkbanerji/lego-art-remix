@@ -582,20 +582,19 @@ let ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.sort((a, b) => {
 // });
 
 const PIXEL_TYPE_OPTIONS = [{
+        name: "1x1 Round Tile",
+        number: 98138
+    }, {
         name: "1x1 Round Plate",
         number: 4073
     },
     {
-        name: "1x1 Round Tile",
-        number: 98138
+        name: "1x1 Square Tile",
+        number: "3070b"
     },
     {
         name: "1x1 Square Plate",
         number: 3024
-    },
-    {
-        name: "1x1 Square  Tile",
-        number: "3070b"
     },
     {
         name: "1x1 Square  Brick",
@@ -605,9 +604,9 @@ const PIXEL_TYPE_OPTIONS = [{
 
 // use this for instructions - we prioritize readability over accuracy here
 const PIXEL_TYPE_TO_FLATTENED = {
-  4073: 98138,
-  98138: 98138,
-  3024: "3070b",
-  "3070b": "3070b",
-  3005: "3070b",
+    98138: 98138,
+    4073: 98138,
+    3024: "3070b",
+    "3070b": "3070b",
+    3005: "3070b",
 }

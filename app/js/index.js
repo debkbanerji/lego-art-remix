@@ -442,9 +442,9 @@ populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
-let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[1].number;
+let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
 document.getElementById("bricklink-piece-button").innerHTML =
-    PIXEL_TYPE_OPTIONS[1].name;
+    PIXEL_TYPE_OPTIONS[0].name;
 const bricklinkPieceOptions = document.getElementById(
     "bricklink-piece-options"
 );
