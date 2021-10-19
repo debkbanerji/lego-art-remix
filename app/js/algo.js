@@ -494,6 +494,30 @@ function revertDarkenedImage(pixels, darkenedStudsToStuds) {
     return outputPixels;
 }
 
+function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
+    ctx.beginPath();
+    if ([PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(pixelType)) {
+        // draw a circle
+        ctx.arc(
+            x + radius,
+            y + radius,
+            radius,
+            0,
+            2 * Math.PI
+        );
+    } else {
+        // draw a square
+        ctx.rect(x,
+            y,
+            2 * radius,
+            2 * radius);
+    }
+    ctx.fillStyle = pixelHex;
+    ctx.fill();
+    ctx.strokeStyle = strokeHex;
+    ctx.stroke();
+}
+
 // replaces square pixels with correct shape and upscales
 function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
     const ctx = canvas.getContext("2d");
@@ -514,27 +538,13 @@ function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) 
             pixels[i * 4 + 1],
             pixels[i * 4 + 2]
         );
-        ctx.beginPath();
-        if ([PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(pixelType)) {
-            // draw a circle
-            ctx.arc(
-                ((i % width) * 2 + 1) * radius,
-                (Math.floor(i / width) * 2 + 1) * radius,
-                radius,
-                0,
-                2 * Math.PI
-            );
-        } else {
-            // draw a square
-            ctx.rect(((i % width) * 2) * radius,
-                (Math.floor(i / width) * 2) * radius,
-                2 * radius,
-                2 * radius);
-        }
-        ctx.fillStyle = pixelHex;
-        ctx.fill();
-        ctx.strokeStyle = "#111111";
-        ctx.stroke();
+        drawPixel(ctx,
+            (i % width) * 2 * radius,
+            Math.floor(i / width) * 2 * radius,
+            radius,
+            pixelHex,
+            "#111111",
+            pixelType);
     }
 }
 
