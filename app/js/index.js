@@ -1498,8 +1498,6 @@ let step3CanvasHoveredPixel = null;
         const pixelCol = Math.round(
             (rawCol * targetResolution[0]) / toHoverCanvas.offsetWidth
         );
-        const circleCircumferance = SCALING_FACTOR;
-        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (
             step3CanvasHoveredPixel == null ||
@@ -1508,78 +1506,42 @@ let step3CanvasHoveredPixel = null;
         ) {
             const ctx = toHoverCanvas.getContext("2d");
 
-            [
-                pixelRow * SCALING_FACTOR + highlightCircleRadius,
-                pixelRow * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-            ].forEach(row => {
-                [
-                    pixelCol * SCALING_FACTOR + highlightCircleRadius,
-                    pixelCol * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(col => {
-                    ctx.beginPath();
-                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle =
-                        toHoverCanvas == step3CanvasUpscaled ?
-                        "#FFFFFF" :
-                        "#E83E8C";
-                    ctx.fill();
+            ctx.lineWidth = 3;
+            step4CanvasUpscaledContext.lineWidth = 3;
 
-                    step4CanvasUpscaledContext.beginPath();
-                    step4CanvasUpscaledContext.arc(
-                        col,
-                        row,
-                        highlightCircleRadius,
-                        0,
-                        2 * Math.PI
-                    );
-                    step4CanvasUpscaledContext.fillStyle = "#FFFFFF";
-                    step4CanvasUpscaledContext.fill();
-                });
-            });
+            ctx.beginPath();
+            ctx.rect(pixelCol * SCALING_FACTOR,
+                pixelRow * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            ctx.strokeStyle =
+                toHoverCanvas == step3CanvasUpscaled ?
+                "#FFFFFF" :
+                "#E83E8C";
+            ctx.stroke();
+            step4CanvasUpscaledContext.beginPath();
+            step4CanvasUpscaledContext.rect(pixelCol * SCALING_FACTOR,
+                pixelRow * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            step4CanvasUpscaledContext.strokeStyle = "#FFFFFF";
+            step4CanvasUpscaledContext.stroke();
 
             if (step3CanvasHoveredPixel != null) {
-                [
-                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(row => {
-                    [
-                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        highlightCircleRadius,
-                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        circleCircumferance -
-                        highlightCircleRadius
-                    ].forEach(col => {
-                        ctx.beginPath();
-                        ctx.arc(
-                            col,
-                            row,
-                            highlightCircleRadius,
-                            0,
-                            2 * Math.PI
-                        );
-                        // TODO: Deal with square pixels
-                        ctx.fillStyle = "#000000";
-                        ctx.fill();
-
-                        step4CanvasUpscaledContext.beginPath();
-                        step4CanvasUpscaledContext.arc(
-                            col,
-                            row,
-                            highlightCircleRadius,
-                            0,
-                            2 * Math.PI
-                        );
-                        step4CanvasUpscaledContext.fillStyle = "#000000";
-                        step4CanvasUpscaledContext.fill();
-                    });
-                });
+                ctx.beginPath();
+                ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                    SCALING_FACTOR,
+                    SCALING_FACTOR);
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+                step4CanvasUpscaledContext.beginPath();
+                step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                    SCALING_FACTOR,
+                    SCALING_FACTOR);
+                step4CanvasUpscaledContext.strokeStyle = "#000000";
+                step4CanvasUpscaledContext.stroke();
             }
             step3CanvasHoveredPixel = [pixelRow, pixelCol];
         }
@@ -1587,41 +1549,22 @@ let step3CanvasHoveredPixel = null;
 
     toHoverCanvas.addEventListener("mouseleave", function(event) {
         const ctx = toHoverCanvas.getContext("2d");
-        const circleCircumferance = SCALING_FACTOR;
-        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (step3CanvasHoveredPixel != null) {
-            [
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                highlightCircleRadius,
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-            ].forEach(row => {
-                [
-                    step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                    step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(col => {
-                    ctx.beginPath();
-                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle = "#000000";
-                    ctx.fill();
-
-                    step4CanvasUpscaledContext.beginPath();
-                    step4CanvasUpscaledContext.arc(
-                        col,
-                        row,
-                        highlightCircleRadius,
-                        0,
-                        2 * Math.PI
-                    );
-                    step4CanvasUpscaledContext.fillStyle = "#000000";
-                    step4CanvasUpscaledContext.fill();
-                });
-            });
+            ctx.beginPath();
+            ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+            step4CanvasUpscaledContext.beginPath();
+            step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            step4CanvasUpscaledContext.strokeStyle = "#000000";
+            step4CanvasUpscaledContext.stroke();
         }
         step3CanvasHoveredPixel = null;
     });
