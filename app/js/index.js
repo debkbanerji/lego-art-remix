@@ -463,7 +463,7 @@ PIXEL_TYPE_OPTIONS.forEach(part => {
 });
 
 function isBleedthroughEnabled() {
-  return [PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(selectedPixelPartNumber);
+    return [PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(selectedPixelPartNumber);
 }
 
 let selectedTiebreakTechnique = "alternatingmod";
@@ -1090,7 +1090,8 @@ function runStep2() {
             ),
             targetResolution[0],
             SCALING_FACTOR,
-            step2DepthCanvasUpscaled
+            step2DepthCanvasUpscaled,
+            selectedPixelPartNumber
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -1140,7 +1141,8 @@ function runStep3() {
             alignedPixelArray,
             targetResolution[0],
             SCALING_FACTOR,
-            step3CanvasUpscaled
+            step3CanvasUpscaled,
+            selectedPixelPartNumber
         );
         step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
         step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
@@ -1151,7 +1153,8 @@ function runStep3() {
             ),
             targetResolution[0],
             SCALING_FACTOR,
-            step3DepthCanvasUpscaled
+            step3DepthCanvasUpscaled,
+            selectedPixelPartNumber
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -1804,7 +1807,8 @@ function runStep4(asyncCallback) {
                 availabilityCorrectedPixelArray,
                 targetResolution[0],
                 SCALING_FACTOR,
-                step4CanvasUpscaled
+                step4CanvasUpscaled,
+                selectedPixelPartNumber
             );
             if (
                 document

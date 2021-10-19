@@ -495,7 +495,7 @@ function revertDarkenedImage(pixels, darkenedStudsToStuds) {
 }
 
 // replaces square pixels with studs and upscales
-function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas) {
+function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
     const ctx = canvas.getContext("2d");
 
     canvas.width = width * scalingFactor;
@@ -515,13 +515,22 @@ function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas) {
             pixels[i * 4 + 2]
         );
         ctx.beginPath();
-        ctx.arc(
-            ((i % width) * 2 + 1) * radius,
-            (Math.floor(i / width) * 2 + 1) * radius,
-            radius,
-            0,
-            2 * Math.PI
-        );
+        if ([PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(pixelType)) {
+            // draw a circle
+            ctx.arc(
+                ((i % width) * 2 + 1) * radius,
+                (Math.floor(i / width) * 2 + 1) * radius,
+                radius,
+                0,
+                2 * Math.PI
+            );
+        } else {
+            // draw a square
+            ctx.rect(((i % width) * 2) * radius,
+                (Math.floor(i / width) * 2) * radius,
+                2 * radius,
+                2 * radius);
+        }
         ctx.fillStyle = pixelHex;
         ctx.fill();
         ctx.strokeStyle = "#111111";
