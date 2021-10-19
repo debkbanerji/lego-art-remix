@@ -1,5 +1,4 @@
-let ALL_BRICKLINK_SOLID_COLORS = [
-    {
+let ALL_BRICKLINK_SOLID_COLORS = [{
         name: "White",
         hex: "#ffffff",
         id: 1
@@ -582,8 +581,7 @@ let ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.sort((a, b) => {
 //     return a.name > b.name ? 1 : -1;
 // });
 
-const PIXEL_TYPE_OPTIONS = [
-    {
+const PIXEL_TYPE_OPTIONS = [{
         name: "1x1 Round Plate",
         number: 4073
     },
@@ -604,3 +602,12 @@ const PIXEL_TYPE_OPTIONS = [
         number: 3005
     }
 ];
+
+// use this for instructions - we prioritize readability over accuracy here
+const PIXEL_TYPE_TO_FLATTENED = {
+  4073: 98138,
+  98138: 98138,
+  3024: "3070b",
+  "3070b": "3070b",
+  3005: "3070b",
+}

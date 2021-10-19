@@ -516,6 +516,22 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
     ctx.fill();
     ctx.strokeStyle = strokeHex;
     ctx.stroke();
+    if ([
+            PIXEL_TYPE_OPTIONS[0].number,
+            PIXEL_TYPE_OPTIONS[2].number,
+            PIXEL_TYPE_OPTIONS[4].number
+        ].includes(pixelType)) {
+        // draw a circle on top of the piece to represent a stud
+        ctx.beginPath()
+        ctx.arc(
+            x + radius,
+            y + radius,
+            radius * 0.6,
+            0,
+            2 * Math.PI
+        );
+        ctx.stroke();
+    }
 }
 
 // replaces square pixels with correct shape and upscales
@@ -596,7 +612,7 @@ function drawStudCountForContext(
             radius,
             pixelHex,
             inverseHex(pixelHex),
-            pixelType);
+            PIXEL_TYPE_TO_FLATTENED[pixelType]);
         ctx.fillStyle = inverseHex(pixelHex);
         ctx.fillText(
             number,
@@ -798,7 +814,7 @@ function generateInstructionPage(
                 radius,
                 pixelHex,
                 inverseHex(pixelHex),
-                pixelType);
+                PIXEL_TYPE_TO_FLATTENED[pixelType]);
             ctx.fillStyle = inverseHex(pixelHex);
             ctx.fillText(
                 studToNumber[pixelHex],
