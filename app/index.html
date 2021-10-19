@@ -624,22 +624,20 @@
                   <div class="card-header" id="step-3-4-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
-                        Bleedthrough
+                        Pixel Type
                       </button>
                     </h5>
                   </div>
                   <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                        <label>
-                          <input type="checkbox" id="use-bleedthrough-check" checked>
-                          Account for round stud bleedthrough
-                        </label>
-                        <small>
-                          <p style="margin-top: 2px">This setting accounts for the fact that pixels represented by round pieces
-                            appear slightly darker due to the black background. Disable it if you're using square pieces for pixels.
-                          </p>
-                        </small>
+                        <div class="btn-group">
+                          <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Bricklink Pixel Piece
+                          </button>
+                          <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -834,15 +832,9 @@
                   <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
-                      <div class="btn-group">
-                        <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          Bricklink Pixel Piece
-                        </button>
-                        <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
-                        </div>
-                      </div>
                       <br />
                       <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of pieces used depends on 'Pixel Type' under step 3</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px;">Frame elements are not exported</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px;">
                           <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">

@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.10.15";
+const VERSION_NUMBER = "v2021.10.19";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -45,7 +45,6 @@ const interactionSelectors = [
     "saturation-slider",
     "value-slider",
     "reset-colors-button",
-    "use-bleedthrough-check",
     "download-instructions-button",
     "add-custom-stud-button",
     "export-to-bricklink-button",
@@ -443,14 +442,14 @@ populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
-let selectedPixelPartNumber = BRICKLINK_PART_OPTIONS[0].number;
+let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
 document.getElementById("bricklink-piece-button").innerHTML =
-    BRICKLINK_PART_OPTIONS[0].name;
+    PIXEL_TYPE_OPTIONS[0].name;
 const bricklinkPieceOptions = document.getElementById(
     "bricklink-piece-options"
 );
 bricklinkPieceOptions.innerHTML = "";
-BRICKLINK_PART_OPTIONS.forEach(part => {
+PIXEL_TYPE_OPTIONS.forEach(part => {
     const option = document.createElement("a");
     option.className = "dropdown-item btn";
     option.textContent = part.name;
@@ -458,9 +457,14 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     option.addEventListener("click", () => {
         document.getElementById("bricklink-piece-button").innerHTML = part.name;
         selectedPixelPartNumber = part.number;
+        runStep3();
     });
     bricklinkPieceOptions.appendChild(option);
 });
+
+function isBleedthroughEnabled() {
+    return [PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(selectedPixelPartNumber);
+}
 
 let selectedTiebreakTechnique = "alternatingmod";
 const TIEBREAK_TECHNIQUES = [{
@@ -975,14 +979,6 @@ document.getElementById("reset-colors-button").addEventListener(
     false
 );
 
-document.getElementById("use-bleedthrough-check").addEventListener(
-    "change",
-    () => {
-        runStep1();
-    },
-    false
-);
-
 function runStep1() {
     disableInteraction();
     updateStudCountText();
@@ -1094,7 +1090,8 @@ function runStep2() {
             ),
             targetResolution[0],
             SCALING_FACTOR,
-            step2DepthCanvasUpscaled
+            step2DepthCanvasUpscaled,
+            selectedPixelPartNumber
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -1103,10 +1100,10 @@ function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
     const alignedPixelArray = alignPixelsToStudMap(
         fiteredPixelArray,
-        document.getElementById("use-bleedthrough-check").checked ?
+        isBleedthroughEnabled() ?
         getDarkenedStudMap(selectedStudMap) :
         selectedStudMap,
-        document.getElementById("use-bleedthrough-check").checked ?
+        isBleedthroughEnabled() ?
         getDarkenedImage(overridePixelArray) :
         overridePixelArray,
         colorDistanceFunction
@@ -1134,7 +1131,7 @@ function runStep3() {
         }
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             revertDarkenedImage(
                 alignedPixelArray,
                 getDarkenedStudsToStuds(
@@ -1144,7 +1141,8 @@ function runStep3() {
             alignedPixelArray,
             targetResolution[0],
             SCALING_FACTOR,
-            step3CanvasUpscaled
+            step3CanvasUpscaled,
+            selectedPixelPartNumber
         );
         step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
         step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
@@ -1155,7 +1153,8 @@ function runStep3() {
             ),
             targetResolution[0],
             SCALING_FACTOR,
-            step3DepthCanvasUpscaled
+            step3DepthCanvasUpscaled,
+            selectedPixelPartNumber
         );
     }, 1); // TODO: find better way to check that input is finished
 }
@@ -1336,8 +1335,7 @@ function onCherryPickColor(row, col) {
         overridePixelArray[pixelIndex + 1] !== null &&
         overridePixelArray[pixelIndex + 2] !== null;
 
-    const step3PixelArray = document.getElementById("use-bleedthrough-check")
-        .checked ?
+    const step3PixelArray = isBleedthroughEnabled() ?
         revertDarkenedImage(
             getPixelArrayFromCanvas(step3Canvas),
             getDarkenedStudsToStuds(
@@ -1500,8 +1498,6 @@ let step3CanvasHoveredPixel = null;
         const pixelCol = Math.round(
             (rawCol * targetResolution[0]) / toHoverCanvas.offsetWidth
         );
-        const circleCircumferance = SCALING_FACTOR;
-        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (
             step3CanvasHoveredPixel == null ||
@@ -1510,77 +1506,42 @@ let step3CanvasHoveredPixel = null;
         ) {
             const ctx = toHoverCanvas.getContext("2d");
 
-            [
-                pixelRow * SCALING_FACTOR + highlightCircleRadius,
-                pixelRow * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-            ].forEach(row => {
-                [
-                    pixelCol * SCALING_FACTOR + highlightCircleRadius,
-                    pixelCol * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(col => {
-                    ctx.beginPath();
-                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle =
-                        toHoverCanvas == step3CanvasUpscaled ?
-                        "#FFFFFF" :
-                        "#E83E8C";
-                    ctx.fill();
+            ctx.lineWidth = 3;
+            step4CanvasUpscaledContext.lineWidth = 3;
 
-                    step4CanvasUpscaledContext.beginPath();
-                    step4CanvasUpscaledContext.arc(
-                        col,
-                        row,
-                        highlightCircleRadius,
-                        0,
-                        2 * Math.PI
-                    );
-                    step4CanvasUpscaledContext.fillStyle = "#FFFFFF";
-                    step4CanvasUpscaledContext.fill();
-                });
-            });
+            ctx.beginPath();
+            ctx.rect(pixelCol * SCALING_FACTOR,
+                pixelRow * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            ctx.strokeStyle =
+                toHoverCanvas == step3CanvasUpscaled ?
+                "#FFFFFF" :
+                "#E83E8C";
+            ctx.stroke();
+            step4CanvasUpscaledContext.beginPath();
+            step4CanvasUpscaledContext.rect(pixelCol * SCALING_FACTOR,
+                pixelRow * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            step4CanvasUpscaledContext.strokeStyle = "#FFFFFF";
+            step4CanvasUpscaledContext.stroke();
 
             if (step3CanvasHoveredPixel != null) {
-                [
-                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                    step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(row => {
-                    [
-                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        highlightCircleRadius,
-                        step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                        circleCircumferance -
-                        highlightCircleRadius
-                    ].forEach(col => {
-                        ctx.beginPath();
-                        ctx.arc(
-                            col,
-                            row,
-                            highlightCircleRadius,
-                            0,
-                            2 * Math.PI
-                        );
-                        ctx.fillStyle = "#000000";
-                        ctx.fill();
-
-                        step4CanvasUpscaledContext.beginPath();
-                        step4CanvasUpscaledContext.arc(
-                            col,
-                            row,
-                            highlightCircleRadius,
-                            0,
-                            2 * Math.PI
-                        );
-                        step4CanvasUpscaledContext.fillStyle = "#000000";
-                        step4CanvasUpscaledContext.fill();
-                    });
-                });
+                ctx.beginPath();
+                ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                    SCALING_FACTOR,
+                    SCALING_FACTOR);
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+                step4CanvasUpscaledContext.beginPath();
+                step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                    step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                    SCALING_FACTOR,
+                    SCALING_FACTOR);
+                step4CanvasUpscaledContext.strokeStyle = "#000000";
+                step4CanvasUpscaledContext.stroke();
             }
             step3CanvasHoveredPixel = [pixelRow, pixelCol];
         }
@@ -1588,41 +1549,22 @@ let step3CanvasHoveredPixel = null;
 
     toHoverCanvas.addEventListener("mouseleave", function(event) {
         const ctx = toHoverCanvas.getContext("2d");
-        const circleCircumferance = SCALING_FACTOR;
-        const highlightCircleRadius = 0.1 * circleCircumferance;
 
         if (step3CanvasHoveredPixel != null) {
-            [
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                highlightCircleRadius,
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR +
-                circleCircumferance -
-                highlightCircleRadius
-            ].forEach(row => {
-                [
-                    step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    highlightCircleRadius,
-                    step3CanvasHoveredPixel[1] * SCALING_FACTOR +
-                    circleCircumferance -
-                    highlightCircleRadius
-                ].forEach(col => {
-                    ctx.beginPath();
-                    ctx.arc(col, row, highlightCircleRadius, 0, 2 * Math.PI);
-                    ctx.fillStyle = "#000000";
-                    ctx.fill();
-
-                    step4CanvasUpscaledContext.beginPath();
-                    step4CanvasUpscaledContext.arc(
-                        col,
-                        row,
-                        highlightCircleRadius,
-                        0,
-                        2 * Math.PI
-                    );
-                    step4CanvasUpscaledContext.fillStyle = "#000000";
-                    step4CanvasUpscaledContext.fill();
-                });
-            });
+            ctx.beginPath();
+            ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+            step4CanvasUpscaledContext.beginPath();
+            step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+                SCALING_FACTOR,
+                SCALING_FACTOR);
+            step4CanvasUpscaledContext.strokeStyle = "#000000";
+            step4CanvasUpscaledContext.stroke();
         }
         step3CanvasHoveredPixel = null;
     });
@@ -1770,11 +1712,11 @@ function runStep4(asyncCallback) {
 
         const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
             step3PixelArray,
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             getDarkenedStudMap(selectedStudMap) :
             selectedStudMap,
             step2PixelArray,
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             getDarkenedImage(overridePixelArray) :
             overridePixelArray,
             selectedTiebreakTechnique,
@@ -1787,7 +1729,7 @@ function runStep4(asyncCallback) {
         setTimeout(async () => {
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
+                isBleedthroughEnabled() ?
                 revertDarkenedImage(
                     availabilityCorrectedPixelArray,
                     getDarkenedStudsToStuds(
@@ -1799,7 +1741,7 @@ function runStep4(asyncCallback) {
             );
 
             drawStudImageOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
+                isBleedthroughEnabled() ?
                 revertDarkenedImage(
                     availabilityCorrectedPixelArray,
                     getDarkenedStudsToStuds(
@@ -1809,7 +1751,8 @@ function runStep4(asyncCallback) {
                 availabilityCorrectedPixelArray,
                 targetResolution[0],
                 SCALING_FACTOR,
-                step4CanvasUpscaled
+                step4CanvasUpscaled,
+                selectedPixelPartNumber
             );
             if (
                 document
@@ -1888,8 +1831,7 @@ async function generateInstructions() {
             "high-quality-instructions-check"
         ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
-        const resultImage = document.getElementById("use-bleedthrough-check")
-            .checked ?
+        const resultImage = isBleedthroughEnabled() ?
             revertDarkenedImage(
                 step4PixelArray,
                 getDarkenedStudsToStuds(
@@ -1914,7 +1856,8 @@ async function generateInstructions() {
             SCALING_FACTOR,
             step4CanvasUpscaled,
             titlePageCanvas,
-            isHighQuality
+            isHighQuality,
+            selectedPixelPartNumber
         );
         setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
 
@@ -1986,7 +1929,8 @@ async function generateInstructions() {
                 SCALING_FACTOR,
                 instructionPageCanvas,
                 i + 1,
-                isHighQuality
+                isHighQuality,
+                selectedPixelPartNumber
             );
 
             setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);

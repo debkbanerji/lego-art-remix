@@ -494,8 +494,48 @@ function revertDarkenedImage(pixels, darkenedStudsToStuds) {
     return outputPixels;
 }
 
-// replaces square pixels with studs and upscales
-function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas) {
+function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
+    ctx.beginPath();
+    if ([PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(pixelType)) {
+        // draw a circle
+        ctx.arc(
+            x + radius,
+            y + radius,
+            radius,
+            0,
+            2 * Math.PI
+        );
+    } else {
+        // draw a square
+        ctx.rect(x,
+            y,
+            2 * radius,
+            2 * radius);
+    }
+    ctx.fillStyle = pixelHex;
+    ctx.fill();
+    ctx.strokeStyle = strokeHex;
+    ctx.stroke();
+    if ([
+            PIXEL_TYPE_OPTIONS[1].number,
+            PIXEL_TYPE_OPTIONS[3].number,
+            PIXEL_TYPE_OPTIONS[4].number
+        ].includes(pixelType)) {
+        // draw a circle on top of the piece to represent a stud
+        ctx.beginPath()
+        ctx.arc(
+            x + radius,
+            y + radius,
+            radius * 0.6,
+            0,
+            2 * Math.PI
+        );
+        ctx.stroke();
+    }
+}
+
+// replaces square pixels with correct shape and upscales
+function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
     const ctx = canvas.getContext("2d");
 
     canvas.width = width * scalingFactor;
@@ -514,18 +554,13 @@ function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas) {
             pixels[i * 4 + 1],
             pixels[i * 4 + 2]
         );
-        ctx.beginPath();
-        ctx.arc(
-            ((i % width) * 2 + 1) * radius,
-            (Math.floor(i / width) * 2 + 1) * radius,
+        drawPixel(ctx,
+            (i % width) * 2 * radius,
+            Math.floor(i / width) * 2 * radius,
             radius,
-            0,
-            2 * Math.PI
-        );
-        ctx.fillStyle = pixelHex;
-        ctx.fill();
-        ctx.strokeStyle = "#111111";
-        ctx.stroke();
+            pixelHex,
+            "#111111",
+            pixelType);
     }
 }
 
@@ -561,7 +596,8 @@ function drawStudCountForContext(
     ctx,
     horizontalOffset,
     verticalOffset,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const radius = scalingFactor / 2;
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -570,11 +606,13 @@ function drawStudCountForContext(
         ctx.beginPath();
         const x = horizontalOffset;
         const y = verticalOffset + radius * 2.5 * number;
-        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = pixelHex;
-        ctx.fill();
-        ctx.strokeStyle = inverseHex(pixelHex);
-        ctx.stroke();
+        drawPixel(ctx,
+            x - radius,
+            y - radius,
+            radius,
+            pixelHex,
+            inverseHex(pixelHex),
+            PIXEL_TYPE_TO_FLATTENED[pixelType]);
         ctx.fillStyle = inverseHex(pixelHex);
         ctx.fillText(
             number,
@@ -612,7 +650,8 @@ function generateInstructionTitlePage(
     scalingFactor,
     finalImageCanvas,
     canvas,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -638,7 +677,8 @@ function generateInstructionTitlePage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName // unused
+        showColorName, // unused
+        pixelType
     );
 
     ctx.fillStyle = "#000000";
@@ -700,7 +740,8 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -767,11 +808,13 @@ function generateInstructionPage(
             ctx.beginPath();
             const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
             const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
-            ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = pixelHex;
-            ctx.fill();
-            ctx.strokeStyle = inverseHex(pixelHex);
-            ctx.stroke();
+            drawPixel(ctx,
+                x - radius,
+                y - radius,
+                radius,
+                pixelHex,
+                inverseHex(pixelHex),
+                PIXEL_TYPE_TO_FLATTENED[pixelType]);
             ctx.fillStyle = inverseHex(pixelHex);
             ctx.fillText(
                 studToNumber[pixelHex],
@@ -791,7 +834,8 @@ function generateInstructionPage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName // unused
+        showColorName, // unused
+        pixelType
     );
 }
 
