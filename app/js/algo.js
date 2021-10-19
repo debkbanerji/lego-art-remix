@@ -494,7 +494,7 @@ function revertDarkenedImage(pixels, darkenedStudsToStuds) {
     return outputPixels;
 }
 
-// replaces square pixels with studs and upscales
+// replaces square pixels with correct shape and upscales
 function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
     const ctx = canvas.getContext("2d");
 
