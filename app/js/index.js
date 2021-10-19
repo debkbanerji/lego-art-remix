@@ -45,7 +45,6 @@ const interactionSelectors = [
     "saturation-slider",
     "value-slider",
     "reset-colors-button",
-    "use-bleedthrough-check",
     "download-instructions-button",
     "add-custom-stud-button",
     "export-to-bricklink-button",
@@ -443,14 +442,14 @@ populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
-let selectedPixelPartNumber = BRICKLINK_PART_OPTIONS[0].number;
+let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
 document.getElementById("bricklink-piece-button").innerHTML =
-    BRICKLINK_PART_OPTIONS[0].name;
+    PIXEL_TYPE_OPTIONS[0].name;
 const bricklinkPieceOptions = document.getElementById(
     "bricklink-piece-options"
 );
 bricklinkPieceOptions.innerHTML = "";
-BRICKLINK_PART_OPTIONS.forEach(part => {
+PIXEL_TYPE_OPTIONS.forEach(part => {
     const option = document.createElement("a");
     option.className = "dropdown-item btn";
     option.textContent = part.name;
@@ -458,9 +457,14 @@ BRICKLINK_PART_OPTIONS.forEach(part => {
     option.addEventListener("click", () => {
         document.getElementById("bricklink-piece-button").innerHTML = part.name;
         selectedPixelPartNumber = part.number;
+        runStep3();
     });
     bricklinkPieceOptions.appendChild(option);
 });
+
+function isBleedthroughEnabled() {
+  return [PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(selectedPixelPartNumber);
+}
 
 let selectedTiebreakTechnique = "alternatingmod";
 const TIEBREAK_TECHNIQUES = [{
@@ -975,14 +979,6 @@ document.getElementById("reset-colors-button").addEventListener(
     false
 );
 
-document.getElementById("use-bleedthrough-check").addEventListener(
-    "change",
-    () => {
-        runStep1();
-    },
-    false
-);
-
 function runStep1() {
     disableInteraction();
     updateStudCountText();
@@ -1103,10 +1099,10 @@ function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
     const alignedPixelArray = alignPixelsToStudMap(
         fiteredPixelArray,
-        document.getElementById("use-bleedthrough-check").checked ?
+        isBleedthroughEnabled() ?
         getDarkenedStudMap(selectedStudMap) :
         selectedStudMap,
-        document.getElementById("use-bleedthrough-check").checked ?
+        isBleedthroughEnabled() ?
         getDarkenedImage(overridePixelArray) :
         overridePixelArray,
         colorDistanceFunction
@@ -1134,7 +1130,7 @@ function runStep3() {
         }
         step3CanvasUpscaledContext.imageSmoothingEnabled = false;
         drawStudImageOnCanvas(
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             revertDarkenedImage(
                 alignedPixelArray,
                 getDarkenedStudsToStuds(
@@ -1336,8 +1332,7 @@ function onCherryPickColor(row, col) {
         overridePixelArray[pixelIndex + 1] !== null &&
         overridePixelArray[pixelIndex + 2] !== null;
 
-    const step3PixelArray = document.getElementById("use-bleedthrough-check")
-        .checked ?
+    const step3PixelArray = isBleedthroughEnabled() ?
         revertDarkenedImage(
             getPixelArrayFromCanvas(step3Canvas),
             getDarkenedStudsToStuds(
@@ -1770,11 +1765,11 @@ function runStep4(asyncCallback) {
 
         const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
             step3PixelArray,
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             getDarkenedStudMap(selectedStudMap) :
             selectedStudMap,
             step2PixelArray,
-            document.getElementById("use-bleedthrough-check").checked ?
+            isBleedthroughEnabled() ?
             getDarkenedImage(overridePixelArray) :
             overridePixelArray,
             selectedTiebreakTechnique,
@@ -1787,7 +1782,7 @@ function runStep4(asyncCallback) {
         setTimeout(async () => {
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             drawPixelsOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
+                isBleedthroughEnabled() ?
                 revertDarkenedImage(
                     availabilityCorrectedPixelArray,
                     getDarkenedStudsToStuds(
@@ -1799,7 +1794,7 @@ function runStep4(asyncCallback) {
             );
 
             drawStudImageOnCanvas(
-                document.getElementById("use-bleedthrough-check").checked ?
+                isBleedthroughEnabled() ?
                 revertDarkenedImage(
                     availabilityCorrectedPixelArray,
                     getDarkenedStudsToStuds(
@@ -1888,8 +1883,7 @@ async function generateInstructions() {
             "high-quality-instructions-check"
         ).checked;
         const step4PixelArray = getPixelArrayFromCanvas(step4Canvas);
-        const resultImage = document.getElementById("use-bleedthrough-check")
-            .checked ?
+        const resultImage = isBleedthroughEnabled() ?
             revertDarkenedImage(
                 step4PixelArray,
                 getDarkenedStudsToStuds(

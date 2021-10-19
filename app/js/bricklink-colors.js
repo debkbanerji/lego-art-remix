@@ -582,7 +582,7 @@ let ALL_VALID_BRICKLINK_COLORS = ALL_BRICKLINK_SOLID_COLORS.sort((a, b) => {
 //     return a.name > b.name ? 1 : -1;
 // });
 
-const BRICKLINK_PART_OPTIONS = [
+const PIXEL_TYPE_OPTIONS = [
     {
         name: "1x1 Round Plate - Default",
         number: 4073
