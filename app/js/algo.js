@@ -580,7 +580,8 @@ function drawStudCountForContext(
     ctx,
     horizontalOffset,
     verticalOffset,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const radius = scalingFactor / 2;
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -589,11 +590,13 @@ function drawStudCountForContext(
         ctx.beginPath();
         const x = horizontalOffset;
         const y = verticalOffset + radius * 2.5 * number;
-        ctx.arc(x, y, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = pixelHex;
-        ctx.fill();
-        ctx.strokeStyle = inverseHex(pixelHex);
-        ctx.stroke();
+        drawPixel(ctx,
+            x - radius,
+            y - radius,
+            radius,
+            pixelHex,
+            inverseHex(pixelHex),
+            pixelType);
         ctx.fillStyle = inverseHex(pixelHex);
         ctx.fillText(
             number,
@@ -631,7 +634,8 @@ function generateInstructionTitlePage(
     scalingFactor,
     finalImageCanvas,
     canvas,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -657,7 +661,8 @@ function generateInstructionTitlePage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName // unused
+        showColorName, // unused
+        pixelType
     );
 
     ctx.fillStyle = "#000000";
@@ -719,7 +724,8 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    showColorName // unused
+    showColorName, // unused
+    pixelType
 ) {
     const ctx = canvas.getContext("2d");
 
@@ -786,11 +792,13 @@ function generateInstructionPage(
             ctx.beginPath();
             const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
             const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
-            ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = pixelHex;
-            ctx.fill();
-            ctx.strokeStyle = inverseHex(pixelHex);
-            ctx.stroke();
+            drawPixel(ctx,
+                x - radius,
+                y - radius,
+                radius,
+                pixelHex,
+                inverseHex(pixelHex),
+                pixelType);
             ctx.fillStyle = inverseHex(pixelHex);
             ctx.fillText(
                 studToNumber[pixelHex],
@@ -810,7 +818,8 @@ function generateInstructionPage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName // unused
+        showColorName, // unused
+        pixelType
     );
 }
 
