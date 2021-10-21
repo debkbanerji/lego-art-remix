@@ -1,0 +1,22 @@
+{
+  "name": "Lego Art Remix",
+  "description": "The Intelligent, Easy to Use Lego Mosaic Maker",
+  "theme_color": "#ff7fe7",
+  "background_color": "#fcfcfc",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "display": "browser",
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone"
+}

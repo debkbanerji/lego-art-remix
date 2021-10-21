@@ -17,6 +17,8 @@
   <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
   <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ff7fe7">
+  <link rel="manifest" href="/manifest.json">
 
   <style>
     a {
@@ -1208,10 +1210,22 @@
   <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
   <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
-  <script src="js/stud-maps.js?version=v2021.7.5"></script>
-  <script src="js/algo.js?version=v2021.7.5"></script>
-  <script src="js/index.js?version=v2021.7.5"></script>
+  <script src="js/stud-maps.js"></script>
+  <script src="js/algo.js"></script>
+  <script src="js/index.js"></script>
   <script src="js/metrics.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service worker registration successful, scope is:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('Service worker registration failed, error:', error);
+        });
+    }
+  </script>
 
   <footer>
     <small class="footer">
