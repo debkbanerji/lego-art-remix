@@ -1,4 +1,5 @@
-const CACHE_NAME = "cache-v2021.10.21";
+const VERSION_NAME = "v2021.10.21"
+const CACHE_NAME = `cache-${VERSION_NAME}`;
 const assetToCache = [
     "/index.html",
     "/favicon.png",
