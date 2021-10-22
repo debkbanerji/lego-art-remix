@@ -8,15 +8,17 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
-  <link href="favicon.png?v=2" rel="icon" type="image/x-icon" />
+  <link href="assets/png/icon-192x192.png" rel="icon" type="image/x-icon" />
 
   <title>Lego Art Remix</title>
 
   <meta property="og:title" content="Lego Art Remix" />
-  <meta property="og:image" content="https://lego-art-remix.com/favicon.png" />
+  <meta property="og:image" content="https://lego-art-remix.com/assets/png/icon-960x960.png" />
   <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
   <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FCE4EC">
+  <link rel="manifest" href="/manifest.json">
 
   <style>
     a {
@@ -1019,7 +1021,7 @@
               <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
               <p>Due to the nature of the Lego Art sets, images with transparency aren't fully supported</p>
             </small>
-            <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="examples/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
+            <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="assets/pdf/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
                 Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
               <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
           </div>
@@ -1208,10 +1210,22 @@
   <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
   <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
-  <script src="js/stud-maps.js?version=v2021.7.5"></script>
-  <script src="js/algo.js?version=v2021.7.5"></script>
-  <script src="js/index.js?version=v2021.7.5"></script>
+  <script src="js/stud-maps.js"></script>
+  <script src="js/algo.js"></script>
+  <script src="js/index.js"></script>
   <script src="js/metrics.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(function(registration) {
+          console.log('Service worker registration successful, scope is:', registration.scope);
+        })
+        .catch(function(error) {
+          console.error('Service worker registration failed, error:', error);
+        });
+    }
+  </script>
 
   <footer>
     <small class="footer">

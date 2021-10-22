@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.10.19";
+const VERSION_NUMBER = "v2021.10.20";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -2431,7 +2431,7 @@ function handleInputDepthMapImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
-const EXAMPLES_BASE_URL = "examples/";
+const EXAMPLES_BASE_URL = "assets/png/";
 const EXAMPLES = [{
     colorFile: "lenna.png",
     depthFile: "lenna-depth.png"
@@ -2548,5 +2548,18 @@ document
     .addEventListener("click", () => {
         depthImageSelectorHidden.click();
     });
+
+
+window.addEventListener('appinstalled', () => {
+    perfLoggingDatabase
+        .ref("pwa-install-count/total")
+        .transaction(incrementTransaction);
+    const loggingTimestamp = Math.floor(
+        (Date.now() - (Date.now() % 8.64e7)) / 1000
+    ); // 8.64e+7 = ms in day
+    perfLoggingDatabase
+        .ref("pwa-install-count/per-day/" + loggingTimestamp)
+        .transaction(incrementTransaction);
+});
 
 enableInteraction(); // enable interaction once everything has loaded in
