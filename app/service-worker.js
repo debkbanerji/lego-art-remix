@@ -1,4 +1,4 @@
-const VERSION_NAME = "v2021.10.21"
+const VERSION_NAME = "v2021.10.21-experimental"
 const CACHE_NAME = `cache-${VERSION_NAME}`;
 const assetToCache = [
     "/index.html",
