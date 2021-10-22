@@ -2549,4 +2549,17 @@ document
         depthImageSelectorHidden.click();
     });
 
+
+window.addEventListener('appinstalled', () => {
+    perfLoggingDatabase
+        .ref("pwa-install-count/total")
+        .transaction(incrementTransaction);
+    const loggingTimestamp = Math.floor(
+        (Date.now() - (Date.now() % 8.64e7)) / 1000
+    ); // 8.64e+7 = ms in day
+    perfLoggingDatabase
+        .ref("pwa-install-count/per-day/" + loggingTimestamp)
+        .transaction(incrementTransaction);
+});
+
 enableInteraction(); // enable interaction once everything has loaded in
