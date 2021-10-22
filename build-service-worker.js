@@ -18,6 +18,7 @@ const buildSW = () => {
     ],
     swDest: 'app/service-worker.js',
     sourcemap: false,
+    cacheId: VERSION_NUMBER,
     cleanupOutdatedCaches: true,
   });
 };
