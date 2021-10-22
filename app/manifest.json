@@ -21,5 +21,6 @@
   ],
   "display": "browser",
   "scope": "/",
-  "start_url": "/"
+  "start_url": "/",
+  "display": "standalone"
 }
