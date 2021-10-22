@@ -2431,7 +2431,7 @@ function handleInputDepthMapImage(e) {
     reader.readAsDataURL(e.target.files[0]);
 }
 
-const EXAMPLES_BASE_URL = "examples/";
+const EXAMPLES_BASE_URL = "assets/png/";
 const EXAMPLES = [{
     colorFile: "lenna.png",
     depthFile: "lenna-depth.png"
