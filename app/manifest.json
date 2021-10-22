@@ -19,5 +19,5 @@
   "display": "browser",
   "scope": "/",
   "start_url": "/",
-  "display": "standalone"
+  "display": "minimal-ui"
 }
