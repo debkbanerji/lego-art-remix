@@ -1759,7 +1759,6 @@ function runStep4(asyncCallback) {
                 studRow.style = "height: 1px;"
 
                 const colorCell = document.createElement("td");
-                // const colorInput = getColorSelectorDropdown();
                 const colorSquare = getColorSquare(color)
                 colorCell.appendChild(colorSquare);
                 const colorLabel = document.createElement("small");
@@ -1772,18 +1771,65 @@ function runStep4(asyncCallback) {
                 const numberCellChild = document.createElement("div");
                 numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
                 const numberCellChild2 = document.createElement("div");
-
-                // numberCellChild.style="position: absolute; top: 50%;"
                 numberCellChild2.style = ""
-
-
                 numberCellChild2.innerHTML = usedPixelsStudMap[color];
+
                 numberCellChild.appendChild(numberCellChild2)
                 numberCell.appendChild(numberCellChild);
                 studRow.appendChild(numberCell);
 
                 usedPixelsTableBody.appendChild(studRow)
             });
+
+            document.getElementById('studs-missing-container').hidden = shouldSideStepStep4;
+            const missingPixelsTableBody = document.getElementById('studs-missing-table-body');
+            missingPixelsTableBody.innerHTML = '';
+
+            if (!shouldSideStepStep4) {
+                // create stud map missing pieces table
+                const missingPixelsStudMap = studMapDifference(
+                    getUsedPixelsStudMap(
+                        isBleedthroughEnabled() ?
+                        revertDarkenedImage(
+                            step3PixelArray,
+                            getDarkenedStudsToStuds(
+                                ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
+                            )
+                        ) :
+                        step3PixelArray
+                    ),
+                    usedPixelsStudMap,
+
+                );
+                Object.keys(missingPixelsStudMap).forEach((color) => {
+                    if (missingPixelsStudMap[color] > 0) {
+                        const studRow = document.createElement("tr");
+                        studRow.style = "height: 1px;"
+
+                        const colorCell = document.createElement("td");
+                        const colorSquare = getColorSquare(color)
+                        colorCell.appendChild(colorSquare);
+                        const colorLabel = document.createElement("small");
+                        colorLabel.innerHTML = HEX_TO_COLOR_NAME[color] || color
+                        colorCell.appendChild(colorLabel);
+                        studRow.appendChild(colorCell);
+
+                        const numberCell = document.createElement("td");
+                        numberCell.style = "height: inherit;"
+                        const numberCellChild = document.createElement("div");
+                        numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
+                        const numberCellChild2 = document.createElement("div");
+                        numberCellChild2.style = ""
+                        numberCellChild2.innerHTML = missingPixelsStudMap[color];
+
+                        numberCellChild.appendChild(numberCellChild2)
+                        numberCell.appendChild(numberCellChild);
+                        studRow.appendChild(numberCell);
+
+                        missingPixelsTableBody.appendChild(studRow);
+                    }
+                });
+            }
 
             if (
                 document
