@@ -1017,25 +1017,29 @@
     <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <h3 style="font-weight: 600">Select Input</h3>
+          <h3 style="font-weight: 600">Select Your Input</h3>
           <span class="btn-group" style="margin-top: 8px;">
-            <span style="margin-right: 8px; margin-top: 4px; font-weight: 600">Input Set:</span>
-            <span>
-              <button class="btn dropdown-toggle btn-secondary btn-sm" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-                Input set
-              </button>
-              <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
+            <div class="row" style="margin-left: 0px">
+              <div >
+                <span style="margin-left: 4px; margin-right: 8px; margin-top: 4px; font-weight: 600">Input Set:</span>
+                <span>
+                  <button class="btn dropdown-toggle btn-secondary btn-sm" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                    Input set
+                  </button>
+                  <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
+                  </div>
+                </span>
               </div>
-            </span>
+              <div>
+                <small>
+                  <span style="margin-left: 4px; margin-top: 4px" id="input-stud-map-description"></span>
+                </small>
+              </div>
+
+            </div>
           </span>
           <canvas id="input-canvas" hidden></canvas>
           <canvas id="input-depth-canvas" hidden></canvas>
-          <div style="margin-left: 4px; margin-top: 10px">
-            <small>
-              <p style="margin-bottom: 4px">If you select an input set, Lego Art Remix will intelligently limit the pieces used to those in the set</p>
-              <p style="margin-bottom: 4px">You can also change the available piece count after selecting the input image</p>
-            </small>
-          </div>
           <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
             <div style="margin-top: 8px;">
