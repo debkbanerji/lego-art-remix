@@ -1244,7 +1244,8 @@
   <script src="js/metrics.js"></script>
 
   <script>
-    if ('serviceWorker' in navigator) {
+    // note that the disableServiceWorker param only disables new service worker registration
+    if ('serviceWorker' in navigator && !window.location.href.match(/disableServiceWorker/gi)) {
       navigator.serviceWorker.register('service-worker.js')
         .then(function(registration) {
           console.log('Service worker registration successful, scope is:', registration.scope);
