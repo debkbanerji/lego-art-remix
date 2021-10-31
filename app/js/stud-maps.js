@@ -12,6 +12,7 @@ STUD_MAPS = {
     warhol_marilyn_monroe: {
         name: "Warhol (31197)",
         officialName: "Andy Warhol's Marilyn Monroe (31197)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/andy-warhols-marilyn-monroe-31197\" target=\"_blank\">Andy Warhol's Marilyn Monroe (Set #31197)</a>",
         sortedStuds: [
             "#212121",
             "#595d60",

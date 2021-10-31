@@ -660,6 +660,9 @@ STUD_MAP_KEYS
                 document.getElementById(
                     "select-starting-custom-stud-map-button"
                 ).innerHTML = STUD_MAPS[studMap].name;
+                document.getElementById(
+                    "input-stud-map-description"
+                ).innerHTML = STUD_MAPS[studMap].descriptionHTML ?? ''
             });
             document
                 .getElementById("select-starting-custom-stud-map-options")
