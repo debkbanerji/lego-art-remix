@@ -269,6 +269,7 @@ availableStudHexes.forEach(hex => {
 STUD_MAPS["all_stud_colors"] = {
     name: "All Stud Colors",
     officialName: "All Available Stud Colors",
+    descriptionHTML: "All colors in which studs (1x1 round plates) are available",
     sortedStuds: availableStudHexes,
     studMap: studHexToCount
 };
@@ -281,6 +282,7 @@ availableTileHexes.forEach(hex => {
 STUD_MAPS["all_tile_colors"] = {
     name: "All Tile Colors",
     officialName: "All Available Tile Colors",
+    descriptionHTML: "All colors in which 1x1 round tiles are available",
     sortedStuds: availableTileHexes,
     studMap: tileHexToCount
 };
@@ -292,7 +294,8 @@ availableSolidHexes.forEach(hex => {
 });
 STUD_MAPS["all_solid_colors"] = {
     name: "All Supported Colors",
-    officialName: "All Supported",
+    officialName: "All Supported Colors",
+    descriptionHTML: "All colors supported by the application",
     sortedStuds: availableSolidHexes,
     studMap: solidHexToCount
 };
@@ -319,6 +322,7 @@ availablePickABrickStudHexes.forEach(hex => {
 STUD_MAPS["pick_a_brick"] = {
     name: "All Pick a Brick Stud Colors",
     officialName: "Lego.com Pick a Brick",
+    descriptionHTML: "All colors in which studs are available on the <a href=\"https://www.lego.com/en-us/page/static/pick-a-brick\" target=\"_blank\">Lego.com pick a brick page</a>",
     sortedStuds: availablePickABrickStudHexes,
     studMap: pickABricStudkHexToCount
 };

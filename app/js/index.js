@@ -331,7 +331,7 @@ document.getElementById("color-tie-grouping-factor-slider").addEventListener(
     }
 );
 
-let DEFAULT_STUD_MAP = "all_stud_colors";
+let DEFAULT_STUD_MAP = "all_tile_colors";
 let DEFAULT_COLOR = "#42c0fb";
 let DEFAULT_COLOR_NAME = "Medium Azure";
 
@@ -672,6 +672,9 @@ STUD_MAP_KEYS
 
 document.getElementById("select-starting-custom-stud-map-button").innerHTML =
     STUD_MAPS[DEFAULT_STUD_MAP].name;
+document.getElementById(
+    "input-stud-map-description"
+).innerHTML = STUD_MAPS[DEFAULT_STUD_MAP].descriptionHTML ?? ''
 
 
 constMixInDivider = document.createElement("div");
