@@ -745,7 +745,7 @@ function getColorSelectorDropdown() {
     const id = "color-selector" + uuidv4();
 
     const button = document.createElement("button");
-    button.className = "btn btn-outline-light";
+    button.className = "btn btn-outline-secondary";
     button.type = "button";
     button.setAttribute("data-toggle", "dropdown");
     button.setAttribute("aria-haspopup", "true");
