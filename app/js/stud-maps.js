@@ -239,9 +239,9 @@ STUD_MAPS = {
     //     }
     // },
     personalized_portrait_4502: {
-        name: "Personalised Portrait - 4502 Piece Version (40179)",
+        name: "Personalised Portrait (40179)",
         officialName:
-            "Personalised Mosaic Portrait - 4502 Piece Version (40179)",
+            "Personalised Mosaic Portrait (40179)",
         sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
         studMap: {
             "#212121": 900,
