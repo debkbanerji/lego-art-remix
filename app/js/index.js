@@ -616,39 +616,64 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
     document.getElementById("distance-function-options").appendChild(option);
 });
 
-Object.keys(STUD_MAPS)
+
+const DIVIDER = 'DIVIDER';
+const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
+const NUM_SET_STUD_MAPS = 8;
+STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER)
+
+STUD_MAP_KEYS
     .filter(key => key !== "rgb")
     .forEach(studMap => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = STUD_MAPS[studMap].name;
-        option.value = studMap;
-        option.addEventListener("click", () => {
-            mixInStudMap(STUD_MAPS[studMap]);
-        });
-        mixInStudMapOptions.appendChild(option);
+        if (studMap === DIVIDER) {
+            const divider = document.createElement("div");
+            divider.className = "dropdown-divider";
+            mixInStudMapOptions.appendChild(divider);
+        } else {
+            const option = document.createElement("a");
+            option.className = "dropdown-item btn";
+            option.textContent = STUD_MAPS[studMap].name;
+            option.value = studMap;
+            option.addEventListener("click", () => {
+                mixInStudMap(STUD_MAPS[studMap]);
+            });
+            mixInStudMapOptions.appendChild(option);
+        }
     });
 
-Object.keys(STUD_MAPS)
+STUD_MAP_KEYS
     .filter(key => key !== "rgb")
     .forEach(studMap => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = STUD_MAPS[studMap].name;
-        option.value = studMap;
-        option.addEventListener("click", () => {
-            customStudTableBody.innerHTML = "";
-            mixInStudMap(STUD_MAPS[studMap]);
-            document.getElementById(
-                "select-starting-custom-stud-map-button"
-            ).innerHTML = STUD_MAPS[studMap].name;
-        });
-        document
-            .getElementById("select-starting-custom-stud-map-options")
-            .appendChild(option);
+        if (studMap === DIVIDER) {
+            const divider = document.createElement("div");
+            divider.className = "dropdown-divider";
+            document
+                .getElementById("select-starting-custom-stud-map-options").appendChild(divider);
+        } else {
+            const option = document.createElement("a");
+            option.className = "dropdown-item btn";
+            option.textContent = STUD_MAPS[studMap].name;
+            option.value = studMap;
+            option.addEventListener("click", () => {
+                customStudTableBody.innerHTML = "";
+                mixInStudMap(STUD_MAPS[studMap]);
+                document.getElementById(
+                    "select-starting-custom-stud-map-button"
+                ).innerHTML = STUD_MAPS[studMap].name;
+            });
+            document
+                .getElementById("select-starting-custom-stud-map-options")
+                .appendChild(option);
+        }
     });
+
 document.getElementById("select-starting-custom-stud-map-button").innerHTML =
     STUD_MAPS[DEFAULT_STUD_MAP].name;
+
+
+constMixInDivider = document.createElement("div");
+constMixInDivider.className = "dropdown-divider";
+mixInStudMapOptions.appendChild(constMixInDivider);
 
 const importOption = document.createElement("a");
 importOption.className = "dropdown-item btn";
