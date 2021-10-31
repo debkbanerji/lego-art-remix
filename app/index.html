@@ -1022,7 +1022,7 @@
             <div class="row" style="margin-left: 0px">
               <div style="margin-right: 4px;">
                 <span style="margin-left: 4px; margin-right: 8px; margin-top: 4px; font-weight: 600">Input Pieces:</span>
-                <span>
+                <span data-toggle="tooltip" title="This can also be changed or adjusted piece by piece later" data-placement="top">
                   <button class="btn dropdown-toggle btn-secondary btn-sm" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
                     Input set
                   </button>
@@ -1030,17 +1030,16 @@
                   </div>
                 </span>
               </div>
-              <div  style="margin-left: 2px;">
+              <div style="margin-left: 2px;">
                 <small style="margin-top: 10px" class="text-muted" id="input-stud-map-description"></small>
               </div>
-
             </div>
           </span>
           <canvas id="input-canvas" hidden></canvas>
           <canvas id="input-depth-canvas" hidden></canvas>
           <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
-            <div style="margin-top: 8px;">
+            <div style="margin-top: 12px;">
               <button class="btn btn-success" type="button" id="input-image-selector" disabled>
                 Select Input Image
               </button>
