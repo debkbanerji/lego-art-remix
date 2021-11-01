@@ -9,6 +9,47 @@ STUD_MAPS = {
     //         "#6666ff": 1000
     //     }
     // },
+    art_project: {
+        name: "Art Project (21226)",
+        officialName: "Art Project - Create Together (21226)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/art-project-create-together-21226\" target=\"_blank\">Art Project - Create Together (Set #21226)</a>",
+        sortedStuds: [
+            "#212121",
+            "#143044",
+            "#3399ff",
+            "#ccffff",
+            "#ffffff",
+            "#ffbbff",
+            "#b30006",
+            "#ff7e14",
+            "#f7ba30",
+            "#f7d117",
+            "#f3e055",
+            "#dec69c",
+            "#e3a05b",
+            "#89351d",
+            "#10cb31",
+            "#a6ca55",
+        ],
+        studMap: {
+            "#212121": 254,
+            "#143044": 660,
+            "#3399ff": 127,
+            "#ccffff": 317,
+            "#ffffff": 474,
+            "#ffbbff": 58,
+            "#b30006": 190,
+            "#ff7e14": 121,
+            "#f7ba30": 175,
+            "#f7d117": 299,
+            "#f3e055": 119,
+            "#dec69c": 241,
+            "#e3a05b": 281,
+            "#89351d": 307,
+            "#10cb31": 148,
+            "#a6ca55": 166,
+        }
+    },
     warhol_marilyn_monroe: {
         name: "Warhol (31197)",
         officialName: "Andy Warhol's Marilyn Monroe (31197)",
@@ -247,9 +288,8 @@ STUD_MAPS = {
     // },
     personalized_portrait_4502: {
         name: "Personalised Portrait (40179)",
-        officialName:
-            "Personalised Mosaic Portrait (40179)",
-            descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/mosaic-maker-40179\" target=\"_blank\">Personalised Mosaic Portrait (Set #40179)</a>",
+        officialName: "Personalised Mosaic Portrait (40179)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/mosaic-maker-40179\" target=\"_blank\">Personalised Mosaic Portrait (Set #40179)</a>",
         sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
         studMap: {
             "#212121": 900,
