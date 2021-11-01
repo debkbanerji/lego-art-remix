@@ -16,7 +16,7 @@ These are some articles and videos featuring Lego Art Remix. Note that some were
  - [DuckBricks Video](https://www.youtube.com/watch?v=RY4OJnD99VQ)
 
 
-![Lego Art Meta Picture](https://raw.githubusercontent.com/debkbanerji/lego-art-remix/master/app/favicon.png)
+![Lego Art Meta Picture](https://raw.githubusercontent.com/debkbanerji/lego-art-remix/master/app/assets/png/icon-960x960.png)
 
 ## What is it?
 In 2020, The Lego Group released the [Lego Art](https://www.lego.com/en-us/campaigns/art) theme, which allows people to create a predetermined image using Lego studs.
