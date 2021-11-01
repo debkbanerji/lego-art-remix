@@ -1812,10 +1812,10 @@ function runStep4(asyncCallback) {
                 usedPixelsTableBody.appendChild(studRow)
             });
 
-            document.getElementById('studs-missing-container').hidden = shouldSideStepStep4;
             const missingPixelsTableBody = document.getElementById('studs-missing-table-body');
             missingPixelsTableBody.innerHTML = '';
 
+            let missingPixelsExist = false;
             if (!shouldSideStepStep4) {
                 // create stud map missing pieces table
                 const missingPixelsStudMap = studMapDifference(
@@ -1834,6 +1834,7 @@ function runStep4(asyncCallback) {
                 );
                 Object.keys(missingPixelsStudMap).forEach((color) => {
                     if (missingPixelsStudMap[color] > 0) {
+                        missingPixelsExist = true;
                         const studRow = document.createElement("tr");
                         studRow.style = "height: 1px;"
 
@@ -1861,6 +1862,7 @@ function runStep4(asyncCallback) {
                     }
                 });
             }
+            document.getElementById('studs-missing-container').hidden = !missingPixelsExist;
 
             if (
                 document
