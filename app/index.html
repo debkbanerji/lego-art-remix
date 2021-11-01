@@ -546,7 +546,7 @@
                           results in many cases
                         </p>
                       </small>
-                      <button class="btn dropdown-toggle" type="button" id="distance-function-button" data-toggle="dropdown">
+                      <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
                         Euclidean RGB
                       </button>
                       <div class="dropdown-menu" id="distance-function-options">
@@ -634,7 +634,7 @@
                     <div class="card-body accordion-card-body">
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <div class="btn-group">
-                          <button class="btn dropdown-toggle" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button class="btn dropdown-toggle btn-outline-dark" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Bricklink Pixel Piece
                           </button>
                           <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
@@ -797,7 +797,7 @@
                         </p>
                       </small>
                       <div class="btn-group">
-                        <button class="btn dropdown-toggle" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
                           Strategy: Alternating Mod
                         </button>
                         <div class="dropdown-menu" id="color-ties-resolution-options">
@@ -1017,42 +1017,43 @@
     <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
-          <span id="image-input">
-            <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
-            <div style="margin-top: 8px;">
-              <button class="btn btn-success" type="button" id="input-image-selector" disabled>
-                Select Input Image
-              </button>
-              <span id="run-example-input-container">
-                <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
-                <button class="btn btn-success" type="button" id="run-example-input" disabled>
-                  See an Example
-                </button>
-              </span>
-            </div>
-          </span>
+          <h3 style="font-weight: 600">Get Started</h3>
           <span class="btn-group" style="margin-top: 8px;">
-            <button class="btn dropdown-toggle btn-info" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
-              Input set
-            </button>
-            <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
+            <div class="row" style="margin-left: 0px">
+              <div style="margin-right: 4px;">
+                <span style="margin-left: 4px; margin-right: 8px; margin-top: 4px; font-weight: 600">Input Pieces:</span>
+                <span data-toggle="tooltip" title="This can also be changed or adjusted piece by piece later" data-placement="top">
+                  <button class="btn dropdown-toggle btn-outline-dark btn-sm" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+                    Input set
+                  </button>
+                  <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
+                  </div>
+                </span>
+              </div>
+              <div style="margin-left: 2px;">
+                <small style="margin-top: 10px" class="text-muted" id="input-stud-map-description"></small>
+              </div>
             </div>
           </span>
           <canvas id="input-canvas" hidden></canvas>
           <canvas id="input-depth-canvas" hidden></canvas>
-          <div style="margin-left: 4px; margin-top: 10px">
-            <small>
-              <p style="margin-bottom: 4px">If you select an input set, Lego Art Remix will intelligently limit the pieces used to those in the set</p>
-              <p style="margin-bottom: 4px">You can also change the available piece count after selecting the input image</p>
-            </small>
-            <small hidden>
-              <p style="margin-bottom: 4px">Supported image formats are dependent on your browser's compatibility</p>
-              <p>Due to the nature of the Lego Art sets, images with transparency aren't fully supported</p>
-            </small>
-            <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="assets/pdf/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
-                Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
-              <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
-          </div>
+          <span id="image-input">
+            <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
+            <div style="margin-top: 12px;">
+              <button class="btn btn-success" type="button" id="input-image-selector" disabled>
+                Select Input Image
+              </button>
+            </div>
+          </span>
+          <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="assets/pdf/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
+              Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
+            <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
+          <span id="run-example-input-container" hidden>
+            <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
+            <button class="btn btn-success" type="button" id="run-example-input" disabled>
+              See an Example
+            </button>
+          </span>
         </div>
       </div>
     </div>

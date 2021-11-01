@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.10.22";
+const VERSION_NUMBER = "v2021.10.31";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -331,7 +331,7 @@ document.getElementById("color-tie-grouping-factor-slider").addEventListener(
     }
 );
 
-let DEFAULT_STUD_MAP = "all_stud_colors";
+let DEFAULT_STUD_MAP = "all_tile_colors";
 let DEFAULT_COLOR = "#42c0fb";
 let DEFAULT_COLOR_NAME = "Medium Azure";
 
@@ -616,39 +616,70 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
     document.getElementById("distance-function-options").appendChild(option);
 });
 
-Object.keys(STUD_MAPS)
+
+const DIVIDER = 'DIVIDER';
+const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
+const NUM_SET_STUD_MAPS = 8;
+STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER)
+
+STUD_MAP_KEYS
     .filter(key => key !== "rgb")
     .forEach(studMap => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = STUD_MAPS[studMap].name;
-        option.value = studMap;
-        option.addEventListener("click", () => {
-            mixInStudMap(STUD_MAPS[studMap]);
-        });
-        mixInStudMapOptions.appendChild(option);
+        if (studMap === DIVIDER) {
+            const divider = document.createElement("div");
+            divider.className = "dropdown-divider";
+            mixInStudMapOptions.appendChild(divider);
+        } else {
+            const option = document.createElement("a");
+            option.className = "dropdown-item btn";
+            option.textContent = STUD_MAPS[studMap].name;
+            option.value = studMap;
+            option.addEventListener("click", () => {
+                mixInStudMap(STUD_MAPS[studMap]);
+            });
+            mixInStudMapOptions.appendChild(option);
+        }
     });
 
-Object.keys(STUD_MAPS)
+STUD_MAP_KEYS
     .filter(key => key !== "rgb")
     .forEach(studMap => {
-        const option = document.createElement("a");
-        option.className = "dropdown-item btn";
-        option.textContent = STUD_MAPS[studMap].name;
-        option.value = studMap;
-        option.addEventListener("click", () => {
-            customStudTableBody.innerHTML = "";
-            mixInStudMap(STUD_MAPS[studMap]);
-            document.getElementById(
-                "select-starting-custom-stud-map-button"
-            ).innerHTML = "Input Set: " + STUD_MAPS[studMap].name;
-        });
-        document
-            .getElementById("select-starting-custom-stud-map-options")
-            .appendChild(option);
+        if (studMap === DIVIDER) {
+            const divider = document.createElement("div");
+            divider.className = "dropdown-divider";
+            document
+                .getElementById("select-starting-custom-stud-map-options").appendChild(divider);
+        } else {
+            const option = document.createElement("a");
+            option.className = "dropdown-item btn";
+            option.textContent = STUD_MAPS[studMap].name;
+            option.value = studMap;
+            option.addEventListener("click", () => {
+                customStudTableBody.innerHTML = "";
+                mixInStudMap(STUD_MAPS[studMap]);
+                document.getElementById(
+                    "select-starting-custom-stud-map-button"
+                ).innerHTML = STUD_MAPS[studMap].name;
+                document.getElementById(
+                    "input-stud-map-description"
+                ).innerHTML = STUD_MAPS[studMap].descriptionHTML ?? ''
+            });
+            document
+                .getElementById("select-starting-custom-stud-map-options")
+                .appendChild(option);
+        }
     });
+
 document.getElementById("select-starting-custom-stud-map-button").innerHTML =
-    "Input Set: " + STUD_MAPS[DEFAULT_STUD_MAP].name;
+    STUD_MAPS[DEFAULT_STUD_MAP].name;
+document.getElementById(
+    "input-stud-map-description"
+).innerHTML = STUD_MAPS[DEFAULT_STUD_MAP].descriptionHTML ?? ''
+
+
+constMixInDivider = document.createElement("div");
+constMixInDivider.className = "dropdown-divider";
+mixInStudMapOptions.appendChild(constMixInDivider);
 
 const importOption = document.createElement("a");
 importOption.className = "dropdown-item btn";
@@ -714,7 +745,7 @@ function getColorSelectorDropdown() {
     const id = "color-selector" + uuidv4();
 
     const button = document.createElement("button");
-    button.className = "btn btn-outline-light";
+    button.className = "btn btn-outline-secondary";
     button.type = "button";
     button.setAttribute("data-toggle", "dropdown");
     button.setAttribute("aria-haspopup", "true");
@@ -1781,10 +1812,10 @@ function runStep4(asyncCallback) {
                 usedPixelsTableBody.appendChild(studRow)
             });
 
-            document.getElementById('studs-missing-container').hidden = shouldSideStepStep4;
             const missingPixelsTableBody = document.getElementById('studs-missing-table-body');
             missingPixelsTableBody.innerHTML = '';
 
+            let missingPixelsExist = false;
             if (!shouldSideStepStep4) {
                 // create stud map missing pieces table
                 const missingPixelsStudMap = studMapDifference(
@@ -1803,6 +1834,7 @@ function runStep4(asyncCallback) {
                 );
                 Object.keys(missingPixelsStudMap).forEach((color) => {
                     if (missingPixelsStudMap[color] > 0) {
+                        missingPixelsExist = true;
                         const studRow = document.createElement("tr");
                         studRow.style = "height: 1px;"
 
@@ -1830,6 +1862,7 @@ function runStep4(asyncCallback) {
                     }
                 });
             }
+            document.getElementById('studs-missing-container').hidden = !missingPixelsExist;
 
             if (
                 document

@@ -12,6 +12,7 @@ STUD_MAPS = {
     warhol_marilyn_monroe: {
         name: "Warhol (31197)",
         officialName: "Andy Warhol's Marilyn Monroe (31197)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/andy-warhols-marilyn-monroe-31197\" target=\"_blank\">Andy Warhol's Marilyn Monroe (Set #31197)</a>",
         sortedStuds: [
             "#212121",
             "#595d60",
@@ -34,6 +35,7 @@ STUD_MAPS = {
     the_beatles: {
         name: "The Beatles (31198)",
         officialName: "The Beatles (31198)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/the-beatles-31198\" target=\"_blank\">The Beatles (Set #31198)</a>",
         sortedStuds: [
             "#212121",
             "#595d60",
@@ -72,6 +74,7 @@ STUD_MAPS = {
     iron_man: {
         name: "Iron Man (31199)",
         officialName: "Marvel Studios Iron Man (31199)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/marvel-studios-iron-man-31199\" target=\"_blank\">Marvel Studios Iron Man (Set #31199)</a>",
         sortedStuds: [
             "#212121",
             "#595d60",
@@ -110,6 +113,7 @@ STUD_MAPS = {
     star_wars_sith: {
         name: "Star Wars (31200)",
         officialName: "Star Wars The Sith (31200)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/star-wars-the-sith-31200\" target=\"_blank\">Star Wars The Sith (Set #31200)</a>",
         sortedStuds: [
             "#212121",
             "#666660",
@@ -142,6 +146,7 @@ STUD_MAPS = {
     harry_potter_hogwarts_crests: {
         name: "Harry Potter (31201)",
         officialName: "Harry Potter Hogwarts Crests (31201)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201\" target=\"_blank\">Harry Potter Hogwarts Crests (Set #31201)</a>",
         sortedStuds: [
             "#212121",
             "#666660",
@@ -174,6 +179,7 @@ STUD_MAPS = {
     mickey_mouse: {
         name: "Mickey Mouse (31202)",
         officialName: "Disney's Mickey Mouse (31202)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/disney-s-mickey-mouse-31202\" target=\"_blank\">Disney's Mickey Mouse (Set #31202)</a>",
         sortedStuds: [
             "#212121",
             "#595d60",
@@ -200,6 +206,7 @@ STUD_MAPS = {
     world_map: {
         name: "World Map (31203)",
         officialName: "World Map (31203)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/world-map-31203\" target=\"_blank\">World Map (Set #31203)</a>",
         sortedStuds: [
             "#ffffff",
             "#143044",
@@ -239,9 +246,10 @@ STUD_MAPS = {
     //     }
     // },
     personalized_portrait_4502: {
-        name: "Personalised Portrait - 4502 Piece Version (40179)",
+        name: "Personalised Portrait (40179)",
         officialName:
-            "Personalised Mosaic Portrait - 4502 Piece Version (40179)",
+            "Personalised Mosaic Portrait (40179)",
+            descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/mosaic-maker-40179\" target=\"_blank\">Personalised Mosaic Portrait (Set #40179)</a>",
         sortedStuds: ["#212121", "#595d60", "#afb5c7", "#ffffff", "#f7d117"],
         studMap: {
             "#212121": 900,
@@ -261,6 +269,7 @@ availableStudHexes.forEach(hex => {
 STUD_MAPS["all_stud_colors"] = {
     name: "All Stud Colors",
     officialName: "All Available Stud Colors",
+    descriptionHTML: "All colors in which studs (1x1 round plates) are available",
     sortedStuds: availableStudHexes,
     studMap: studHexToCount
 };
@@ -273,6 +282,7 @@ availableTileHexes.forEach(hex => {
 STUD_MAPS["all_tile_colors"] = {
     name: "All Tile Colors",
     officialName: "All Available Tile Colors",
+    descriptionHTML: "All colors in which 1x1 round tiles are available",
     sortedStuds: availableTileHexes,
     studMap: tileHexToCount
 };
@@ -284,7 +294,8 @@ availableSolidHexes.forEach(hex => {
 });
 STUD_MAPS["all_solid_colors"] = {
     name: "All Supported Colors",
-    officialName: "All Supported",
+    officialName: "All Supported Colors",
+    descriptionHTML: "All colors supported by the application",
     sortedStuds: availableSolidHexes,
     studMap: solidHexToCount
 };
@@ -311,6 +322,7 @@ availablePickABrickStudHexes.forEach(hex => {
 STUD_MAPS["pick_a_brick"] = {
     name: "All Pick a Brick Stud Colors",
     officialName: "Lego.com Pick a Brick",
+    descriptionHTML: "All colors in which studs are available on the <a href=\"https://www.lego.com/en-us/page/static/pick-a-brick\" target=\"_blank\">Lego.com pick a brick page</a>",
     sortedStuds: availablePickABrickStudHexes,
     studMap: pickABricStudkHexToCount
 };
