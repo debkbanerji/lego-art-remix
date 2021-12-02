@@ -25,6 +25,21 @@
       text-decoration: none !important;
     }
 
+    .responsive-youtube {
+      overflow: hidden;
+      padding-bottom: 56.25%;
+      position: relative;
+      height: 0;
+    }
+
+    .responsive-youtube iframe {
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+    }
+
     .btn-link {
       text-decoration: none !important;
       width: 100%;
@@ -1072,10 +1087,16 @@
               <p style="margin-bottom: 4px;">If you're interested in understanding how this site works, the talk goes over the techniques and algorithms that were used</p>
               <p style="margin-bottom: 4px;">It also goes over some ideas that haven't (yet) been implemented within the tool, so it functions fairly well as a more general overview of the Lego mosaic space</p>
               <p style="margin-bottom: 4px;">You can find the slide deck used in the talk <a href="https://github.com/debkbanerji/lego-art-remix/blob/master/media/Lego%20Mosaic%20Presentation.pdf" target="_blank">here</a>,
-              and if the video doesn't load, you can find it directly on BrickCon's YouTube channel <a href="https://www.youtube.com/watch?v=G58ZNurxXgQ" target="_blank">here</a></p>
+                and if the video doesn't load, you can find it directly on BrickCon's YouTube channel <a href="https://www.youtube.com/watch?v=G58ZNurxXgQ" target="_blank">here</a></p>
             </small>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/G58ZNurxXgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
+            <div class="row">
+              <div class="col-12 col-md-6">
+                <div class="responsive-youtube">
+                  <iframe width="560" height="315" src="https://www.youtube.com/embed/G58ZNurxXgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+                </div>
+              </div>
+            </div>
             <p style="margin-bottom: 4px; margin-top: 15px; font-weight: 600">These are some other articles and videos featuring Lego Art Remix</p>
             <small>
               <p style="margin-bottom: 4px">Some are quite interesting even outside the context of this tool in particular, since they
