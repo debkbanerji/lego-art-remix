@@ -149,6 +149,26 @@ function alignPixelsToStudMap(
     return alignedPixels;
 }
 
+function getAverageQuantizationError(pixels1, pixels2, colorDistanceFunction) {
+    let totalError = 0;
+    for (let i = 0; i < pixels1.length / 4; i++) {
+        const targetPixelIndex = i * 4;
+
+        const pixel1 = [];
+        const pixel2 = [];
+        for (let j = 0; j < 3; j++) {
+            pixel1.push(pixels1[targetPixelIndex + j]);
+            pixel2.push(pixels2[targetPixelIndex + j]);
+        }
+
+        totalError += colorDistanceFunction(
+            pixel1,
+            pixel2
+        );
+    }
+    return totalError / (pixels1.length / 4);
+}
+
 function getArrayWithOverridesApplied(inputPixels, overridePixels) {
     const resultPixels = [];
     for (let i = 0; i < inputPixels.length; i++) {

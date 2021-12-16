@@ -1143,6 +1143,10 @@ function runStep3() {
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
 
+    const step3QuantizationError = getAverageQuantizationError(fiteredPixelArray, alignedPixelArray, colorDistanceFunction);
+    document.getElementById('step-3-quantization-error').innerHTML = step3QuantizationError.toFixed(3);
+
+
     step3DepthCanvas.width = targetResolution[0];
     step3DepthCanvas.height = targetResolution[1];
     const inputDepthPixelArray = getPixelArrayFromCanvas(step2DepthCanvas);
@@ -1757,6 +1761,10 @@ function runStep4(asyncCallback) {
         );
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
+
+        const step4QuantizationError = getAverageQuantizationError(step2PixelArray, availabilityCorrectedPixelArray, colorDistanceFunction);
+        document.getElementById('step-4-quantization-error').innerHTML = step4QuantizationError.toFixed(3);
+
         setTimeout(async () => {
             step4CanvasUpscaledContext.imageSmoothingEnabled = false;
             const pixelsToDraw = isBleedthroughEnabled() ?
