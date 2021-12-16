@@ -158,7 +158,7 @@ function getAverageQuantizationError(pixels1, pixels2, colorDistanceFunction) {
         const pixel2 = [];
         for (let j = 0; j < 3; j++) {
             pixel1.push(pixels1[targetPixelIndex + j]);
-            pixel2.push(pixels1[targetPixelIndex + 2]);
+            pixel2.push(pixels2[targetPixelIndex + j]);
         }
 
         totalError += colorDistanceFunction(
