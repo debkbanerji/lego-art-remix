@@ -503,6 +503,10 @@
               <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 3</h4>
               <small className="step-header-subtitle">Align to closest pixel from available colors</small>
+              <br />
+              <span data-toggle="tooltip" title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function)" data-placement="top">
+                <small>Average</small> &#x3F5;: <small id="step-3-quantization-error"></small>
+              </span>
 
               <div id="step-3-accordion">
                 <div class="card accordion-card">
@@ -516,7 +520,7 @@
                   <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px">
-                        <small><em>I recommend tweaking the color alignment setting before using the paintbrush</em></small>
+                        <small><em>I recommend tweaking the color distance setting before using the paintbrush</em></small>
                         <div style="margin-bottom: 4px; display: flex; flex-direction: row; align-items: center;">
                           <span style="font-weight: 600">Paintbrush color: &nbsp;</span>
                           <span id="paintbrush-controls">
@@ -545,7 +549,7 @@
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
-                        Color Alignment
+                        Color Distance
                       </button>
                     </h5>
                   </div>
@@ -744,6 +748,10 @@
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 4</h4>
               <small className="step-header-subtitle">Correct for available studs (if stud counts are limited)</small>
+              <br />
+              <span data-toggle="tooltip" title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Parts Missing From Step 3' under 'Parts Used' to determine which additional parts can be used to improve the image." data-placement="top">
+                <small>Average</small> &#x3F5;: <small id="step-4-quantization-error"></small>
+              </span>
               <div id="step-4-accordion">
 
                 <div class="card accordion-card">
