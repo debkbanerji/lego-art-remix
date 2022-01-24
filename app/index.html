@@ -8,6 +8,8 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.css" integrity="sha512-6QxSiaKfNSQmmqwqpTNyhHErr+Bbm8u8HHSiinMEz0uimy9nu7lc/2NaXJiUJj2y4BApd5vgDjSHyLzC8nP6Ng==" crossorigin="anonymous"
+    referrerpolicy="no-referrer" />
   <link href="assets/png/icon-192x192.png" rel="icon" type="image/x-icon" />
 
   <title>Lego Art Remix</title>
@@ -87,6 +89,12 @@
       border-right: 1px solid rgb(222, 226, 230);
     }
 
+    .cropper-img {
+      display: block;
+
+      max-width: 100%;
+    }
+
     .progress-bar.indeterminate {
       position: relative;
       animation: progress-indeterminate 3s linear infinite;
@@ -154,10 +162,11 @@
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
-              <canvas id="step-1-canvas" hidden></canvas>
-              <canvas id="step-1-canvas-upscaled" style="width: 100%"></canvas>
+              <div style="width: 100%">
+                <canvas id="step-1-canvas-upscaled"  style="width: 100%"></canvas>
+              </div>
               <h4>Step 1</h4>
-              <small className="step-header-subtitle">Scale input image</small>
+              <small className="step-header-subtitle">Crop + Scale input image</small>
               <div id="step-1-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-1-heading">
@@ -261,7 +270,8 @@
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1</h4>
-              <small className="step-header-subtitle">Get depth map</small>
+              <small className="step-header-subtitle">Get depth map</small><br/>
+              <small className="step-header-subtitle">Depth map cropping will match input image</small>
               <div id="step-1-depth-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-depth-1-heading">
@@ -412,6 +422,7 @@
               </div>
             </div>
             <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
+              <canvas id="step-2-depth-canvas-cropper-buffer" hidden></canvas>
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2</h4>
@@ -749,7 +760,9 @@
               <h4>Step 4</h4>
               <small className="step-header-subtitle">Correct for available studs (if stud counts are limited)</small>
               <br />
-              <span data-toggle="tooltip" title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Parts Missing From Step 3' under 'Parts Used' to determine which additional parts can be used to improve the image." data-placement="top">
+              <span data-toggle="tooltip"
+                title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Parts Missing From Step 3' under 'Parts Used' to determine which additional parts can be used to improve the image."
+                data-placement="top">
                 <small>Average</small> &#x3F5;: <small id="step-4-quantization-error"></small>
               </span>
               <div id="step-4-accordion">
@@ -1276,6 +1289,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v5.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js" integrity="sha512-IlZV3863HqEgMeFLVllRjbNOoh8uVj0kgx0aYxgt4rdBABTZCl/h5MfshHD9BrnVs6Rs9yNN7kUQpzhcLkNmHw==" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
   <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
   <script src="js/stud-maps.js"></script>

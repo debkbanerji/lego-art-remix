@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2021.12.15";
+const VERSION_NUMBER = "v2022.1.23";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -81,6 +81,9 @@ function disableInteraction() {
     document.getElementById(
         "universal-loading-progress-complement"
     ).hidden = true;
+    if (inputImageCropper != null) {
+        inputImageCropper.disable();
+    }
 }
 
 function enableInteraction() {
@@ -98,6 +101,9 @@ function enableInteraction() {
     document.getElementById(
         "universal-loading-progress-complement"
     ).hidden = false;
+    if (inputImageCropper != null) {
+        inputImageCropper.enable();
+    }
 }
 
 if (window.location.href.includes("forceUnsupportedDimensions")) {
@@ -124,13 +130,8 @@ const webWorkerOutputCanvas = document.getElementById(
 );
 const webWorkerOutputCanvasContext = webWorkerOutputCanvas.getContext("2d");
 
-const step1Canvas = document.getElementById("step-1-canvas");
-const step1CanvasContext = step1Canvas.getContext("2d");
 const step1CanvasUpscaled = document.getElementById("step-1-canvas-upscaled");
 const step1CanvasUpscaledContext = step1CanvasUpscaled.getContext("2d");
-step1CanvasContext.imageSmoothingQuality = "high";
-const step1DepthCanvas = document.getElementById("step-1-depth-canvas");
-const step1DepthCanvasContext = step1DepthCanvas.getContext("2d");
 const step1DepthCanvasUpscaled = document.getElementById(
     "step-1-depth-canvas-upscaled"
 );
@@ -180,6 +181,20 @@ let targetResolution = [
 ];
 const SCALING_FACTOR = 40;
 const PLATE_WIDTH = 16;
+
+let inputImageCropper
+
+function initializeCropper() {
+    if (inputImageCropper != null) {
+        inputImageCropper.destroy();
+    }
+    inputImageCropper = new Cropper(step1CanvasUpscaled, {
+        aspectRatio: targetResolution[0] / targetResolution[1],
+        viewMode: 3
+    });
+}
+
+step1CanvasUpscaled.addEventListener('cropend', runStep1);
 
 window.addEventListener("resize", () => {
     [step4Canvas].forEach(canvas => {
@@ -268,6 +283,7 @@ function handleResolutionChange() {
     overrideDepthPixelArray = new Array(
         targetResolution[0] * targetResolution[1] * 4
     ).fill(null);
+    initializeCropper();
     runStep1();
 }
 
@@ -1033,51 +1049,29 @@ function runStep1() {
         )
     );
 
-    step1Canvas.width = targetResolution[0];
-    step1Canvas.height = targetResolution[1];
-    step1CanvasContext.drawImage(
-        inputCanvas,
-        0,
-        0,
-        targetResolution[0],
-        targetResolution[1]
-    );
-    step1DepthCanvas.width = targetResolution[0];
-    step1DepthCanvas.height = targetResolution[1];
-    step1DepthCanvasContext.drawImage(
+    step1DepthCanvasUpscaled.width = step1CanvasUpscaled.width;
+    step1DepthCanvasUpscaled.height = step1CanvasUpscaled.height;
+    step1DepthCanvasUpscaledContext.drawImage(
         inputDepthCanvas,
         0,
         0,
-        targetResolution[0],
-        targetResolution[1]
+        step1CanvasUpscaled.width,
+        step1CanvasUpscaled.height
     );
     setTimeout(() => {
         runStep2();
-        step1CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
-        step1CanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
-        step1CanvasUpscaledContext.imageSmoothingEnabled = false;
-        step1CanvasUpscaledContext.drawImage(
-            step1Canvas,
-            0,
-            0,
-            targetResolution[0] * SCALING_FACTOR,
-            targetResolution[1] * SCALING_FACTOR
-        );
-        step1DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
-        step1DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
-        step1DepthCanvasUpscaledContext.imageSmoothingEnabled = false;
-        step1DepthCanvasUpscaledContext.drawImage(
-            step1DepthCanvas,
-            0,
-            0,
-            targetResolution[0] * SCALING_FACTOR,
-            targetResolution[1] * SCALING_FACTOR
-        );
     }, 1); // TODO: find better way to check that input is finished
 }
 
 function runStep2() {
-    const inputPixelArray = getPixelArrayFromCanvas(step1Canvas);
+    const croppedCanvas = inputImageCropper.getCroppedCanvas({
+        width: targetResolution[0],
+        height: targetResolution[1],
+        maxWidth: 4096,
+        maxHeight: 4096,
+        imageSmoothingEnabled: false,
+    });
+    const inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
     const filteredPixelArray = applyHSVAdjustment(
         inputPixelArray,
         document.getElementById("hue-slider").value,
@@ -1090,7 +1084,27 @@ function runStep2() {
 
     step2DepthCanvas.width = targetResolution[0];
     step2DepthCanvas.height = targetResolution[1];
-    const inputDepthPixelArray = getPixelArrayFromCanvas(step1DepthCanvas);
+
+    // Map the crop to the depth image
+    const cropperData = inputImageCropper.getData();
+    const rawCroppedDepthImage = step1DepthCanvasUpscaledContext.getImageData(cropperData.x, cropperData.y, cropperData.width, cropperData.height);
+    const cropperBufferCanvas = document.getElementById("step-2-depth-canvas-cropper-buffer");
+    const cropperBufferCanvasContext = cropperBufferCanvas.getContext("2d");
+    cropperBufferCanvas.width = targetResolution[0];
+    cropperBufferCanvas.height = targetResolution[1];
+    cropperBufferCanvasContext.drawImage(
+        step1DepthCanvasUpscaled,
+        cropperData.x,
+        cropperData.y,
+        cropperData.width,
+        cropperData.height,
+        0,
+        0,
+        targetResolution[0],
+        targetResolution[1],
+    )
+    const inputDepthPixelArray = getPixelArrayFromCanvas(cropperBufferCanvas);
+
     const discreteDepthPixels = getDiscreteDepthPixels(
         inputDepthPixelArray,
         [
@@ -2499,6 +2513,25 @@ function handleInputImage(e, dontClearDepth, dontLog) {
         document.getElementById("image-input-card").hidden = true;
         document.getElementById("run-example-input-container").hidden = true;
         setTimeout(() => {
+            step1CanvasUpscaled.width = SERIALIZE_EDGE_LENGTH;
+            step1CanvasUpscaled.height = Math.floor(SERIALIZE_EDGE_LENGTH * inputImage.height / inputImage.width);
+            console.log({
+                width: step1CanvasUpscaled.width,
+                width: step1CanvasUpscaled.width
+            })
+            step1CanvasUpscaledContext.drawImage(
+                inputCanvas,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH,
+                0,
+                0,
+                step1CanvasUpscaled.width,
+                step1CanvasUpscaled.height
+            );
+
+            initializeCropper();
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
 
