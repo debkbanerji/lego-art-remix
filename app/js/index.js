@@ -427,7 +427,7 @@ function populateCustomStudSelectors(studMap, shouldRunAfterPopulation) {
     }
 }
 
-function mixInStudMap(studMap) {
+function mixInStudMap(studMap, runAfterMixIn) {
     studMap.sortedStuds.forEach(stud => {
         let existingRow = null;
         Array.from(customStudTableBody.children).forEach(row => {
@@ -462,7 +462,8 @@ function mixInStudMap(studMap) {
             );
         }
     });
-    runCustomStudMap();
+    // TODO: Clean up boolean logic here
+    runCustomStudMap(!runAfterMixIn);
 }
 
 populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
@@ -662,7 +663,7 @@ STUD_MAP_KEYS
             option.textContent = STUD_MAPS[studMap].name;
             option.value = studMap;
             option.addEventListener("click", () => {
-                mixInStudMap(STUD_MAPS[studMap]);
+                mixInStudMap(STUD_MAPS[studMap], true);
             });
             mixInStudMapOptions.appendChild(option);
         }
@@ -683,7 +684,7 @@ STUD_MAP_KEYS
             option.value = studMap;
             option.addEventListener("click", () => {
                 customStudTableBody.innerHTML = "";
-                mixInStudMap(STUD_MAPS[studMap]);
+                mixInStudMap(STUD_MAPS[studMap], false);
                 document.getElementById(
                     "select-starting-custom-stud-map-button"
                 ).innerHTML = STUD_MAPS[studMap].name;
@@ -722,7 +723,7 @@ document.getElementById("import-stud-map-file-input").addEventListener(
     e => {
         const reader = new FileReader();
         reader.onload = function(event) {
-            mixInStudMap(JSON.parse(reader.result));
+            mixInStudMap(JSON.parse(reader.result, true));
             document.getElementById("import-stud-map-file-input").value = null;
         };
         reader.readAsText(e.target.files[0]);
@@ -737,7 +738,7 @@ document
         runCustomStudMap();
     });
 
-function runCustomStudMap() {
+function runCustomStudMap(skipStep1) {
     const customStudMap = {};
     const customSortedStuds = [];
     Array.from(customStudTableBody.children).forEach(stud => {
@@ -756,7 +757,9 @@ function runCustomStudMap() {
         selectedFullSetName = "Custom";
         selectedSortedStuds = customSortedStuds;
     }
-    runStep1();
+    if (!skipStep1) {
+        runStep1();
+    }
 }
 
 function getColorSquare(hex) {
