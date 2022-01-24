@@ -191,6 +191,8 @@ function initializeCropper() {
     inputImageCropper = new Cropper(step1CanvasUpscaled, {
         aspectRatio: targetResolution[0] / targetResolution[1],
         viewMode: 3,
+        minContainerWidth: 1,
+        minContainerHeight: 1,
         cropend() {
             overridePixelArray = new Array(
                 targetResolution[0] * targetResolution[1] * 4
