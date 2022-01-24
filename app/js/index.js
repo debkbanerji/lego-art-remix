@@ -190,7 +190,15 @@ function initializeCropper() {
     }
     inputImageCropper = new Cropper(step1CanvasUpscaled, {
         aspectRatio: targetResolution[0] / targetResolution[1],
-        viewMode: 3
+        viewMode: 3,
+        cropend() {
+            overridePixelArray = new Array(
+                targetResolution[0] * targetResolution[1] * 4
+            ).fill(null);
+            overrideDepthPixelArray = new Array(
+                targetResolution[0] * targetResolution[1] * 4
+            ).fill(null);
+        }
     });
 }
 
@@ -269,6 +277,7 @@ function updateStudCountText() {
     document.getElementById("missing-studs").innerHTML = missingStuds;
 }
 
+// TODO: Make this a function
 let overridePixelArray = new Array(
     targetResolution[0] * targetResolution[1] * 4
 ).fill(null);
@@ -2515,10 +2524,6 @@ function handleInputImage(e, dontClearDepth, dontLog) {
         setTimeout(() => {
             step1CanvasUpscaled.width = SERIALIZE_EDGE_LENGTH;
             step1CanvasUpscaled.height = Math.floor(SERIALIZE_EDGE_LENGTH * inputImage.height / inputImage.width);
-            console.log({
-                width: step1CanvasUpscaled.width,
-                width: step1CanvasUpscaled.width
-            })
             step1CanvasUpscaledContext.drawImage(
                 inputCanvas,
                 0,
@@ -2531,6 +2536,13 @@ function handleInputImage(e, dontClearDepth, dontLog) {
                 step1CanvasUpscaled.height
             );
 
+
+            overridePixelArray = new Array(
+                targetResolution[0] * targetResolution[1] * 4
+            ).fill(null);
+            overrideDepthPixelArray = new Array(
+                targetResolution[0] * targetResolution[1] * 4
+            ).fill(null);
             initializeCropper();
             runStep1();
         }, 50); // TODO: find better way to check that input is finished
