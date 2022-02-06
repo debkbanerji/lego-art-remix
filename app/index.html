@@ -412,8 +412,39 @@
                           </button>
                         </div>
                       </div>
-                      <button class="btn btn-info" type="button" id="reset-colors-button">
-                        Reset Colors
+                      <button class="btn btn-info" type="button" id="reset-hsv-button">
+                        Reset HSV
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-2-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-2-collapse" aria-expanded="false" aria-controls="step-2-2-collapse">
+                        Adjust Brightness
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-2-collapse" class="collapse" aria-labelledby="step-2-2-heading" data-parent="#step-2-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div>Brightness adjustment:
+                          <span id="brightness-text">0</span>
+                        </div>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
+                          <button class="btn btn-sm" id="brightness-decrement" style="flex-grow: 0">
+                            -
+                          </button>
+                          <input type="range" id="brightness-slider" name="points" min="-128" max="128" style="flex-grow: 1; min-width: 10px">
+                          <button class="btn btn-sm" id="brightness-increment" style="flex-grow: 0">
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <button class="btn btn-info" type="button" id="reset-brightness-button">
+                        Reset Brightness
                       </button>
                     </div>
                   </div>

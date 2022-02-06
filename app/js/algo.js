@@ -456,6 +456,14 @@ function applyHSVAdjustment(inputPixels, h, s, v) {
     return applyPixelFilter(inputPixels, pixel => adjustHSV(pixel, h, s, v));
 }
 
+function adjustBrightness(rgbPixel, brightnessOffset) {
+    return rgbPixel.map(channel => Math.round(Math.min(Math.max(channel + brightnessOffset, 0), 255)));
+}
+
+function applyBrightnessAdjustment(inputPixels, brightnessOffset) {
+    return applyPixelFilter(inputPixels, pixel => adjustBrightness(pixel, brightnessOffset));
+}
+
 function getDarkenedPixel(rgbPixel) {
     return rgbPixel.map(color => Math.round((color * Math.PI) / 4));
 }

@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.1.23";
+const VERSION_NUMBER = "v2022.2.5";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -44,7 +44,8 @@ const interactionSelectors = [
     "hue-slider",
     "saturation-slider",
     "value-slider",
-    "reset-colors-button",
+    "reset-hsv-button",
+    "reset-brightness-button",
     "download-instructions-button",
     "add-custom-stud-button",
     "export-to-bricklink-button",
@@ -979,6 +980,43 @@ document.getElementById("value-decrement").addEventListener(
     false
 );
 
+const onBrightnessChange = () => {
+    document.getElementById("brightness-text").innerHTML =
+        (document.getElementById("brightness-slider").value > 0 ? '+' : '') + document.getElementById("brightness-slider").value;
+    runStep1();
+};
+document
+    .getElementById("brightness-slider")
+    .addEventListener("change", onBrightnessChange, false);
+document.getElementById("brightness-increment").addEventListener(
+    "click",
+    () => {
+        if (
+            Number(document.getElementById("brightness-slider").value) <
+            Number(document.getElementById("brightness-slider").max)
+        ) {
+            document.getElementById("brightness-slider").value =
+                Number(document.getElementById("brightness-slider").value) + 1;
+            onBrightnessChange();
+        }
+    },
+    false
+);
+document.getElementById("brightness-decrement").addEventListener(
+    "click",
+    () => {
+        if (
+            Number(document.getElementById("brightness-slider").value) >
+            Number(document.getElementById("brightness-slider").min)
+        ) {
+            document.getElementById("brightness-slider").value =
+                Number(document.getElementById("brightness-slider").value) - 1;
+            onBrightnessChange();
+        }
+    },
+    false
+);
+
 function onDepthMapCountChange() {
     const numLevels = Number(
         document.getElementById("num-depth-levels-slider").value
@@ -1023,7 +1061,7 @@ document
     .getElementById("num-depth-levels-slider")
     .addEventListener("change", onDepthMapCountChange, false);
 
-document.getElementById("reset-colors-button").addEventListener(
+document.getElementById("reset-hsv-button").addEventListener(
     "click",
     () => {
         document.getElementById("hue-slider").value = 0;
@@ -1035,6 +1073,17 @@ document.getElementById("reset-colors-button").addEventListener(
             document.getElementById("saturation-slider").value + "%";
         document.getElementById("value-text").innerHTML =
             document.getElementById("value-slider").value + "%";
+        runStep1();
+    },
+    false
+);
+
+document.getElementById("reset-brightness-button").addEventListener(
+    "click",
+    () => {
+        document.getElementById("brightness-slider").value = 0;
+        document.getElementById("brightness-text").innerHTML =
+            document.getElementById("brightness-slider").value;
         runStep1();
     },
     false
@@ -1086,11 +1135,15 @@ function runStep2() {
         imageSmoothingEnabled: false,
     });
     const inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
-    const filteredPixelArray = applyHSVAdjustment(
+    let filteredPixelArray = applyHSVAdjustment(
         inputPixelArray,
         document.getElementById("hue-slider").value,
         document.getElementById("saturation-slider").value / 100,
         document.getElementById("value-slider").value / 100
+    );
+    filteredPixelArray = applyBrightnessAdjustment(
+        filteredPixelArray,
+        Number(document.getElementById("brightness-slider").value)
     );
     step2Canvas.width = targetResolution[0];
     step2Canvas.height = targetResolution[1];
