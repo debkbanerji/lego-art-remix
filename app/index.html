@@ -163,7 +163,7 @@
           <div class="tab-content">
             <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
               <div style="width: 100%">
-                <canvas id="step-1-canvas-upscaled"  style="width: 100%" class="cropper-img"></canvas>
+                <canvas id="step-1-canvas-upscaled" style="width: 100%" class="cropper-img"></canvas>
               </div>
               <h4>Step 1</h4>
               <small className="step-header-subtitle">Crop + Scale input image</small>
@@ -270,7 +270,7 @@
               <canvas id="step-1-depth-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 1</h4>
-              <small className="step-header-subtitle">Get depth map</small><br/>
+              <small className="step-header-subtitle">Get depth map</small><br />
               <small className="step-header-subtitle">Depth map cropping will match input image</small>
               <div id="step-1-depth-accordion">
                 <div class="card accordion-card">
@@ -364,7 +364,7 @@
                   <div class="card-header" id="step-2-1-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-1-collapse" aria-expanded="false" aria-controls="step-2-1-collapse">
-                        Adjust HSV
+                        HSV
                       </button>
                     </h5>
                   </div>
@@ -423,7 +423,7 @@
                   <div class="card-header" id="step-2-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-2-collapse" aria-expanded="false" aria-controls="step-2-2-collapse">
-                        Adjust Brightness
+                        Brightness
                       </button>
                     </h5>
                   </div>
@@ -445,6 +445,37 @@
                       </div>
                       <button class="btn btn-info" type="button" id="reset-brightness-button">
                         Reset Brightness
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-3-collapse" aria-expanded="false" aria-controls="step-2-3-collapse">
+                        Contrast
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-2-3-collapse" class="collapse" aria-labelledby="step-2-3-heading" data-parent="#step-2-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div>Contrast adjustment:
+                          <span id="contrast-text">0</span>
+                        </div>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
+                          <button class="btn btn-sm" id="contrast-decrement" style="flex-grow: 0">
+                            -
+                          </button>
+                          <input type="range" id="contrast-slider" name="points" min="-128" max="128" style="flex-grow: 1; min-width: 10px">
+                          <button class="btn btn-sm" id="contrast-increment" style="flex-grow: 0">
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <button class="btn btn-info" type="button" id="reset-contrast-button">
+                        Reset Contrast
                       </button>
                     </div>
                   </div>

@@ -464,6 +464,15 @@ function applyBrightnessAdjustment(inputPixels, brightnessOffset) {
     return applyPixelFilter(inputPixels, pixel => adjustBrightness(pixel, brightnessOffset));
 }
 
+function adjustContrast(rgbPixel, contrastFactor) {
+    return rgbPixel.map(channel => Math.round(Math.min(Math.max(contrastFactor * (channel - 128) + 128, 0), 255)));
+}
+
+function applyContrastAdjustment(inputPixels, contrastOffset) {
+    const contrastFactor = (259 * (255 + contrastOffset)) / (255 * (259 - contrastOffset));
+    return applyPixelFilter(inputPixels, pixel => adjustContrast(pixel, contrastFactor));
+}
+
 function getDarkenedPixel(rgbPixel) {
     return rgbPixel.map(color => Math.round((color * Math.PI) / 4));
 }
