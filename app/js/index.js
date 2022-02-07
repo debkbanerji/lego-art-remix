@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.2.5";
+const VERSION_NUMBER = "v2022.2.6";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -55,6 +55,7 @@ const interactionSelectors = [
     "bricklink-piece-button",
     "clear-overrides-button",
     "clear-custom-studs-button",
+    "infinite-piece-count-check",
     "color-ties-resolution-button",
     "resolution-limit-increase-button",
     "high-quality-instructions-check",
@@ -339,6 +340,12 @@ document
         ).fill(null);
         runStep1();
     });
+
+document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
+    [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = document.getElementById("infinite-piece-count-check").checked);
+    [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !document.getElementById("infinite-piece-count-check").checked);
+    runStep4();
+});
 
 document
     .getElementById("resolution-limit-increase-button")
@@ -846,15 +853,22 @@ function getNewCustomStudRow() {
     numberInput.style = "max-width: 80px";
     numberInput.type = "number";
     numberInput.value = 10;
-    numberInput.className = "form-control form-control-sm";
+    numberInput.className = "form-control form-control-sm piece-count-input";
     numberInput.addEventListener("change", v => {
         numberInput.value = Math.round(
             Math.min(Math.max(parseFloat(numberInput.value) || 0, 0), 99999)
         );
         runCustomStudMap();
     });
+    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked;
+    infinityPlaceholder = document.createElement("div");
+    infinityPlaceholder.hidden = !numberInput.hidden;
+    infinityPlaceholder.className = "piece-count-infinity-placeholder";
+    infinityPlaceholder.innerHTML = '∞'
     numberCellChild.style = "display: flex; flex-direction: horizontal;";
     numberCellChild.appendChild(numberInput);
+    numberCellChild.appendChild(infinityPlaceholder);
+
     numberCellChild.appendChild(removeButton);
     numberCell.appendChild(numberCellChild);
     studRow.appendChild(numberCell);
@@ -1878,6 +1892,7 @@ function runStep4(asyncCallback) {
                 shouldSideStepStep4 = false;
             }
         });
+        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked;
 
         const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
             step3PixelArray,

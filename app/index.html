@@ -89,6 +89,13 @@
       border-right: 1px solid rgb(222, 226, 230);
     }
 
+    .piece-count-infinity-placeholder {
+      padding-left: 2px;
+      padding-right: 2px;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
     .cropper-img {
       display: block;
 
@@ -679,6 +686,12 @@
                           </button>
                         </div>
                         <small style=" margin-left: 4px; margin-bottom: 10px"><b>Color names are Bricklink colors</b></small>
+                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                          <label>
+                            <input type="checkbox" id="infinite-piece-count-check">
+                            Assume Infinite Piece Counts
+                          </label>
+                        </div>
                         <table class="table">
                           <thead>
                             <tr>
