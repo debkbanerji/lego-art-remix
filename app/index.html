@@ -668,23 +668,23 @@
                       <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
                         <div style="margin-bottom: 20px">
                           <small>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many studs of each color you have available to create the image
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many pieces of each color you have available to create the image
                             </p>
                               <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
                               </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough studs to fill the picture ('Missing Studs' must be 0)
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough pieces to fill the picture ('Missing Pieces' must be 0)
                             </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
-                              then clear the available studs and use the mix in option to add in the pieces from your set.
+                              then clear the available pieces and use the mix in option to add in the pieces from your set.
                             </p>
-                            <b>Required Studs: <span id="required-studs"></span></b><br>
-                            <b>Available Studs: <span id="available-studs"></span></b><br>
-                            <b>Missing Studs: <span id="missing-studs"></span></b><br>
+                            <b>Required Pieces: <span id="required-studs"></span></b><br>
+                            <b>Available Pieces: <span id="available-studs"></span></b><br>
+                            <b>Missing Pieces: <span id="missing-studs"></span></b><br>
                           </small>
                         </div>
                         <div style="padding-bottom: 10px">
                           <button class="btn btn-warning" type="button" id="clear-custom-studs-button">
-                            Clear Available Studs
+                            Clear Available Pieces
                           </button>
                         </div>
                         <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
@@ -834,10 +834,10 @@
               <canvas id="bricklink-cache-canvas" hidden></canvas>
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 4</h4>
-              <small className="step-header-subtitle">Correct for available studs (if stud counts are limited)</small>
+              <small className="step-header-subtitle">Correct for available pieces, if piece counts are limited</small>
               <br />
               <span data-toggle="tooltip"
-                title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Parts Missing From Step 3' under 'Parts Used' to determine which additional parts can be used to improve the image."
+                title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Pieces Missing From Step 3' under 'Pieces Used' to determine which additional pieces can be used to improve the image."
                 data-placement="top">
                 <small>Average</small> &#x3F5;: <small id="step-4-quantization-error"></small>
               </span>
@@ -847,14 +847,14 @@
                   <div class="card-header" id="step-4-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
-                        Parts Used
+                        Pieces Used
                       </button>
                     </h5>
                   </div>
                   <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                        <b>Parts Used in Final Image
+                        <b>Pieces Used in Final Image
                         </b>
                       </div>
                       <table class="table">
@@ -869,11 +869,11 @@
                       </table>
                       <div id="studs-missing-container" hidden>
                         <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                          <b>Parts Missing From Step 3
+                          <b>Pieces Missing From Step 3
                           </b>
                         </div>
                         <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                          <small>Adding these parts will allow the image from step 4 to match the image from step 3
+                          <small>Adding these pieces will allow the image from step 4 to match the image from step 3
                           </small>
                         </div>
                         <table class="table">
@@ -905,7 +905,7 @@
                         <b style="margin-left: 4px; margin-bottom: 2px">Color Tie Resolution Strategy
                         </b>
                         <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have a large background
-                          but not enough studs to fill it out uniformly
+                          but not enough pieces to fill it out uniformly
                         </p>
                       </small>
                       <div class="btn-group">
@@ -967,7 +967,7 @@
                   <div class="card-header" id="step-4-4-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-4-collapse" aria-expanded="false" aria-controls="step-4-4-collapse">
-                        Export Part List
+                        Export Piece List
                       </button>
                     </h5>
                   </div>
@@ -976,7 +976,7 @@
                       <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
                       <br />
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of pieces used depends on 'Pixel Type' under step 3</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of piece used depends on 'Pixel Type' under step 3</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px;">Frame elements are not exported</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px;">
                           <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
@@ -1039,7 +1039,7 @@
                   <div id="step-4-depth-4-collapse" class="collapse" aria-labelledby="step-4-depth-4-heading" data-parent="#step-4-depth-accordion">
                     <div class="card-body accordion-card-body">
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; This is the set of plates that may be used to generate depth instructions and part
+                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; This is the set of plates that may be used to generate depth instructions and piece
                           lists</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; These pieces are used as padding so that the correct pixels protrude outwards</p>
                         <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; Note that larger plates may be difficult to attach/detach from the base</p>
@@ -1095,7 +1095,7 @@
                   <div class="card-header" id="step-4-depth-3-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-3-collapse" aria-expanded="false" aria-controls="step-4-depth-3-collapse">
-                        Part List
+                        Piece List
                       </button>
                     </h5>
                   </div>
