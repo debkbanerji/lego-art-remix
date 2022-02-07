@@ -272,14 +272,19 @@ Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(plate => {
 
 function updateStudCountText() {
     const requiredStuds = targetResolution[0] * targetResolution[1];
-    let availableStuds = 0;
-    Array.from(customStudTableBody.children).forEach(stud => {
-        availableStuds += parseInt(stud.children[1].children[0].children[0].value);
-    });
-    const missingStuds = Math.max(requiredStuds - availableStuds, 0);
     document.getElementById("required-studs").innerHTML = requiredStuds;
-    document.getElementById("available-studs").innerHTML = availableStuds;
-    document.getElementById("missing-studs").innerHTML = missingStuds;
+    if (document.getElementById("infinite-piece-count-check").checked) {
+        document.getElementById("available-studs").innerHTML = '∞';
+        document.getElementById("missing-studs").innerHTML = '0';
+    } else {
+        let availableStuds = 0;
+        Array.from(customStudTableBody.children).forEach(stud => {
+            availableStuds += parseInt(stud.children[1].children[0].children[0].value);
+        });
+        const missingStuds = Math.max(requiredStuds - availableStuds, 0);
+        document.getElementById("available-studs").innerHTML = availableStuds;
+        document.getElementById("missing-studs").innerHTML = missingStuds;
+    }
 }
 
 // TODO: Make this a function
@@ -344,6 +349,7 @@ document
 document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
     [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = document.getElementById("infinite-piece-count-check").checked);
     [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !document.getElementById("infinite-piece-count-check").checked);
+    updateStudCountText();
     runStep4();
 });
 
