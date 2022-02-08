@@ -33,6 +33,10 @@ function uuidv4() {
     });
 }
 
+function clamp255(input) {
+    return Math.round(Math.min(Math.max(input, 0), 255));
+}
+
 function getPixelArrayFromCanvas(canvas) {
     const context = canvas.getContext("2d");
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -417,7 +421,7 @@ function correctPixelsForAvailableStuds(
 const gaussianDitheringKernel = [
     [1, 4, 6, 4, 1],
     [4, 16, 26, 16, 4],
-    [7, 26, -1, 26, 7],
+    [7, 26, 0, 26, 7],
     [4, 16, 26, 16, 4],
     [1, 4, 6, 4, 1],
 ]
@@ -493,6 +497,15 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
 
     while (!pixelQueue.isEmpty()) {
         const nextPixel = pixelQueue.pop();
+
+        // Do this in the RGB color space so we can cleanly spread this around if we're doing dithering
+        // TODO: see if/how this messes with other color distance functions
+        const dequeuedPixelQuantizationError = [
+            nextPixel.pixelRGB[0] - nextPixel.tentativeReplacementRGB[0],
+            nextPixel.pixelRGB[1] - nextPixel.tentativeReplacementRGB[1],
+            nextPixel.pixelRGB[2] - nextPixel.tentativeReplacementRGB[2]
+        ];
+
         nextPixel.isInPixelQueue = false;
         nextPixel.pixelRGB = nextPixel.tentativeReplacementRGB; // lock this in - we're not changing this pixel now
 
@@ -513,7 +526,63 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
             }
         }
 
-        // TODO: Propogate dithering error
+
+        if (!skipDithering) {
+            // first, get the adjacent pixels we may need to adjust
+            const kernel = gaussianDitheringKernel;
+            const kernelHeight = kernel.length;
+            const kernelWidth = kernel[0].length
+            const kernelRowMiddle = Math.floor(kernelHeight / 2);
+            const kernelColMiddle = Math.floor(kernelWidth / 2);
+
+            let totalNeighborhoodPixels = 0;
+            let errorDenominator = 0;
+            for (let kr = 0; kr < kernelHeight; kr++) {
+                for (let kc = 0; kc < kernelWidth; kc++) {
+                    if (kr != kernelRowMiddle || kc != kernelColMiddle) {
+                        const pixelMatrixRow = nextPixel.row - kernelRowMiddle + kr;
+                        const pixelMatrixCol = nextPixel.col - kernelColMiddle + kc;
+                        // console.log([pixelMatrixRow, pixelMatrixCol])
+                        const neighborhoodPixel = (pixelMatrix[pixelMatrixRow] || {})[pixelMatrixCol];
+                        if (neighborhoodPixel != null && neighborhoodPixel.isInPixelQueue) {
+                            totalNeighborhoodPixels++;
+                            errorDenominator += kernel[kr][kc];
+                        }
+                    }
+                }
+            }
+
+            if (errorDenominator > 0) {
+                for (let kr = 0; kr < kernelHeight; kr++) {
+                    for (let kc = 0; kc < kernelWidth; kc++) {
+                        if (kr != kernelRowMiddle || kc != kernelColMiddle) {
+                            const pixelMatrixRow = nextPixel.row - kernelRowMiddle + kr;
+                            const pixelMatrixCol = nextPixel.col - kernelColMiddle + kc;
+                            const neighborhoodPixel = (pixelMatrix[pixelMatrixRow] || {})[pixelMatrixCol];
+                            if (neighborhoodPixel != null && neighborhoodPixel.isInPixelQueue) {
+                                // add in error
+                                const errorWeight = kernel[kr][kc] / errorDenominator;
+                                neighborhoodPixel.pixelRGB = [0, 1, 2]
+                                    .map(channel => clamp255(neighborhoodPixel.pixelRGB[channel] + dequeuedPixelQuantizationError[channel] * errorWeight));
+
+                                const tentativeReplacementRGB = findReplacement(neighborhoodPixel.pixelRGB, availableStudMap, colorDistanceFunction);
+                                const tentativeReplacementDistance = colorDistanceFunction(neighborhoodPixel.pixelRGB, tentativeReplacementRGB);
+                                const oldReplacementRGB = neighborhoodPixel.tentativeReplacementRGB
+                                neighborhoodPixel.tentativeReplacementRGB = tentativeReplacementRGB;
+                                neighborhoodPixel.tentativeReplacementDistance = tentativeReplacementDistance;
+
+                                if (oldReplacementRGB[0] != neighborhoodPixel.tentativeReplacementRGB[0] ||
+                                    oldReplacementRGB[1] != neighborhoodPixel.tentativeReplacementRGB[1] ||
+                                    oldReplacementRGB[2] != neighborhoodPixel.tentativeReplacementRGB[2]) {
+                                    pixelQueue.remove(neighborhoodPixel);
+                                    pixelQueue.add(neighborhoodPixel);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     const result = [];
