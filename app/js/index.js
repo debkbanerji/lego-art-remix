@@ -1915,7 +1915,23 @@ function runStep4(asyncCallback) {
             colorDistanceFunction
         );
 
-        availabilityCorrectedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering()
+        if (window.location.href.includes("enableExperimentalDithering")) {
+            availabilityCorrectedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+                isBleedthroughEnabled() ?
+                getDarkenedStudMap(selectedStudMap) :
+                selectedStudMap,
+                step2PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedImage(overridePixelArray) :
+                overridePixelArray,
+                // selectedTiebreakTechnique,
+                // document.getElementById("color-tie-grouping-factor-slider").value,
+                targetResolution[0],
+                colorDistanceFunction,
+                false, // don't skip dithering
+                false, // don't assume infinite pixel counts
+            );
+        }
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
 

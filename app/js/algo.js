@@ -409,13 +409,121 @@ function correctPixelsForAvailableStuds(
     return correctedPixels;
 }
 
+
+// TODO: Experiment with this - maybe gaussian isn't best bet?
+// Note 1: not normalized - we do that in code based on how many pixels are
+// available for error propogation
+// Note 2: Center is ignored
+const gaussianDitheringKernel = [
+    [1, 4, 6, 4, 1],
+    [4, 16, 26, 16, 4],
+    [7, 26, -1, 26, 7],
+    [4, 16, 26, 16, 4],
+    [1, 4, 6, 4, 1],
+]
+
+function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
+    const possibleReplacements = Object.keys(remainingStudMap);
+    let replacement = possibleReplacements[0];
+    possibleReplacements.forEach(possibleReplacement => {
+        if (remainingStudMap[possibleReplacement] > 0 &&
+            colorDistanceFunction(
+                pixelRGB,
+                hexToRgb(possibleReplacement)
+            ) < colorDistanceFunction(
+                pixelRGB,
+                hexToRgb(replacement)
+            )
+        ) {
+            replacement = possibleReplacement;
+        }
+    });
+    return hexToRgb(replacement);
+}
+
 // TODO: Develop, implement algorithm, augment fast heap.js implementation
 // will probably need to make sure entirety of error is propogated, but not too much to one pixel? (maybe we don't worry about capping the propogation to start with)
 // TODO: Make accessible through URL parameter at first
+// TODO: Tiebreak technique
 // TODO: Create git branch before implementing
-function correctPixelsForAvailableStudsWithGreedyDynamicDithering() {
-  const heap = new Heap();
-  console.log({heap})
+function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+    availableStudMap,
+    originalPixels,
+    overridePixelArray,
+    // tieResolutionMethod,
+    // colorTieGroupingFactor,
+    imageWidth,
+    colorDistanceFunction,
+    skipDithering,
+    assumeInfinitePixelCounts,
+) {
+    availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
+
+    // We use this to easily get adjacent pixels when propogating dithering error
+    const pixelMatrix = [];
+    const height = Math.floor((originalPixels.length / 4) / imageWidth);
+    for (let row = 0; row < height; row++) {
+        pixelMatrix[row] = [];
+        for (let col = 0; col < imageWidth; col++) {
+            const i = (row * imageWidth + col) * 4
+
+            const pixelRGB = [originalPixels[i],
+                originalPixels[i + 1],
+                originalPixels[i + 2]
+            ]
+
+            const tentativeReplacementRGB = findReplacement(pixelRGB, availableStudMap, colorDistanceFunction);
+            const tentativeReplacementDistance = colorDistanceFunction(pixelRGB, tentativeReplacementRGB);
+            const pixel = {
+                pixelRGB,
+                isInPixelQueue: true,
+                row,
+                col,
+                tentativeReplacementRGB,
+                tentativeReplacementDistance
+            };
+            pixelMatrix[row][col] = pixel;
+        }
+    }
+
+    const comparator = (b, a) => a.tentativeReplacementDistance - b.tentativeReplacementDistance;
+    let pixelQueue = new Heap(comparator);
+
+    pixelQueue.init(pixelMatrix.flat());
+
+    while (!pixelQueue.isEmpty()) {
+        const nextPixel = pixelQueue.pop();
+        nextPixel.isInPixelQueue = false;
+        nextPixel.pixelRGB = nextPixel.tentativeReplacementRGB; // lock this in - we're not changing this pixel now
+
+
+        if (!assumeInfinitePixelCounts) {
+            const pixelHex = rgbToHex(nextPixel.pixelRGB[0], nextPixel.pixelRGB[1], nextPixel.pixelRGB[2]);
+            availableStudMap[pixelHex] = availableStudMap[pixelHex] - 1;
+            if (availableStudMap[pixelHex] === 0) {
+                // we're out of parts in this color - reassign the nodes and rebuild the heap
+                const oldHeapPixels = [...pixelQueue.heapArray];
+                oldHeapPixels.forEach((oldPixel) => {
+                    const tentativeReplacementRGB = findReplacement(oldPixel.pixelRGB, availableStudMap, colorDistanceFunction);
+                    const tentativeReplacementDistance = colorDistanceFunction(oldPixel.pixelRGB, tentativeReplacementRGB);
+                    oldPixel.tentativeReplacementRGB = tentativeReplacementRGB;
+                    oldPixel.tentativeReplacementDistance = tentativeReplacementDistance;
+                });
+                pixelQueue.init(); // heapify
+            }
+        }
+
+        // TODO: Propogate dithering error
+    }
+
+    const result = [];
+    pixelMatrix.forEach(row => row.forEach(pixel => {
+        pixel.tentativeReplacementRGB.forEach(channel => {
+            result.push(channel);
+        });
+        result.push(0);
+    }));
+    return new Uint8ClampedArray(result);
 }
 
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
