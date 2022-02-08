@@ -1929,7 +1929,7 @@ function runStep4(asyncCallback) {
                 targetResolution[0],
                 colorDistanceFunction,
                 false, // don't skip dithering
-                false, // don't assume infinite pixel counts
+                shouldSideStepStep4,
             );
         }
 
