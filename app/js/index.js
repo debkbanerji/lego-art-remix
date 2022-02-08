@@ -1992,8 +1992,7 @@ function runStep4(asyncCallback) {
                         ) :
                         step3PixelArray
                     ),
-                    usedPixelsStudMap,
-
+                    selectedStudMap,
                 );
                 Object.keys(missingPixelsStudMap).forEach((color) => {
                     if (missingPixelsStudMap[color] > 0) {
