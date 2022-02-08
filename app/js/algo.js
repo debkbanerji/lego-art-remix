@@ -409,6 +409,15 @@ function correctPixelsForAvailableStuds(
     return correctedPixels;
 }
 
+// TODO: Develop, implement algorithm, augment fast heap.js implementation
+// will probably need to make sure entirety of error is propogated, but not too much to one pixel? (maybe we don't worry about capping the propogation to start with)
+// TODO: Make accessible through URL parameter at first
+// TODO: Create git branch before implementing
+function correctPixelsForAvailableStudsWithGreedyDynamicDithering() {
+  const heap = new Heap();
+  console.log({heap})
+}
+
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
 function rgb2hsv(r, g, b) {
     let v = Math.max(r, g, b),

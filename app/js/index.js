@@ -1900,7 +1900,7 @@ function runStep4(asyncCallback) {
         });
         shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked;
 
-        const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
+        let availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
             step3PixelArray,
             isBleedthroughEnabled() ?
             getDarkenedStudMap(selectedStudMap) :
@@ -1914,6 +1914,8 @@ function runStep4(asyncCallback) {
             targetResolution[0],
             colorDistanceFunction
         );
+
+        availabilityCorrectedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering()
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
 
