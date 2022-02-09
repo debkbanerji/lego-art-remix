@@ -600,7 +600,7 @@
                   <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px">
-                        <small><em>I recommend tweaking the color distance setting before using the paintbrush</em></small>
+                        <small>&#9679; I recommend tweaking the quantization settings before using the paintbrush</small>
                         <div style="margin-bottom: 4px; display: flex; flex-direction: row; align-items: center;">
                           <span style="font-weight: 600">Paintbrush color: &nbsp;</span>
                           <span id="paintbrush-controls">
@@ -625,53 +625,23 @@
                 </div>
 
 
-                <div class="card accordion-card hide-on-step-3-expansion">
+                <div class="card accordion-card">
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
-                        Color Distance
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
-                    <div class="card-body accordion-card-body">
-                      <small>
-                        <b style="margin-left: 4px; margin-bottom: 2px">Color Distance Function
-                        </b>
-                        <p style="margin-left: 4px; margin-bottom: 8px; margin-top: 4px;">&#9679; This setting determines which distance function is used to align pixels to
-                          their closest Lego colors
-                        </p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Euclidean RGB usually leads to the best performance, but the other functions can lead to better
-                          results in many cases
-                        </p>
-                      </small>
-                      <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
-                        Euclidean RGB
-                      </button>
-                      <div class="dropdown-menu" id="distance-function-options">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-3-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
                         Available Colors
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
                         <div style="margin-bottom: 20px">
                           <small>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many pieces of each color you have available to create the image
                             </p>
-                              <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
-                              </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
+                            </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough pieces to fill the picture ('Missing Pieces' must be 0)
                             </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
@@ -687,11 +657,16 @@
                             Clear Available Pieces
                           </button>
                         </div>
-                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px" id="infinite-piece-count-check-container">
                           <label>
                             <input type="checkbox" id="infinite-piece-count-check">
-                            <span style="font-size: 13px;">Infinite piece counts</span>
+                            <span style="font-size: 13px;">Infinite Piece Counts</span>
                           </label>
+                        </div>
+                        <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                          <small>
+                            <p><b>Important</b>: Since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section, infinite piece counts were used</p>
+                          </small>
                         </div>
                         <table class="table">
                           <thead>
@@ -727,16 +702,15 @@
                   </div>
                 </div>
 
-
                 <div class="card accordion-card hide-on-step-3-expansion">
-                  <div class="card-header" id="step-3-4-heading">
+                  <div class="card-header" id="step-3-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
                         Pixel Type
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <div class="btn-group">
@@ -745,6 +719,81 @@
                           </button>
                           <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
                           </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card hide-on-step-3-expansion">
+                  <div class="card-header" id="step-3-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                        Quantization
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <div style="margin-left: 4px;">
+                        <small>
+                          <b style="margin-bottom: 2px">Color Distance Function
+                          </b>
+                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; This setting determines which distance function is used to align pixels to
+                            their closest Lego colors
+                          </p>
+                        </small>
+                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
+                          Euclidean RGB
+                        </button>
+                        <div class="dropdown-menu" id="distance-function-options">
+                        </div>
+                      </div>
+                      <div style="margin-top: 12px; margin-left: 4px;">
+                        <small>
+                          <b style="margin-bottom: 2px">Quantization Algorithm
+                          </b>
+                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; This determines what strategy is used for aligning pixels
+                          </p>
+                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; Some algorithms run faster than others - be careful when running the greedy algorithms on larger images
+                          </p>
+                        </small>
+                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="quantization-algorithm-button" data-toggle="dropdown">
+                          2 Phase
+                        </button>
+                        <div class="dropdown-menu" id="quantization-algorithm-options">
+                        </div>
+                      </div>
+                      <div style="margin-top: 4px; margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                        <small>
+                          <p style="margin-bottom: 8px;"><b>Important</b>: Since this is a linear error dithering algorithm, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available Colors'</span>
+                            was enabled - be careful!
+                          </p>
+                        </small>
+                      </div>
+                      <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                        <small>
+                          <p>It's often best to use <span style="font-weight: 550">'Euclidean RGB'</span> for the color distance function, for mathematical cleanliness</p>
+                        </small>
+                      </div>
+                      <div style="margin-top: 12px; margin-left: 4px;" id="color-ties-resolution-section">
+                        <small>
+                          <b style="margin-bottom: 2px">Color Tie Resolution Strategy
+                          </b>
+                          <p style="margin-bottom: 4px">Changing this is useful if you have a large background
+                            but not enough pieces to fill it out uniformly in step 4
+                          </p>
+                        </small>
+                        <div class="btn-group">
+                          <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                            Strategy: Alternating Mod
+                          </button>
+                          <div class="dropdown-menu" id="color-ties-resolution-options">
+                          </div>
+                        </div>
+                        <div style="padding-top: 4px; padding-right: 12px; width: 100%">
+                          <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
+                          <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
                         </div>
                       </div>
                     </div>
@@ -820,14 +869,14 @@
               <div id="step-4-accordion">
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-4-2-heading">
+                  <div class="card-header" id="step-4-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-1-collapse" aria-expanded="false" aria-controls="step-4-1-collapse">
                         Pieces Used
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
+                  <div id="step-4-1-collapse" class="collapse" aria-labelledby="step-4-1-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
                         <b>Pieces Used in Final Image
@@ -868,46 +917,14 @@
                 </div>
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-4-1-heading">
+                  <div class="card-header" id="step-4-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-1-collapse" aria-expanded="false" aria-controls="step-4-1-collapse">
-                        Color Ties
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-4-1-collapse" class="collapse" aria-labelledby="step-4-1-heading" data-parent="#step-4-accordion">
-                    <div class="card-body accordion-card-body">
-                      <small>
-                        <b style="margin-left: 4px; margin-bottom: 2px">Color Tie Resolution Strategy
-                        </b>
-                        <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have a large background
-                          but not enough pieces to fill it out uniformly
-                        </p>
-                      </small>
-                      <div class="btn-group">
-                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-                          Strategy: Alternating Mod
-                        </button>
-                        <div class="dropdown-menu" id="color-ties-resolution-options">
-                        </div>
-                      </div>
-                      <div style="padding-left: 12px; padding-top: 4px; padding-right: 12px; width: 100%">
-                        <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
-                        <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-4-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
                         Instructions
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
+                  <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
                         <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
@@ -940,14 +957,14 @@
                 </div>
 
                 <div class="card accordion-card" id="bricklink-export-card">
-                  <div class="card-header" id="step-4-4-heading">
+                  <div class="card-header" id="step-4-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-4-collapse" aria-expanded="false" aria-controls="step-4-4-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
                         Export Piece List
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
+                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
                       <br />
@@ -1346,6 +1363,7 @@
   <script src="js/pixi.min.js"></script>
   <script src="js/bricklink-colors.js"></script>
   <script src="js/stud-maps.js"></script>
+  <script src="js/heap.js"></script>
   <script src="js/algo.js"></script>
   <script src="js/index.js"></script>
   <script src="js/metrics.js"></script>

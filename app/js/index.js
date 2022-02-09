@@ -346,13 +346,6 @@ document
         runStep1();
     });
 
-document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
-    [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = document.getElementById("infinite-piece-count-check").checked);
-    [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !document.getElementById("infinite-piece-count-check").checked);
-    updateStudCountText();
-    runStep4();
-});
-
 document
     .getElementById("resolution-limit-increase-button")
     .addEventListener("click", () => {
@@ -654,15 +647,90 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
         document.getElementById("distance-function-button").innerHTML =
             distanceFunction.name;
         colorDistanceFunction = distanceFunction.func;
+        disableInteraction();
         runStep3();
     });
     document.getElementById("distance-function-options").appendChild(option);
 });
 
+const quantizationAlgorithmsInfo = {
+    twoPhase: {
+        name: "2 Phase",
+    },
+    floydSteinberg: {
+        name: "Floyd-Steinberg Dithering",
+    },
+    jarvisJudiceNinkeDithering: {
+        name: "Jarvis-Judice-Ninke Dithering",
+    },
+    atkinsonDithering: {
+        name: "Atkinson Dithering",
+    },
+    sierraDithering: {
+        name: "Sierra Dithering",
+    },
+    greedy: {
+        name: "Greedy",
+    },
+    greedyWithDithering: {
+        name: "Greedy Gaussian Dithering",
+    },
+};
+
+const quantizationAlgorithmToTraditionalDitheringKernel = {
+    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
+    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL,
+    atkinsonDithering: ATKINSON_DITHERING_KERNEL,
+    sierraDithering: SIERRA_DITHERING_KERNEL
+};
+
+const defaultQuantizationAlgorithmKey = "twoPhase";
+let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
+document.getElementById("quantization-algorithm-button").innerHTML =
+    quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
+
+function onInfinitePieceCountChange() {
+    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
+    [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !isUsingInfinite);
+    updateStudCountText();
+}
+document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
+    onInfinitePieceCountChange();
+    runStep4();
+});
+
+Object.keys(quantizationAlgorithmsInfo).forEach(key => {
+    const algorithm = quantizationAlgorithmsInfo[key];
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = algorithm.name;
+    option.value = key;
+    option.addEventListener("click", () => {
+        document.getElementById("quantization-algorithm-button").innerHTML =
+            algorithm.name;
+        quantizationAlgorithm = key;
+
+        // Only 2 phase supports color tie resolution
+        document.getElementById('color-ties-resolution-section').hidden = quantizationAlgorithm != 'twoPhase';
+
+        const isTraditionalErrorDithering = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+        document.getElementById('infinite-piece-count-check-container').hidden = isTraditionalErrorDithering;
+        [...document.getElementsByClassName("traditional-dithering-algorithm-warning")].forEach(
+            item => (item.hidden = !isTraditionalErrorDithering)
+        );
+
+        disableInteraction();
+        onInfinitePieceCountChange();
+        runStep3();
+    });
+    document.getElementById("quantization-algorithm-options").appendChild(option);
+});
+
 
 const DIVIDER = 'DIVIDER';
 const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
-const NUM_SET_STUD_MAPS = 8;
+const NUM_SET_STUD_MAPS = 9;
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER)
 
 STUD_MAP_KEYS
@@ -1283,16 +1351,53 @@ function runStep2() {
 
 function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
-    const alignedPixelArray = alignPixelsToStudMap(
-        fiteredPixelArray,
-        isBleedthroughEnabled() ?
-        getDarkenedStudMap(selectedStudMap) :
-        selectedStudMap,
-        isBleedthroughEnabled() ?
-        getDarkenedImage(overridePixelArray) :
-        overridePixelArray,
-        colorDistanceFunction
-    );
+
+    let alignedPixelArray;
+
+    if (quantizationAlgorithm === 'twoPhase') {
+        alignedPixelArray = alignPixelsToStudMap(
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            colorDistanceFunction
+        );
+    } else if (quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering') {
+        // quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering'
+        alignedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            targetResolution[0],
+            colorDistanceFunction,
+            quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
+            true, // assumeInfinitePixelCounts
+        );
+
+    } else {
+        // assume we're dealing with a traditional error dithering algorithm
+        const ditheringKernel = quantizationAlgorithmToTraditionalDitheringKernel[quantizationAlgorithm];
+        alignedPixelArray = alignPixelsWithTraditionalDithering(
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            targetResolution[0],
+            colorDistanceFunction,
+            ditheringKernel
+        );
+    }
+
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
@@ -1898,22 +2003,59 @@ function runStep4(asyncCallback) {
                 shouldSideStepStep4 = false;
             }
         });
-        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked;
 
-        const availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
-            step3PixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedStudMap(selectedStudMap) :
-            selectedStudMap,
-            step2PixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedImage(overridePixelArray) :
-            overridePixelArray,
-            selectedTiebreakTechnique,
-            document.getElementById("color-tie-grouping-factor-slider").value,
-            targetResolution[0],
-            colorDistanceFunction
-        );
+        // There are three reasons step 4 should be identical to step 3
+        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked ||
+            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+
+        if (!shouldSideStepStep4) {
+            const requiredStuds = targetResolution[0] * targetResolution[1]
+            let availableStuds = 0;
+            Array.from(customStudTableBody.children).forEach(stud => {
+                availableStuds += parseInt(stud.children[1].children[0].children[0].value);
+            });
+            const missingStuds = Math.max(requiredStuds - availableStuds, 0);
+            if (missingStuds > 0) {
+                throw 'Step 4 failed'; // error will be caught and interaction will be enabled
+            }
+        }
+
+        let availabilityCorrectedPixelArray;
+
+        // if we're using a traditional error dithering algorithm, this has to be true
+        if (shouldSideStepStep4) {
+            availabilityCorrectedPixelArray = step3PixelArray;
+        } else if (quantizationAlgorithm === 'twoPhase') {
+            availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
+                step3PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedStudMap(selectedStudMap) :
+                selectedStudMap,
+                step2PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedImage(overridePixelArray) :
+                overridePixelArray,
+                selectedTiebreakTechnique,
+                document.getElementById("color-tie-grouping-factor-slider").value,
+                targetResolution[0],
+                colorDistanceFunction
+            );
+        } else {
+            // quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering'
+            availabilityCorrectedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+                isBleedthroughEnabled() ?
+                getDarkenedStudMap(selectedStudMap) :
+                selectedStudMap,
+                step2PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedImage(overridePixelArray) :
+                overridePixelArray,
+                targetResolution[0],
+                colorDistanceFunction,
+                quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
+                shouldSideStepStep4, // assumeInfinitePixelCounts
+            );
+        }
 
         drawPixelsOnCanvas(availabilityCorrectedPixelArray, step4Canvas);
 

@@ -33,6 +33,10 @@ function uuidv4() {
     });
 }
 
+function clamp255(input) {
+    return Math.round(Math.min(Math.max(input, 0), 255));
+}
+
 function getPixelArrayFromCanvas(canvas) {
     const context = canvas.getContext("2d");
     const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -407,6 +411,383 @@ function correctPixelsForAvailableStuds(
     }
 
     return correctedPixels;
+}
+
+
+// Note 1: not normalized - we do that in code based on how many pixels are
+// available for error propogation
+// Note 2: Center is ignored
+// Note 3: this one is only used in GDD rather than within traditional error
+// dithering algorithms, so it is formatted differently
+const GAUSSIAN_DITHERING_KERNEL = [
+    [1, 4, 6, 4, 1],
+    [4, 16, 26, 16, 4],
+    [7, 26, 0, 26, 7],
+    [4, 16, 26, 16, 4],
+    [1, 4, 6, 4, 1],
+]
+
+const FLOYD_STEINBERG_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 7
+}, {
+    row: 1,
+    col: -1,
+    val: 3
+}, {
+    row: 1,
+    col: 0,
+    val: 5
+}, {
+    row: 1,
+    col: 1,
+    val: 1
+}];
+const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 7
+}, {
+    row: 0,
+    col: 2,
+    val: 5
+}, {
+    row: 1,
+    col: -2,
+    val: 3
+}, {
+    row: 1,
+    col: -1,
+    val: 5
+}, {
+    row: 1,
+    col: 0,
+    val: 7
+}, {
+    row: 1,
+    col: 1,
+    val: 5
+}, {
+    row: 1,
+    col: 2,
+    val: 3
+}, {
+    row: 2,
+    col: -2,
+    val: 1
+}, {
+    row: 2,
+    col: -1,
+    val: 3
+}, {
+    row: 2,
+    col: 0,
+    val: 5
+}, {
+    row: 2,
+    col: 1,
+    val: 3
+}, {
+    row: 2,
+    col: 2,
+    val: 1
+}, ];
+const ATKINSON_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 1
+}, {
+    row: 0,
+    col: 2,
+    val: 1
+}, {
+    row: 1,
+    col: -1,
+    val: 1
+}, {
+    row: 1,
+    col: 0,
+    val: 1
+}, {
+    row: 1,
+    col: 1,
+    val: 1
+}, {
+    row: 2,
+    col: 0,
+    val: 1
+}, ].map(entry => {
+    entry.val = entry.val * 3 / 4;
+    return entry
+});
+const SIERRA_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 5
+}, {
+    row: 0,
+    col: 2,
+    val: 3
+}, {
+    row: 1,
+    col: -2,
+    val: 2
+}, {
+    row: 1,
+    col: -1,
+    val: 4
+}, {
+    row: 1,
+    col: 0,
+    val: 5
+}, {
+    row: 1,
+    col: 1,
+    val: 4
+}, {
+    row: 1,
+    col: 2,
+    val: 2
+}, {
+    row: 2,
+    col: -1,
+    val: 2
+}, {
+    row: 2,
+    col: 0,
+    val: 3
+}, {
+    row: 2,
+    col: 1,
+    val: 2
+}, ];
+
+function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
+    const possibleReplacements = Object.keys(remainingStudMap);
+    let replacement = possibleReplacements[0];
+    possibleReplacements.forEach(possibleReplacement => {
+        if (remainingStudMap[possibleReplacement] > 0 &&
+            colorDistanceFunction(
+                pixelRGB,
+                hexToRgb(possibleReplacement)
+            ) < colorDistanceFunction(
+                pixelRGB,
+                hexToRgb(replacement)
+            )
+        ) {
+            replacement = possibleReplacement;
+        }
+    });
+    return hexToRgb(replacement);
+}
+
+function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+    availableStudMap,
+    originalPixels,
+    overridePixelArray,
+    imageWidth,
+    colorDistanceFunction,
+    skipDithering,
+    assumeInfinitePixelCounts,
+) {
+    availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
+
+    // We use this to easily get adjacent pixels when propogating dithering error
+    const pixelMatrix = [];
+    const height = Math.floor((originalPixels.length / 4) / imageWidth);
+    for (let row = 0; row < height; row++) {
+        pixelMatrix[row] = [];
+        for (let col = 0; col < imageWidth; col++) {
+            const i = (row * imageWidth + col) * 4
+
+            const pixelRGB = [originalPixels[i],
+                originalPixels[i + 1],
+                originalPixels[i + 2]
+            ]
+
+            const tentativeReplacementRGB = findReplacement(pixelRGB, availableStudMap, colorDistanceFunction);
+            const tentativeReplacementDistance = colorDistanceFunction(pixelRGB, tentativeReplacementRGB);
+            const pixel = {
+                pixelRGB,
+                isInPixelQueue: true,
+                row,
+                col,
+                tentativeReplacementRGB,
+                tentativeReplacementDistance
+            };
+            pixelMatrix[row][col] = pixel;
+        }
+    }
+
+    const comparator = (b, a) => a.tentativeReplacementDistance - b.tentativeReplacementDistance;
+    let pixelQueue = new Heap(comparator);
+
+    pixelQueue.init(pixelMatrix.flat());
+
+    while (!pixelQueue.isEmpty()) {
+        const nextPixel = pixelQueue.pop();
+
+        // Do this in the RGB color space so we can cleanly spread this around if we're doing dithering
+        // TODO: see if/how this messes with other color distance functions
+        const dequeuedPixelQuantizationError = [
+            nextPixel.pixelRGB[0] - nextPixel.tentativeReplacementRGB[0],
+            nextPixel.pixelRGB[1] - nextPixel.tentativeReplacementRGB[1],
+            nextPixel.pixelRGB[2] - nextPixel.tentativeReplacementRGB[2]
+        ];
+
+        nextPixel.isInPixelQueue = false;
+        nextPixel.pixelRGB = nextPixel.tentativeReplacementRGB; // lock this in - we're not changing this pixel now
+
+
+        if (!assumeInfinitePixelCounts) {
+            const pixelHex = rgbToHex(nextPixel.pixelRGB[0], nextPixel.pixelRGB[1], nextPixel.pixelRGB[2]);
+            availableStudMap[pixelHex] = availableStudMap[pixelHex] - 1;
+            if (availableStudMap[pixelHex] === 0) {
+                // we're out of parts in this color - reassign the nodes and rebuild the heap
+                const oldHeapPixels = [...pixelQueue.heapArray];
+                oldHeapPixels.forEach((oldPixel) => {
+                    const tentativeReplacementRGB = findReplacement(oldPixel.pixelRGB, availableStudMap, colorDistanceFunction);
+                    const tentativeReplacementDistance = colorDistanceFunction(oldPixel.pixelRGB, tentativeReplacementRGB);
+                    oldPixel.tentativeReplacementRGB = tentativeReplacementRGB;
+                    oldPixel.tentativeReplacementDistance = tentativeReplacementDistance;
+                });
+                pixelQueue.init(); // heapify
+            }
+        }
+
+
+        if (!skipDithering) {
+            // first, get the adjacent pixels we may need to adjust
+            const kernel = GAUSSIAN_DITHERING_KERNEL;
+            const kernelHeight = kernel.length;
+            const kernelWidth = kernel[0].length
+            const kernelRowMiddle = Math.floor(kernelHeight / 2);
+            const kernelColMiddle = Math.floor(kernelWidth / 2);
+
+            let totalNeighborhoodPixels = 0;
+            let errorDenominator = 0;
+            for (let kr = 0; kr < kernelHeight; kr++) {
+                for (let kc = 0; kc < kernelWidth; kc++) {
+                    if (kr != kernelRowMiddle || kc != kernelColMiddle) {
+                        const pixelMatrixRow = nextPixel.row - kernelRowMiddle + kr;
+                        const pixelMatrixCol = nextPixel.col - kernelColMiddle + kc;
+                        const neighborhoodPixel = (pixelMatrix[pixelMatrixRow] || {})[pixelMatrixCol];
+                        if (neighborhoodPixel != null && neighborhoodPixel.isInPixelQueue) {
+                            totalNeighborhoodPixels++;
+                            errorDenominator += kernel[kr][kc];
+                        }
+                    }
+                }
+            }
+
+            if (errorDenominator > 0) {
+                for (let kr = 0; kr < kernelHeight; kr++) {
+                    for (let kc = 0; kc < kernelWidth; kc++) {
+                        if (kr != kernelRowMiddle || kc != kernelColMiddle) {
+                            const pixelMatrixRow = nextPixel.row - kernelRowMiddle + kr;
+                            const pixelMatrixCol = nextPixel.col - kernelColMiddle + kc;
+                            const neighborhoodPixel = (pixelMatrix[pixelMatrixRow] || {})[pixelMatrixCol];
+                            if (neighborhoodPixel != null && neighborhoodPixel.isInPixelQueue) {
+                                // add in error
+                                const errorWeight = kernel[kr][kc] / errorDenominator;
+                                neighborhoodPixel.pixelRGB = [0, 1, 2]
+                                    .map(channel => clamp255(neighborhoodPixel.pixelRGB[channel] + dequeuedPixelQuantizationError[channel] * errorWeight));
+
+                                const tentativeReplacementRGB = findReplacement(neighborhoodPixel.pixelRGB, availableStudMap, colorDistanceFunction);
+                                const tentativeReplacementDistance = colorDistanceFunction(neighborhoodPixel.pixelRGB, tentativeReplacementRGB);
+                                const oldReplacementRGB = neighborhoodPixel.tentativeReplacementRGB
+                                neighborhoodPixel.tentativeReplacementRGB = tentativeReplacementRGB;
+                                neighborhoodPixel.tentativeReplacementDistance = tentativeReplacementDistance;
+
+                                if (oldReplacementRGB[0] != neighborhoodPixel.tentativeReplacementRGB[0] ||
+                                    oldReplacementRGB[1] != neighborhoodPixel.tentativeReplacementRGB[1] ||
+                                    oldReplacementRGB[2] != neighborhoodPixel.tentativeReplacementRGB[2]) {
+                                    pixelQueue.remove(neighborhoodPixel);
+                                    pixelQueue.add(neighborhoodPixel);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    const result = [];
+    pixelMatrix.forEach(row => row.forEach(pixel => {
+        pixel.tentativeReplacementRGB.forEach(channel => {
+            result.push(channel);
+        });
+        result.push(255);
+    }));
+    return new Uint8ClampedArray(result);
+}
+
+function alignPixelsWithTraditionalDithering(
+    availableStudMap,
+    originalPixels,
+    overridePixelArray,
+    imageWidth,
+    colorDistanceFunction,
+    kernel
+) {
+    availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
+
+    // We use this to easily get adjacent pixels when propogating dithering error
+    const pixelMatrix = [];
+    const height = Math.floor((originalPixels.length / 4) / imageWidth);
+    for (let row = 0; row < height; row++) {
+        pixelMatrix[row] = [];
+        for (let col = 0; col < imageWidth; col++) {
+            const i = (row * imageWidth + col) * 4
+
+            const pixelRGB = [originalPixels[i],
+                originalPixels[i + 1],
+                originalPixels[i + 2]
+            ]
+
+            const pixel = {
+                pixelRGB,
+            };
+            pixelMatrix[row][col] = pixel;
+        }
+    }
+
+    const kernelDenominator = kernel.reduce((partialSum, entry) => partialSum + entry.val, 0);
+
+    for (let row = 0; row < height; row++) {
+        for (let col = 0; col < imageWidth; col++) {
+            const currentPixel = pixelMatrix[row][col];
+            const replacementRGB = findReplacement(currentPixel.pixelRGB, availableStudMap, colorDistanceFunction);
+            const currentPixelQuantizationError = [
+                currentPixel.pixelRGB[0] - replacementRGB[0],
+                currentPixel.pixelRGB[1] - replacementRGB[1],
+                currentPixel.pixelRGB[2] - replacementRGB[2]
+            ];
+
+            // spread the error
+            kernel.forEach(kernelEntry => {
+                const forwardPixel = (pixelMatrix[row + kernelEntry.row] || {})[col + kernelEntry.col];
+                if (forwardPixel != null) {
+                    forwardPixel.pixelRGB = [0, 1, 2]
+                        .map(channel => clamp255(forwardPixel.pixelRGB[channel] + currentPixelQuantizationError[channel] * kernelEntry.val / kernelDenominator));
+                }
+            });
+
+            // reassign the current pixel
+            currentPixel.pixelRGB = replacementRGB;
+        }
+    }
+
+    const result = [];
+    pixelMatrix.forEach(row => row.forEach(pixel => {
+        pixel.pixelRGB.forEach(channel => {
+            result.push(channel);
+        });
+        result.push(255);
+    }));
+    return new Uint8ClampedArray(result);
 }
 
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
