@@ -671,13 +671,17 @@ const quantizationAlgorithmsInfo = {
     },
     atkinsonDithering: {
         name: "Atkinson Dithering",
+    },
+    sierraDithering: {
+        name: "Sierra Dithering",
     }
 };
 
 const quantizationAlgorithmToTraditionalDitheringKernel = {
     floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
     jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL,
-    atkinsonDithering: ATKINSON_DITHERING_KERNEL
+    atkinsonDithering: ATKINSON_DITHERING_KERNEL,
+    sierraDithering: SIERRA_DITHERING_KERNEL
 };
 
 const defaultQuantizationAlgorithmKey = "twoPhase";

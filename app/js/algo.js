@@ -521,7 +521,47 @@ const ATKINSON_DITHERING_KERNEL = [{
     entry.val = entry.val * 3 / 4;
     return entry
 });
-const SIERRA_DITHERING_KERNEL = [];
+const SIERRA_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 5
+}, {
+    row: 0,
+    col: 2,
+    val: 3
+}, {
+    row: 1,
+    col: -2,
+    val: 2
+}, {
+    row: 1,
+    col: -1,
+    val: 4
+}, {
+    row: 1,
+    col: 0,
+    val: 5
+}, {
+    row: 1,
+    col: 1,
+    val: 4
+}, {
+    row: 1,
+    col: 2,
+    val: 2
+}, {
+    row: 2,
+    col: -1,
+    val: 2
+}, {
+    row: 2,
+    col: 0,
+    val: 3
+}, {
+    row: 2,
+    col: 1,
+    val: 2
+}, ];
 
 function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
     const possibleReplacements = Object.keys(remainingStudMap);
