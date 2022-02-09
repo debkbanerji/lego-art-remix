@@ -657,12 +657,6 @@ const quantizationAlgorithmsInfo = {
     twoPhase: {
         name: "2 Phase",
     },
-    greedy: {
-        name: "Greedy",
-    },
-    greedyWithDithering: {
-        name: "Greedy Gaussian Dithering",
-    },
     floydSteinberg: {
         name: "Floyd-Steinberg Dithering",
     },
@@ -674,7 +668,13 @@ const quantizationAlgorithmsInfo = {
     },
     sierraDithering: {
         name: "Sierra Dithering",
-    }
+    },
+    greedy: {
+        name: "Greedy",
+    },
+    greedyWithDithering: {
+        name: "Greedy Gaussian Dithering",
+    },
 };
 
 const quantizationAlgorithmToTraditionalDitheringKernel = {
@@ -1974,6 +1974,7 @@ document
     .addEventListener("change", create3dPreview, false);
 
 function runStep4(asyncCallback) {
+    console.log('hello from runStep4')
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
     step4Canvas.width = 0;
@@ -2008,6 +2009,17 @@ function runStep4(asyncCallback) {
         shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked ||
             Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
 
+        if (!shouldSideStepStep4) {
+            const requiredStuds = targetResolution[0] * targetResolution[1]
+            let availableStuds = 0;
+            Array.from(customStudTableBody.children).forEach(stud => {
+                availableStuds += parseInt(stud.children[1].children[0].children[0].value);
+            });
+            const missingStuds = Math.max(requiredStuds - availableStuds, 0);
+            if (missingStuds > 0) {
+                throw 'Step 4 failed'; // error will be caught and interaction will be enabled
+            }
+        }
 
         let availabilityCorrectedPixelArray;
 
