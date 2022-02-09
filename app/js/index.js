@@ -287,6 +287,43 @@ function updateStudCountText() {
     }
 }
 
+const quantizationAlgorithmsInfo = {
+    twoPhase: {
+        name: "2 Phase",
+    },
+    floydSteinberg: {
+        name: "Floyd-Steinberg Dithering",
+    },
+    jarvisJudiceNinkeDithering: {
+        name: "Jarvis-Judice-Ninke Dithering",
+    },
+    atkinsonDithering: {
+        name: "Atkinson Dithering",
+    },
+    sierraDithering: {
+        name: "Sierra Dithering",
+    },
+    greedy: {
+        name: "Greedy",
+    },
+    greedyWithDithering: {
+        name: "Greedy Gaussian Dithering",
+    },
+};
+
+const quantizationAlgorithmToTraditionalDitheringKernel = {
+    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
+    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL,
+    atkinsonDithering: ATKINSON_DITHERING_KERNEL,
+    sierraDithering: SIERRA_DITHERING_KERNEL
+};
+
+const defaultQuantizationAlgorithmKey = "twoPhase";
+let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
+document.getElementById("quantization-algorithm-button").innerHTML =
+    quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
+
+
 // TODO: Make this a function
 let overridePixelArray = new Array(
     targetResolution[0] * targetResolution[1] * 4
@@ -653,42 +690,6 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
     document.getElementById("distance-function-options").appendChild(option);
 });
 
-const quantizationAlgorithmsInfo = {
-    twoPhase: {
-        name: "2 Phase",
-    },
-    floydSteinberg: {
-        name: "Floyd-Steinberg Dithering",
-    },
-    jarvisJudiceNinkeDithering: {
-        name: "Jarvis-Judice-Ninke Dithering",
-    },
-    atkinsonDithering: {
-        name: "Atkinson Dithering",
-    },
-    sierraDithering: {
-        name: "Sierra Dithering",
-    },
-    greedy: {
-        name: "Greedy",
-    },
-    greedyWithDithering: {
-        name: "Greedy Gaussian Dithering",
-    },
-};
-
-const quantizationAlgorithmToTraditionalDitheringKernel = {
-    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
-    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL,
-    atkinsonDithering: ATKINSON_DITHERING_KERNEL,
-    sierraDithering: SIERRA_DITHERING_KERNEL
-};
-
-const defaultQuantizationAlgorithmKey = "twoPhase";
-let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
-document.getElementById("quantization-algorithm-button").innerHTML =
-    quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
-
 function onInfinitePieceCountChange() {
     const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
     [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
@@ -934,7 +935,7 @@ function getNewCustomStudRow() {
         );
         runCustomStudMap();
     });
-    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked;
+    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
     infinityPlaceholder = document.createElement("div");
     infinityPlaceholder.hidden = !numberInput.hidden;
     infinityPlaceholder.className = "piece-count-infinity-placeholder";
