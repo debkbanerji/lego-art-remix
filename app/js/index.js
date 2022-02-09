@@ -1924,8 +1924,6 @@ function runStep4(asyncCallback) {
                 isBleedthroughEnabled() ?
                 getDarkenedImage(overridePixelArray) :
                 overridePixelArray,
-                // selectedTiebreakTechnique,
-                // document.getElementById("color-tie-grouping-factor-slider").value,
                 targetResolution[0],
                 colorDistanceFunction,
                 false, // don't skip dithering
