@@ -657,11 +657,16 @@
                             Clear Available Pieces
                           </button>
                         </div>
-                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
+                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px" id="infinite-piece-count-check-container">
                           <label>
                             <input type="checkbox" id="infinite-piece-count-check">
                             <span style="font-size: 13px;">Infinite piece counts</span>
                           </label>
+                        </div>
+                        <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                          <small>
+                            <p><b>Important</b>: Since a traditional error dithering algorithm was selected in the 'Quantization' section, infinite piece counts were used</p>
+                          </small>
                         </div>
                         <table class="table">
                           <thead>

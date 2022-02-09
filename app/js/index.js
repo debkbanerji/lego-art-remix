@@ -698,6 +698,12 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
         // Only 2 phase supports color tie resolution
         document.getElementById('color-ties-resolution-section').hidden = quantizationAlgorithm != 'twoPhase';
 
+        const isTraditionalErrorDithering = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+        document.getElementById('infinite-piece-count-check-container').hidden = isTraditionalErrorDithering;
+        [...document.getElementsByClassName("traditional-dithering-algorithm-warning")].forEach(
+            item => (item.hidden = !isTraditionalErrorDithering)
+        );
+
         disableInteraction();
         runStep3();
     });
