@@ -666,10 +666,14 @@ const quantizationAlgorithmsInfo = {
     floydSteinberg: {
         name: "Floyd-Steinberg Dithering",
     },
+    jarvisJudiceNinkeDithering: {
+        name: "Jarvis-Judice-Ninke Dithering",
+    }
 };
 
 const quantizationAlgorithmToTraditionalDitheringKernel = {
-    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL
+    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
+    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL
 };
 
 const defaultQuantizationAlgorithmKey = "twoPhase";

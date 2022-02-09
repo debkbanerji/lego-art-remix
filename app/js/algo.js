@@ -444,9 +444,55 @@ const FLOYD_STEINBERG_DITHERING_KERNEL = [{
     col: 1,
     val: 1
 }];
-
-// TODO: Add these
-const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [];
+const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 7
+}, {
+    row: 0,
+    col: 2,
+    val: 5
+}, {
+    row: 1,
+    col: -2,
+    val: 3
+}, {
+    row: 1,
+    col: -1,
+    val: 5
+}, {
+    row: 1,
+    col: 0,
+    val: 7
+}, {
+    row: 1,
+    col: 1,
+    val: 5
+}, {
+    row: 1,
+    col: 2,
+    val: 3
+}, {
+    row: 2,
+    col: -2,
+    val: 1
+}, {
+    row: 2,
+    col: -1,
+    val: 3
+}, {
+    row: 2,
+    col: 0,
+    val: 5
+}, {
+    row: 2,
+    col: 1,
+    val: 3
+}, {
+    row: 2,
+    col: 2,
+    val: 1
+}, ];
 const ATKINSON_DITHERING_KERNEL = [];
 const SIERRA_DITHERING_KERNEL = [];
 
