@@ -1974,7 +1974,6 @@ document
     .addEventListener("change", create3dPreview, false);
 
 function runStep4(asyncCallback) {
-    console.log('hello from runStep4')
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
     step4Canvas.width = 0;
