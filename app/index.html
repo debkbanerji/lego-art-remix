@@ -600,7 +600,7 @@
                   <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px">
-                        <small><em>I recommend tweaking the quantization settings before using the paintbrush</em></small>
+                        <small>&#9679; I recommend tweaking the quantization settings before using the paintbrush</small>
                         <div style="margin-bottom: 4px; display: flex; flex-direction: row; align-items: center;">
                           <span style="font-weight: 600">Paintbrush color: &nbsp;</span>
                           <span id="paintbrush-controls">
@@ -660,12 +660,12 @@
                         <div class="checkbox" style="margin-top: 4px; margin-left: 4px" id="infinite-piece-count-check-container">
                           <label>
                             <input type="checkbox" id="infinite-piece-count-check">
-                            <span style="font-size: 13px;">Infinite piece counts</span>
+                            <span style="font-size: 13px;">Infinite Piece Counts</span>
                           </label>
                         </div>
                         <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
                           <small>
-                            <p><b>Important</b>: Since a traditional error dithering algorithm was selected in the 'Quantization' section, infinite piece counts were used</p>
+                            <p><b>Important</b>: Since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section, infinite piece counts were used</p>
                           </small>
                         </div>
                         <table class="table">
@@ -761,6 +761,18 @@
                         </button>
                         <div class="dropdown-menu" id="quantization-algorithm-options">
                         </div>
+                      </div>
+                      <div style="margin-top: 4px; margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                        <small>
+                          <p style="margin-bottom: 8px;"><b>Important</b>: Since this is a linear error dithering algorithm, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available Colors'</span>
+                            was enabled - be careful!
+                          </p>
+                        </small>
+                      </div>
+                      <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                        <small>
+                          <p>It's often best to use <span style="font-weight: 550">'Euclidean RGB'</span> for the color distance function, for mathematical cleanliness</p>
+                        </small>
                       </div>
                       <div style="margin-top: 12px; margin-left: 4px;" id="color-ties-resolution-section">
                         <small>

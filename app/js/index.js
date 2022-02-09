@@ -346,13 +346,6 @@ document
         runStep1();
     });
 
-document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
-    [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = document.getElementById("infinite-piece-count-check").checked);
-    [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !document.getElementById("infinite-piece-count-check").checked);
-    updateStudCountText();
-    runStep4();
-});
-
 document
     .getElementById("resolution-limit-increase-button")
     .addEventListener("click", () => {
@@ -684,6 +677,15 @@ let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
 document.getElementById("quantization-algorithm-button").innerHTML =
     quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
 
+function onInfinitePieceCountChange() {
+    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
+    [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !isUsingInfinite);
+    updateStudCountText();
+    runStep4();
+}
+document.getElementById("infinite-piece-count-check").addEventListener("change", onInfinitePieceCountChange);
+
 Object.keys(quantizationAlgorithmsInfo).forEach(key => {
     const algorithm = quantizationAlgorithmsInfo[key];
     const option = document.createElement("a");
@@ -704,6 +706,7 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
             item => (item.hidden = !isTraditionalErrorDithering)
         );
 
+        onInfinitePieceCountChange();
         disableInteraction();
         runStep3();
     });
@@ -713,7 +716,7 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
 
 const DIVIDER = 'DIVIDER';
 const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
-const NUM_SET_STUD_MAPS = 8;
+const NUM_SET_STUD_MAPS = 9;
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER)
 
 STUD_MAP_KEYS
