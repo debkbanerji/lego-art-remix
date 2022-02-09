@@ -654,9 +654,43 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
         document.getElementById("distance-function-button").innerHTML =
             distanceFunction.name;
         colorDistanceFunction = distanceFunction.func;
+        disableInteraction();
         runStep3();
     });
     document.getElementById("distance-function-options").appendChild(option);
+});
+
+const quantizationAlgorithmsInfo = {
+    twoPhase: {
+        name: "2 Phase",
+    },
+    greedy: {
+        name: "Greedy",
+    },
+    greedyWithDithering: {
+        name: "GDD",
+    },
+};
+
+const defaultQuantizationAlgorithmKey = "twoPhase";
+let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
+document.getElementById("quantization-algorithm-button").innerHTML =
+    quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
+
+Object.keys(quantizationAlgorithmsInfo).forEach(key => {
+    const algorithm = quantizationAlgorithmsInfo[key];
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = algorithm.name;
+    option.value = key;
+    option.addEventListener("click", () => {
+        document.getElementById("quantization-algorithm-button").innerHTML =
+            algorithm.name;
+        quantizationAlgorithm = key;
+        disableInteraction();
+        runStep3();
+    });
+    document.getElementById("quantization-algorithm-options").appendChild(option);
 });
 
 
@@ -1283,16 +1317,37 @@ function runStep2() {
 
 function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
-    const alignedPixelArray = alignPixelsToStudMap(
-        fiteredPixelArray,
-        isBleedthroughEnabled() ?
-        getDarkenedStudMap(selectedStudMap) :
-        selectedStudMap,
-        isBleedthroughEnabled() ?
-        getDarkenedImage(overridePixelArray) :
-        overridePixelArray,
-        colorDistanceFunction
-    );
+
+    let alignedPixelArray;
+
+    if (quantizationAlgorithm === 'twoPhase') {
+        alignedPixelArray = alignPixelsToStudMap(
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            colorDistanceFunction
+        );
+    } else if (quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering') {
+        // quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering'
+        alignedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            targetResolution[0],
+            colorDistanceFunction,
+            quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
+            true, // assumeInfinitePixelCounts
+        );
+    } // else TODO: FSD or JJND
+
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
@@ -1898,24 +1953,30 @@ function runStep4(asyncCallback) {
                 shouldSideStepStep4 = false;
             }
         });
-        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked;
+        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked; // TODO: check FSD or JJND
 
-        let availabilityCorrectedPixelArray = shouldSideStepStep4 ? step3PixelArray : correctPixelsForAvailableStuds(
-            step3PixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedStudMap(selectedStudMap) :
-            selectedStudMap,
-            step2PixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedImage(overridePixelArray) :
-            overridePixelArray,
-            selectedTiebreakTechnique,
-            document.getElementById("color-tie-grouping-factor-slider").value,
-            targetResolution[0],
-            colorDistanceFunction
-        );
+        let availabilityCorrectedPixelArray;
 
-        if (window.location.href.includes("enableExperimentalDithering")) {
+        // if we're using FSD or JJND, this has to be true
+        if (shouldSideStepStep4) {
+            availabilityCorrectedPixelArray = step3PixelArray;
+        } else if (quantizationAlgorithm === 'twoPhase') {
+            availabilityCorrectedPixelArray = correctPixelsForAvailableStuds(
+                step3PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedStudMap(selectedStudMap) :
+                selectedStudMap,
+                step2PixelArray,
+                isBleedthroughEnabled() ?
+                getDarkenedImage(overridePixelArray) :
+                overridePixelArray,
+                selectedTiebreakTechnique,
+                document.getElementById("color-tie-grouping-factor-slider").value,
+                targetResolution[0],
+                colorDistanceFunction
+            );
+        } else {
+            // quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering'
             availabilityCorrectedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
                 isBleedthroughEnabled() ?
                 getDarkenedStudMap(selectedStudMap) :
@@ -1926,8 +1987,8 @@ function runStep4(asyncCallback) {
                 overridePixelArray,
                 targetResolution[0],
                 colorDistanceFunction,
-                false, // don't skip dithering
-                shouldSideStepStep4,
+                quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
+                shouldSideStepStep4, // assumeInfinitePixelCounts
             );
         }
 

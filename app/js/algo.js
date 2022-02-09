@@ -588,7 +588,7 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
         pixel.tentativeReplacementRGB.forEach(channel => {
             result.push(channel);
         });
-        result.push(0);
+        result.push(255);
     }));
     return new Uint8ClampedArray(result);
 }
