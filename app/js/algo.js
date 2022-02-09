@@ -445,11 +445,6 @@ function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
     return hexToRgb(replacement);
 }
 
-// TODO: Develop, implement algorithm, augment fast heap.js implementation
-// will probably need to make sure entirety of error is propogated, but not too much to one pixel? (maybe we don't worry about capping the propogation to start with)
-// TODO: Make accessible through URL parameter at first
-// TODO: Tiebreak technique
-// TODO: Create git branch before implementing
 function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
     availableStudMap,
     originalPixels,
