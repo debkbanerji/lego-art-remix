@@ -625,53 +625,23 @@
                 </div>
 
 
-                <div class="card accordion-card hide-on-step-3-expansion">
+                <div class="card accordion-card">
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
-                        Color Distance
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
-                    <div class="card-body accordion-card-body">
-                      <small>
-                        <b style="margin-left: 4px; margin-bottom: 2px">Color Distance Function
-                        </b>
-                        <p style="margin-left: 4px; margin-bottom: 8px; margin-top: 4px;">&#9679; This setting determines which distance function is used to align pixels to
-                          their closest Lego colors
-                        </p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Euclidean RGB usually leads to the best performance, but the other functions can lead to better
-                          results in many cases
-                        </p>
-                      </small>
-                      <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
-                        Euclidean RGB
-                      </button>
-                      <div class="dropdown-menu" id="distance-function-options">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-3-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
                         Available Colors
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
                         <div style="margin-bottom: 20px">
                           <small>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many pieces of each color you have available to create the image
                             </p>
-                              <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
-                              </p>
+                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
+                            </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough pieces to fill the picture ('Missing Pieces' must be 0)
                             </p>
                             <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
@@ -727,16 +697,15 @@
                   </div>
                 </div>
 
-
                 <div class="card accordion-card hide-on-step-3-expansion">
-                  <div class="card-header" id="step-3-4-heading">
+                  <div class="card-header" id="step-3-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
                         Pixel Type
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <div class="btn-group">
@@ -746,6 +715,35 @@
                           <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
                           </div>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card hide-on-step-3-expansion">
+                  <div class="card-header" id="step-3-4-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                        Color Distance
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                    <div class="card-body accordion-card-body">
+                      <small>
+                        <b style="margin-left: 4px; margin-bottom: 2px">Color Distance Function
+                        </b>
+                        <p style="margin-left: 4px; margin-bottom: 8px; margin-top: 4px;">&#9679; This setting determines which distance function is used to align pixels to
+                          their closest Lego colors
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Euclidean RGB usually leads to the best performance, but the other functions can lead to better
+                          results in many cases
+                        </p>
+                      </small>
+                      <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
+                        Euclidean RGB
+                      </button>
+                      <div class="dropdown-menu" id="distance-function-options">
                       </div>
                     </div>
                   </div>
