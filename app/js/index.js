@@ -687,6 +687,10 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
         document.getElementById("quantization-algorithm-button").innerHTML =
             algorithm.name;
         quantizationAlgorithm = key;
+
+        // Only 2 phase supports color tie resolution
+        document.getElementById('color-ties-resolution-section').hidden = quantizationAlgorithm != 'twoPhase';
+
         disableInteraction();
         runStep3();
     });

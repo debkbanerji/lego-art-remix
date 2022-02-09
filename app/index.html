@@ -757,6 +757,26 @@
                         <div class="dropdown-menu" id="quantization-algorithm-options">
                         </div>
                       </div>
+                      <div style="margin-top: 12px; margin-left: 4px;" id="color-ties-resolution-section">
+                        <small>
+                          <b style="margin-bottom: 2px">Color Tie Resolution Strategy
+                          </b>
+                          <p style="margin-bottom: 4px">Changing this is useful if you have a large background
+                            but not enough pieces to fill it out uniformly in step 4
+                          </p>
+                        </small>
+                        <div class="btn-group">
+                          <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                            Strategy: Alternating Mod
+                          </button>
+                          <div class="dropdown-menu" id="color-ties-resolution-options">
+                          </div>
+                        </div>
+                        <div style="padding-top: 4px; padding-right: 12px; width: 100%">
+                          <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
+                          <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -878,46 +898,14 @@
                 </div>
 
                 <div class="card accordion-card">
-                  <div class="card-header" id="step-4-1-heading">
+                  <div class="card-header" id="step-4-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-1-collapse" aria-expanded="false" aria-controls="step-4-1-collapse">
-                        Color Ties
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-4-1-collapse" class="collapse" aria-labelledby="step-4-1-heading" data-parent="#step-4-accordion">
-                    <div class="card-body accordion-card-body">
-                      <small>
-                        <b style="margin-left: 4px; margin-bottom: 2px">Color Tie Resolution Strategy
-                        </b>
-                        <p style="margin-left: 4px; margin-bottom: 4px">Changing this is useful if you have a large background
-                          but not enough pieces to fill it out uniformly
-                        </p>
-                      </small>
-                      <div class="btn-group">
-                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
-                          Strategy: Alternating Mod
-                        </button>
-                        <div class="dropdown-menu" id="color-ties-resolution-options">
-                        </div>
-                      </div>
-                      <div style="padding-left: 12px; padding-top: 4px; padding-right: 12px; width: 100%">
-                        <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
-                        <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-4-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
                         Instructions
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
+                  <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
                         <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
@@ -950,14 +938,14 @@
                 </div>
 
                 <div class="card accordion-card" id="bricklink-export-card">
-                  <div class="card-header" id="step-4-4-heading">
+                  <div class="card-header" id="step-4-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-4-collapse" aria-expanded="false" aria-controls="step-4-4-collapse">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
                         Export Piece List
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-4-collapse" class="collapse" aria-labelledby="step-4-4-heading" data-parent="#step-4-accordion">
+                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
                       <br />
