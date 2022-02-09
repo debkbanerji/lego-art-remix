@@ -454,8 +454,6 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
     availableStudMap,
     originalPixels,
     overridePixelArray,
-    // tieResolutionMethod,
-    // colorTieGroupingFactor,
     imageWidth,
     colorDistanceFunction,
     skipDithering,
