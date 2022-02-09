@@ -668,12 +668,16 @@ const quantizationAlgorithmsInfo = {
     },
     jarvisJudiceNinkeDithering: {
         name: "Jarvis-Judice-Ninke Dithering",
+    },
+    atkinsonDithering: {
+        name: "Atkinson Dithering",
     }
 };
 
 const quantizationAlgorithmToTraditionalDitheringKernel = {
     floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL,
-    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL
+    jarvisJudiceNinkeDithering: JARVIS_JUDICE_NINKE_DITHERING_KERNEL,
+    atkinsonDithering: ATKINSON_DITHERING_KERNEL
 };
 
 const defaultQuantizationAlgorithmKey = "twoPhase";
@@ -686,9 +690,11 @@ function onInfinitePieceCountChange() {
     [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
     [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !isUsingInfinite);
     updateStudCountText();
-    runStep4();
 }
-document.getElementById("infinite-piece-count-check").addEventListener("change", onInfinitePieceCountChange);
+document.getElementById("infinite-piece-count-check").addEventListener("change", () => {
+    onInfinitePieceCountChange();
+    runStep4();
+});
 
 Object.keys(quantizationAlgorithmsInfo).forEach(key => {
     const algorithm = quantizationAlgorithmsInfo[key];
@@ -710,8 +716,8 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
             item => (item.hidden = !isTraditionalErrorDithering)
         );
 
-        onInfinitePieceCountChange();
         disableInteraction();
+        onInfinitePieceCountChange();
         runStep3();
     });
     document.getElementById("quantization-algorithm-options").appendChild(option);

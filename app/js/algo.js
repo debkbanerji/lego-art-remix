@@ -493,7 +493,34 @@ const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [{
     col: 2,
     val: 1
 }, ];
-const ATKINSON_DITHERING_KERNEL = [];
+const ATKINSON_DITHERING_KERNEL = [{
+    row: 0,
+    col: 1,
+    val: 1
+}, {
+    row: 0,
+    col: 2,
+    val: 1
+}, {
+    row: 1,
+    col: -1,
+    val: 1
+}, {
+    row: 1,
+    col: 0,
+    val: 1
+}, {
+    row: 1,
+    col: 1,
+    val: 1
+}, {
+    row: 2,
+    col: 0,
+    val: 1
+}, ].map(entry => {
+    entry.val = entry.val * 3 / 4;
+    return entry
+});
 const SIERRA_DITHERING_KERNEL = [];
 
 function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
