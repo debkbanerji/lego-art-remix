@@ -668,8 +668,15 @@ const quantizationAlgorithmsInfo = {
         name: "Greedy",
     },
     greedyWithDithering: {
-        name: "GDD",
+        name: "Greedy Gaussian Dithering",
     },
+    floydSteinberg: {
+        name: "Floyd-Steinberg Dithering",
+    },
+};
+
+const quantizationAlgorithmToTraditionalDitheringKernel = {
+    floydSteinberg: FLOYD_STEINBERG_DITHERING_KERNEL
 };
 
 const defaultQuantizationAlgorithmKey = "twoPhase";
@@ -1350,7 +1357,23 @@ function runStep3() {
             quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
             true, // assumeInfinitePixelCounts
         );
-    } // else TODO: FSD or JJND
+
+    } else {
+        // assume we're dealing with a traditional error dithering algorithm
+        const ditheringKernel = quantizationAlgorithmToTraditionalDitheringKernel[quantizationAlgorithm];
+        alignedPixelArray = alignPixelsWithTraditionalDithering(
+            isBleedthroughEnabled() ?
+            getDarkenedStudMap(selectedStudMap) :
+            selectedStudMap,
+            fiteredPixelArray,
+            isBleedthroughEnabled() ?
+            getDarkenedImage(overridePixelArray) :
+            overridePixelArray,
+            targetResolution[0],
+            colorDistanceFunction,
+            ditheringKernel
+        );
+    }
 
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
@@ -1957,11 +1980,15 @@ function runStep4(asyncCallback) {
                 shouldSideStepStep4 = false;
             }
         });
-        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked; // TODO: check FSD or JJND
+
+        // There are three reasons step 4 should be identical to step 3
+        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked ||
+            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+
 
         let availabilityCorrectedPixelArray;
 
-        // if we're using FSD or JJND, this has to be true
+        // if we're using a traditional error dithering algorithm, this has to be true
         if (shouldSideStepStep4) {
             availabilityCorrectedPixelArray = step3PixelArray;
         } else if (quantizationAlgorithm === 'twoPhase') {
