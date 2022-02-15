@@ -1290,7 +1290,8 @@ function getRequiredPartMatrixFromSetPixelMatrix(
     // pixels which are not set but need to be
     // should be completely true by the end
     setPixelMatrix,
-    partDimensions
+    partDimensions,
+    boundaryWidth = null, // if this is set, don't cross boundaries
 ) {
 
     // initial result as a null array
@@ -1329,6 +1330,12 @@ function getRequiredPartMatrixFromSetPixelMatrix(
                             canPlacePiece &&
                             !setPixelMatrix[row + pRow][col + pCol];
                     }
+                }
+                if (boundaryWidth && boundaryWidth > 1) {
+                    // make sure we don't cross bounaries on either direction
+                    canPlacePiece = canPlacePiece &&
+                        Math.floor(row / boundaryWidth) === Math.floor((row + part[0] - 1) / boundaryWidth) &&
+                        Math.floor(col / boundaryWidth) === Math.floor((col + part[1] - 1) / boundaryWidth)
                 }
                 if (canPlacePiece) {
                     result[row][col] = [part[0], part[1]]; // place the piece here
