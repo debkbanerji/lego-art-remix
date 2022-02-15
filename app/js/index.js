@@ -1448,9 +1448,13 @@ function runStep3() {
 
     if (('' + selectedPixelPartNumber).match("^variable.*$")) {
         const alignedPixelMatrix = convertPixelArrayToMatrix(alignedPixelArray, targetResolution[0]);
-        step3VariablePixelPieceDimensions = new Array(targetResolution[1]);
-        for (let i = 0; i < step3VariablePixelPieceDimensions.length; i++) {
-            step3VariablePixelPieceDimensions[i] = new Array(targetResolution[0]);
+        step3VariablePixelPieceDimensions = new Array();
+        for (let i = 0; i < targetResolution[1]; i++) {
+            step3VariablePixelPieceDimensions.push([]);
+            step3VariablePixelPieceDimensions[i] = [];
+            for (let j = 0; j < targetResolution[0]; j++) {
+                step3VariablePixelPieceDimensions[i].push(null);
+            }
         }
         const uniqueColors = Object.keys(getUsedPixelsStudMap(alignedPixelArray));
         const availableParts = getVariablePixelAvailablePartDimensions();
