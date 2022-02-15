@@ -2402,7 +2402,7 @@ function getUsedPlateMatrices(depthPixelArray) {
         .filter(input => input.checked)
         .map(input => input.name)
         .map(part =>
-            part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+            part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
         );
     const flippedParts = [];
     availableParts.forEach(part => {

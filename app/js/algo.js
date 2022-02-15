@@ -1375,8 +1375,8 @@ function drawDepthPlatesCountForContext(
     }
 
     sortedDepthParts = sortedDepthParts.sort((part1, part2) => {
-        const part1Numbers = part1.split(DEPTH_SEPERATOR);
-        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         return (
             Number(part1Numbers[0]) * Number(part1Numbers[1]) -
             Number(part2Numbers[0]) * Number(part2Numbers[1])
@@ -1421,8 +1421,8 @@ function getUsedDepthPartsMap(perDepthLevelMatrices) {
         matrix.forEach(row =>
             row.forEach(part => {
                 if (part != null) {
-                    result[getDepthPlateString(part)] =
-                        (result[getDepthPlateString(part)] || 0) + 1;
+                    result[getPlateDimensionsString(part)] =
+                        (result[getPlateDimensionsString(part)] || 0) + 1;
                 }
             })
         )
@@ -1446,8 +1446,8 @@ function generateDepthInstructionTitlePage(
     const usedDepthParts = getUsedDepthPartsMap(usedPlatesMatrices.flat());
     const sortedDepthParts = Object.keys(usedDepthParts);
     sortedDepthParts.sort((part1, part2) => {
-        const part1Numbers = part1.split(DEPTH_SEPERATOR);
-        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         return (
             Number(part1Numbers[0]) * Number(part1Numbers[1]) -
             Number(part2Numbers[0]) * Number(part2Numbers[1])
@@ -1546,8 +1546,8 @@ function generateDepthInstructionPage(
     const usedDepthParts = getUsedDepthPartsMap(perDepthLevelMatrices);
     const sortedDepthParts = Object.keys(usedDepthParts);
     sortedDepthParts.sort((part1, part2) => {
-        const part1Numbers = part1.split(DEPTH_SEPERATOR);
-        const part2Numbers = part2.split(DEPTH_SEPERATOR);
+        const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
+        const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         return (
             Number(part1Numbers[0]) * Number(part1Numbers[1]) -
             Number(part2Numbers[0]) * Number(part2Numbers[1])
@@ -1673,12 +1673,12 @@ function getSetPixelMatrixFromInputMatrix(inputMatrix, isSetFunction) {
     return result;
 }
 
-const DEPTH_SEPERATOR = " X ";
+const PLATE_DIMENSIONS_DEPTH_SEPERATOR = " X ";
 
-function getDepthPlateString(part) {
+function getPlateDimensionsString(part) {
     return part[0] < part[1] ?
-        `${part[0]}${DEPTH_SEPERATOR}${part[1]}` :
-        `${part[1]}${DEPTH_SEPERATOR}${part[0]}`;
+        `${part[0]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[1]}` :
+        `${part[1]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[0]}`;
 }
 
 const DEPTH_PLATE_TO_PART_ID = {
@@ -1699,10 +1699,10 @@ const DEPTH_PLATE_TO_PART_ID = {
 const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
 
 const DEPTH_FILLER_PARTS = Object.keys(DEPTH_PLATE_TO_PART_ID).map(part =>
-    part.split(DEPTH_SEPERATOR).map(dimension => Number(dimension))
+    part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
 );
 Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
-    const splitPart = part.split(DEPTH_SEPERATOR);
+    const splitPart = part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
     if (splitPart[0] !== splitPart[1]) {
         DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
     }
