@@ -2161,7 +2161,8 @@ function runStep4(asyncCallback) {
                 targetResolution[0],
                 SCALING_FACTOR,
                 step4CanvasUpscaled,
-                selectedPixelPartNumber
+                selectedPixelPartNumber,
+                step3VariablePixelPieceDimensions
             );
 
             // create stud map result table
