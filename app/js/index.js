@@ -702,9 +702,9 @@ document.getElementById("infinite-piece-count-check").addEventListener("change",
 });
 
 function updateForceInfinitePieceCountText() {
-  const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
-  document.getElementById('infinite-piece-count-check-container').hidden = isInfinitePieceCountForced;
-  document.getElementById('forced-infinite-piece-count-warning').hidden = !isInfinitePieceCountForced;
+    const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    document.getElementById('infinite-piece-count-check-container').hidden = isInfinitePieceCountForced;
+    document.getElementById('forced-infinite-piece-count-warning').hidden = !isInfinitePieceCountForced;
 }
 
 Object.keys(quantizationAlgorithmsInfo).forEach(key => {
@@ -2441,10 +2441,13 @@ function getUsedPlateMatrices(depthPixelArray) {
                 ) -
                 1; depthLevel++
             ) {
+                const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
+                    depthSubPixelMatrix,
+                    depthPixel => depthPixel <= depthLevel
+                );
                 perDepthLevelMatrices.push(
-                    getRequiredPartMatrixFromDepthMatrix(
-                        depthSubPixelMatrix,
-                        depthLevel,
+                    getRequiredPartMatrixFromSetPixelMatrix(
+                        setPixelMatrix,
                         availableParts
                     )
                 );

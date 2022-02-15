@@ -1286,23 +1286,18 @@ function getDepthSubPixelMatrix(
     return result;
 }
 
-function getRequiredPartMatrixFromDepthMatrix(
-    depthMatrix,
-    targetLevel,
-    partDimensions
-) {
+function getRequiredPartMatrixFromSetPixelMatrix(
     // pixels which are not set but need to be
     // should be completely true by the end
-    const setPixelMatrix = getUnsetPixelMatrixFromDepthMatrix(
-        depthMatrix,
-        targetLevel
-    );
+    setPixelMatrix,
+    partDimensions
+) {
 
     // initial result as a null array
     const result = [];
-    for (let i = 0; i < depthMatrix.length; i++) {
+    for (let i = 0; i < setPixelMatrix.length; i++) {
         result[i] = [];
-        for (let j = 0; j < depthMatrix[0].length; j++) {
+        for (let j = 0; j < setPixelMatrix[0].length; j++) {
             result[i][j] = null; // nothing has been placed here yet
         }
     }
@@ -1321,9 +1316,9 @@ function getRequiredPartMatrixFromDepthMatrix(
         const part = partDimensions[i];
 
         // place the part as many times as we can
-        for (let row = 0; row < depthMatrix.length - part[0] + 1; row++) {
+        for (let row = 0; row < setPixelMatrix.length - part[0] + 1; row++) {
             for (
-                let col = 0; col < depthMatrix[0].length - part[1] + 1; col++
+                let col = 0; col < setPixelMatrix[0].length - part[1] + 1; col++
             ) {
                 let canPlacePiece = true;
                 for (let pRow = 0; pRow < part[0] && canPlacePiece; pRow++) {
@@ -1660,12 +1655,12 @@ function generateDepthInstructionPage(
     );
 }
 
-function getUnsetPixelMatrixFromDepthMatrix(depthMatrix, targetLevel) {
+function getSetPixelMatrixFromInputMatrix(inputMatrix, isSetFunction) {
     const result = [];
-    for (let i = 0; i < depthMatrix.length; i++) {
+    for (let i = 0; i < inputMatrix.length; i++) {
         result[i] = [];
-        for (let j = 0; j < depthMatrix[0].length; j++) {
-            result[i][j] = depthMatrix[i][j] <= targetLevel; // pixel is not set but needs to be
+        for (let j = 0; j < inputMatrix[0].length; j++) {
+            result[i][j] = isSetFunction(inputMatrix[i][j]);
         }
     }
     return result;
