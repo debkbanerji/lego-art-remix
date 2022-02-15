@@ -998,6 +998,7 @@ function drawStudImageOnCanvas(
                 const part = plateDimensionsOverlay[row][col];
                 if (part != null) {
                     ctx.strokeStyle = "#888888";
+                    ctx.lineWidth = 5;
                     ctx.beginPath();
                     ctx.rect(
                         col * 2 * radius,
