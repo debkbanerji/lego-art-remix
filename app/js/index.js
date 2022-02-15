@@ -92,7 +92,9 @@ function disableInteraction() {
 function enableInteraction() {
     interactionSelectors.forEach(button => (button.disabled = false));
     [...document.getElementsByTagName("input")].forEach(
-        button => (button.disabled = false)
+        button => {
+            button.disabled = button.className === 'always-disabled';
+        }
     );
     [...document.getElementsByClassName("btn")].forEach(
         button => (button.disabled = false)
@@ -260,6 +262,7 @@ Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
         input.name = plate;
         input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
         input.disabled = plate === "1 X 1";
+        input.className = plate === "1 X 1" ? 'always-disabled' : ''
         const label = document.createElement("label");
         const plateSpan = document.createElement("span");
         plateSpan.innerHTML = " " + plate;
