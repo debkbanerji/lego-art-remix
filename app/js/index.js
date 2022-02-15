@@ -701,6 +701,12 @@ document.getElementById("infinite-piece-count-check").addEventListener("change",
     runStep4();
 });
 
+function updateForceInfinitePieceCountText() {
+  const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+  document.getElementById('infinite-piece-count-check-container').hidden = isInfinitePieceCountForced;
+  document.getElementById('forced-infinite-piece-count-warning').hidden = !isInfinitePieceCountForced;
+}
+
 Object.keys(quantizationAlgorithmsInfo).forEach(key => {
     const algorithm = quantizationAlgorithmsInfo[key];
     const option = document.createElement("a");
@@ -716,10 +722,10 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
         document.getElementById('color-ties-resolution-section').hidden = quantizationAlgorithm != 'twoPhase';
 
         const isTraditionalErrorDithering = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
-        document.getElementById('infinite-piece-count-check-container').hidden = isTraditionalErrorDithering;
         [...document.getElementsByClassName("traditional-dithering-algorithm-warning")].forEach(
             item => (item.hidden = !isTraditionalErrorDithering)
         );
+        updateForceInfinitePieceCountText();
 
         disableInteraction();
         onInfinitePieceCountChange();
