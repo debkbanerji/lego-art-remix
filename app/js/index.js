@@ -2277,7 +2277,6 @@ async function generateInstructions() {
             SCALING_FACTOR,
             step4CanvasUpscaled,
             titlePageCanvas,
-            isHighQuality,
             selectedPixelPartNumber
         );
         setDPI(titlePageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
@@ -2350,7 +2349,6 @@ async function generateInstructions() {
                 SCALING_FACTOR,
                 instructionPageCanvas,
                 i + 1,
-                isHighQuality,
                 selectedPixelPartNumber
             );
 

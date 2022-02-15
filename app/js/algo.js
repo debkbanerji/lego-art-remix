@@ -1014,7 +1014,6 @@ function drawStudCountForContext(
     ctx,
     horizontalOffset,
     verticalOffset,
-    showColorName, // unused
     pixelType
 ) {
     const radius = scalingFactor / 2;
@@ -1068,7 +1067,6 @@ function generateInstructionTitlePage(
     scalingFactor,
     finalImageCanvas,
     canvas,
-    showColorName, // unused
     pixelType
 ) {
     const ctx = canvas.getContext("2d");
@@ -1095,7 +1093,6 @@ function generateInstructionTitlePage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName, // unused
         pixelType
     );
 
@@ -1158,7 +1155,6 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    showColorName, // unused
     pixelType
 ) {
     const ctx = canvas.getContext("2d");
@@ -1252,7 +1248,6 @@ function generateInstructionPage(
         ctx,
         pictureWidth * 0.25,
         pictureHeight * 0.2 - radius,
-        showColorName, // unused
         pixelType
     );
 }
