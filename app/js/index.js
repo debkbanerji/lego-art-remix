@@ -3087,4 +3087,15 @@ window.addEventListener('appinstalled', () => {
         .transaction(incrementTransaction);
 });
 
+document.getElementById('toggle-tech-talk-button')
+    .addEventListener('click', () => {
+        // small hack so the iframe only renders when open
+        const youtubeWrapper = document.getElementById('responsive-youtube');
+        if (youtubeWrapper.innerHTML.match(/.*Loading.*/i)) {
+            youtubeWrapper.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/G58ZNurxXgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>`;
+        }
+    });
+
+
 enableInteraction(); // enable interaction once everything has loaded in
