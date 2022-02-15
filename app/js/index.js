@@ -1469,7 +1469,8 @@ function runStep3() {
             );
             const requiredPartMatrix = getRequiredPartMatrixFromSetPixelMatrix(
                 setPixelMatrix,
-                availableParts
+                availableParts,
+                PLATE_WIDTH
             )
             requiredPartMatrix.forEach((row, i) => {
                 row.forEach((entry, j) => {
