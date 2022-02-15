@@ -933,11 +933,15 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
     ctx.fillStyle = pixelHex;
     ctx.fill();
     ctx.strokeStyle = strokeHex;
-    ctx.stroke();
+    if (!('' + pixelType).match("^variable.*$")) { // TODO: Look at perf?
+        ctx.stroke();
+    }
     if ([
             PIXEL_TYPE_OPTIONS[1].number,
             PIXEL_TYPE_OPTIONS[3].number,
-            PIXEL_TYPE_OPTIONS[4].number
+            PIXEL_TYPE_OPTIONS[4].number,
+            PIXEL_TYPE_OPTIONS[6].number,
+            PIXEL_TYPE_OPTIONS[7].number
         ].includes(pixelType)) {
         // draw a circle on top of the piece to represent a stud
         ctx.beginPath()
@@ -953,7 +957,14 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
 }
 
 // replaces square pixels with correct shape and upscales
-function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
+function drawStudImageOnCanvas(
+    pixels,
+    width,
+    scalingFactor,
+    canvas,
+    pixelType,
+    plateDimensionsOverlay // only used if pixelType contains 'variable'
+) {
     const ctx = canvas.getContext("2d");
 
     canvas.width = width * scalingFactor;
@@ -979,6 +990,25 @@ function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) 
             pixelHex,
             "#111111",
             pixelType);
+    }
+
+    if (('' + pixelType).match("^variable.*$") && plateDimensionsOverlay) {
+        for (let row = 0; row < plateDimensionsOverlay.length; row++) {
+            for (let col = 0; col < plateDimensionsOverlay[0].length; col++) {
+                const part = plateDimensionsOverlay[row][col];
+                if (part != null) {
+                    ctx.strokeStyle = "#888888";
+                    ctx.beginPath();
+                    ctx.rect(
+                        col * 2 * radius,
+                        row * 2 * radius,
+                        2 * radius * part[1],
+                        2 * radius * part[0]
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
     }
 }
 
@@ -1281,6 +1311,27 @@ function getDepthSubPixelMatrix(
     return result;
 }
 
+// TODO: Reduce this problem to the one from the previous function?
+function convertPixelArrayToMatrix(
+    pixelArray,
+    totalWidth
+) {
+    const result = [];
+    for (var i = 0; i < pixelArray.length / 4; i++) {
+        const iHorizontal = i % totalWidth;
+        const iVertical = Math.floor(i / totalWidth);
+
+        result[iVertical] = result[iVertical] || [];
+        result[iVertical][iHorizontal] = [
+            pixelArray[4 * i],
+            pixelArray[4 * i + 1],
+            pixelArray[4 * i + 2]
+        ];
+    }
+
+    return result;
+}
+
 function getRequiredPartMatrixFromSetPixelMatrix(
     // pixels which are not set but need to be
     // should be completely true by the end
@@ -1506,7 +1557,7 @@ function generateDepthInstructionTitlePage(
     ctx.strokeStyle = "#000000";
     ctx.font = `${legendSquareSide / 2}px Arial`;
 
-    for (var i = 0; i < numPlates; i++) {
+    for (let i = 0; i < numPlates; i++) {
         const horIndex = ((i * plateWidth) % targetResolution[0]) / plateWidth;
         const vertIndex = Math.floor((i * plateWidth) / targetResolution[0]);
         ctx.beginPath();

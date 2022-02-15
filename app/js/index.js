@@ -269,6 +269,12 @@ Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
         checkbox.style = "margin-top: 2px; margin-left: 4px";
         checkbox.appendChild(label);
         document.getElementById(container).appendChild(checkbox);
+        if (container === "pixel-dimensions-container") {
+            checkbox.addEventListener('change', () => {
+                disableInteraction();
+                runStep3();
+            });
+        }
     });
 });
 
@@ -1366,6 +1372,30 @@ function runStep2() {
     }, 1); // TODO: find better way to check that input is finished
 }
 
+function getVariablePixelAvailablePartDimensions() {
+    const availableParts = [
+            ...document.getElementById("pixel-dimensions-container").children
+        ]
+        .map(div => div.children[0])
+        .map(label => label.children[0])
+        .filter(input => input.checked)
+        .map(input => input.name)
+        .map(part =>
+            part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
+        );
+    const flippedParts = [];
+    availableParts.forEach(part => {
+        if (part[0] !== part[1]) {
+            flippedParts.push([part[1], part[0]]);
+        }
+    });
+    flippedParts.forEach(part => availableParts.push(part));
+    return availableParts;
+}
+
+// only non null if pixel piece is variable
+let step3VariablePixelPieceDimensions = null;
+
 function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
 
@@ -1415,6 +1445,35 @@ function runStep3() {
         );
     }
 
+
+    if (('' + selectedPixelPartNumber).match("^variable.*$")) {
+        const alignedPixelMatrix = convertPixelArrayToMatrix(alignedPixelArray, targetResolution[0]);
+        step3VariablePixelPieceDimensions = new Array(targetResolution[0]);
+        for (let i = 0; i < step3VariablePixelPieceDimensions.length; i++) {
+            step3VariablePixelPieceDimensions[i] = new Array(targetResolution[1]);
+        }
+        const uniqueColors = Object.keys(getUsedPixelsStudMap(alignedPixelArray));
+        const availableParts = getVariablePixelAvailablePartDimensions();
+        uniqueColors.forEach(colorHex => {
+            const colorRGB = hexToRgb(colorHex);
+            const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
+                alignedPixelMatrix,
+                p => !(p[0] === colorRGB[0] && p[1] === colorRGB[1] && p[2] === colorRGB[2])
+            );
+            const requiredPartMatrix = getRequiredPartMatrixFromSetPixelMatrix(
+                setPixelMatrix,
+                availableParts
+            )
+            requiredPartMatrix.forEach((row, i) => {
+                row.forEach((entry, j) => {
+                    step3VariablePixelPieceDimensions[i][j] = step3VariablePixelPieceDimensions[i][j] || entry;
+                });
+            });
+        });
+    } else {
+        step3VariablePixelPieceDimensions = null;
+    }
+
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
@@ -1453,7 +1512,8 @@ function runStep3() {
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled,
-            selectedPixelPartNumber
+            selectedPixelPartNumber,
+            step3VariablePixelPieceDimensions
         );
         step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
         step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
