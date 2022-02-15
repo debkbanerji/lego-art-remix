@@ -1676,7 +1676,7 @@ function getPlateDimensionsString(part) {
         `${part[1]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[0]}`;
 }
 
-const DEPTH_PLATE_TO_PART_ID = {
+const PLATE_DIMENSIONS_TO_PART_ID = {
     "1 X 1": 3024,
     "1 X 2": 3023,
     "1 X 3": 3623,
@@ -1693,10 +1693,10 @@ const DEPTH_PLATE_TO_PART_ID = {
 
 const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
 
-const DEPTH_FILLER_PARTS = Object.keys(DEPTH_PLATE_TO_PART_ID).map(part =>
+const DEPTH_FILLER_PARTS = Object.keys(PLATE_DIMENSIONS_TO_PART_ID).map(part =>
     part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
 );
-Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
+Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(part => {
     const splitPart = part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
     if (splitPart[0] !== splitPart[1]) {
         DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
@@ -1708,7 +1708,7 @@ function getDepthWantedListXML(depthPartsMap) {
         part =>
         `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
-      <ITEMID>${DEPTH_PLATE_TO_PART_ID[part]}</ITEMID>
+      <ITEMID>${PLATE_DIMENSIONS_TO_PART_ID[part]}</ITEMID>
       <COLOR>11</COLOR>
       <MINQTY>${depthPartsMap[part]}</MINQTY>
     </ITEM>`

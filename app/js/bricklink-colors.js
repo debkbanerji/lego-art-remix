@@ -597,9 +597,21 @@ const PIXEL_TYPE_OPTIONS = [{
         number: 3024
     },
     {
-        name: "1x1 Square  Brick",
+        name: "1x1 Square Brick",
         number: 3005
-    }
+    },
+    {
+        name: "Variable Tile",
+        number: "variable_tile"
+    },
+    {
+        name: "Variable Plate",
+        number: "variable_plate"
+    },
+    {
+        name: "Variable Brick",
+        number: "variable_brick"
+    },
 ];
 
 // use this for instructions - we prioritize readability over accuracy here

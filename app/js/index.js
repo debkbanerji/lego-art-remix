@@ -253,21 +253,23 @@ if (window.location.href.includes("enable3d")) {
     enableDepth();
 }
 
-Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(plate => {
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.name = plate;
-    input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
-    input.disabled = plate === "1 X 1";
-    const label = document.createElement("label");
-    const plateSpan = document.createElement("span");
-    plateSpan.innerHTML = " " + plate;
-    label.appendChild(input);
-    label.appendChild(plateSpan);
-    const checkbox = document.createElement("div");
-    checkbox.style = "margin-top: 2px; margin-left: 4px";
-    checkbox.appendChild(label);
-    document.getElementById("depth-plates-container").appendChild(checkbox);
+Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
+    ["depth-plates-container", "pixel-dimensions-container"].forEach(container => {
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = plate;
+        input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
+        input.disabled = plate === "1 X 1";
+        const label = document.createElement("label");
+        const plateSpan = document.createElement("span");
+        plateSpan.innerHTML = " " + plate;
+        label.appendChild(input);
+        label.appendChild(plateSpan);
+        const checkbox = document.createElement("div");
+        checkbox.style = "margin-top: 2px; margin-left: 4px";
+        checkbox.appendChild(label);
+        document.getElementById(container).appendChild(checkbox);
+    });
 });
 
 function updateStudCountText() {
@@ -323,6 +325,9 @@ let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
 document.getElementById("quantization-algorithm-button").innerHTML =
     quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
 
+let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
+document.getElementById("bricklink-piece-button").innerHTML =
+    PIXEL_TYPE_OPTIONS[0].name;
 
 // TODO: Make this a function
 let overridePixelArray = new Array(
@@ -515,9 +520,6 @@ populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
-let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
-document.getElementById("bricklink-piece-button").innerHTML =
-    PIXEL_TYPE_OPTIONS[0].name;
 const bricklinkPieceOptions = document.getElementById(
     "bricklink-piece-options"
 );
@@ -530,6 +532,9 @@ PIXEL_TYPE_OPTIONS.forEach(part => {
     option.addEventListener("click", () => {
         document.getElementById("bricklink-piece-button").innerHTML = part.name;
         selectedPixelPartNumber = part.number;
+        document.getElementById('pixel-dimensions-container-wrapper').hidden = !('' + selectedPixelPartNumber).match("^variable.*$");
+        onInfinitePieceCountChange();
+        updateForceInfinitePieceCountText();
         runStep3();
     });
     bricklinkPieceOptions.appendChild(option);
@@ -691,7 +696,9 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
 });
 
 function onInfinitePieceCountChange() {
-    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked ||
+        Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
     [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !isUsingInfinite);
     updateStudCountText();
@@ -702,7 +709,8 @@ document.getElementById("infinite-piece-count-check").addEventListener("change",
 });
 
 function updateForceInfinitePieceCountText() {
-    const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     document.getElementById('infinite-piece-count-check-container').hidden = isInfinitePieceCountForced;
     document.getElementById('forced-infinite-piece-count-warning').hidden = !isInfinitePieceCountForced;
 }
@@ -941,7 +949,9 @@ function getNewCustomStudRow() {
         );
         runCustomStudMap();
     });
-    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked ||
+        Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     infinityPlaceholder = document.createElement("div");
     infinityPlaceholder.hidden = !numberInput.hidden;
     infinityPlaceholder.className = "piece-count-infinity-placeholder";
@@ -2012,8 +2022,10 @@ function runStep4(asyncCallback) {
         });
 
         // There are three reasons step 4 should be identical to step 3
-        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked ||
-            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+        shouldSideStepStep4 = shouldSideStepStep4 ||
+            document.getElementById("infinite-piece-count-check").checked ||
+            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+            ('' + selectedPixelPartNumber).match("^variable.*$");
 
         if (!shouldSideStepStep4) {
             const requiredStuds = targetResolution[0] * targetResolution[1]
