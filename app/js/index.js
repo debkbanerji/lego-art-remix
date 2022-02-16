@@ -2423,6 +2423,18 @@ async function generateInstructions() {
                 targetResolution[0],
                 PLATE_WIDTH
             );
+
+            const row = Math.floor(i * PLATE_WIDTH / targetResolution[0]);
+            const col = i % (targetResolution[0] / PLATE_WIDTH);
+
+            const variablePixelPieceDimensionsForPage = step3VariablePixelPieceDimensions == null ? null :
+                getSubPixelMatrix(
+                    step3VariablePixelPieceDimensions,
+                    (col) * PLATE_WIDTH,
+                    (row) * PLATE_WIDTH,
+                    PLATE_WIDTH,
+                    PLATE_WIDTH
+                );
             generateInstructionPage(
                 subPixelArray,
                 PLATE_WIDTH,
@@ -2430,7 +2442,8 @@ async function generateInstructions() {
                 SCALING_FACTOR,
                 instructionPageCanvas,
                 i + 1,
-                selectedPixelPartNumber
+                selectedPixelPartNumber,
+                variablePixelPieceDimensionsForPage
             );
 
             setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);

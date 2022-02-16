@@ -621,4 +621,7 @@ const PIXEL_TYPE_TO_FLATTENED = {
     3024: "3070b",
     "3070b": "3070b",
     3005: "3070b",
+    "variable_tile": "variable_tile",
+    "variable_plate": "variable_tile",
+    "variable_brick": "variable_tile",
 }

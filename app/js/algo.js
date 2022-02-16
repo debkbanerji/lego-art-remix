@@ -1068,7 +1068,9 @@ function drawStudCountForContext(
             y + scalingFactor / 8
         );
         ctx.fillStyle = "#000000";
-        ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
+        if (!('' + pixelType).match("^variable.*$")) {
+            ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
+        }
         ctx.font = `${scalingFactor / 2.5}px Arial`;
         ctx.fillText(
             HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
@@ -1186,13 +1188,15 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    pixelType
+    pixelType,
+    variablePixelPieceDimensions
 ) {
     const ctx = canvas.getContext("2d");
 
     pictureWidth = plateWidth * scalingFactor;
     pictureHeight = ((pixelArray.length / 4) * scalingFactor) / plateWidth;
 
+    const innerPadding = scalingFactor / 12;
     const radius = scalingFactor / 2;
 
     const studMap = getUsedPixelsStudMap(pixelArray);
@@ -1272,6 +1276,34 @@ function generateInstructionPage(
         }
     }
 
+    if (variablePixelPieceDimensions != null) {
+        for (let i = 0; i < plateWidth; i++) {
+            for (let j = 0; j < plateWidth; j++) {
+                const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
+                const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
+                const piece = variablePixelPieceDimensions[i][j];
+                if (piece != null) {
+                    ctx.strokeStyle = "#888888";
+                    ctx.beginPath();
+                    ctx.rect(x - radius,
+                        y - radius,
+                        2 * radius * piece[1],
+                        2 * radius * piece[0]);
+                    ctx.stroke();
+                    ctx.strokeStyle = "#FFFFFF";
+                    ctx.beginPath();
+                    ctx.rect(
+                        x - radius + innerPadding,
+                        y - radius + innerPadding,
+                        2 * radius * piece[1] - 2 * innerPadding,
+                        2 * radius * piece[0] - 2 * innerPadding
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
     drawStudCountForContext(
         studMap,
         availableStudHexList,
@@ -1330,6 +1362,33 @@ function convertPixelArrayToMatrix(
         ];
     }
 
+    return result;
+}
+
+function getSubPixelMatrix(
+    pixelMatrix,
+    horizontalOffset,
+    verticalOffset,
+    width,
+    height
+) {
+    const result = [];
+    for (let iHorizontal = 0; iHorizontal < pixelMatrix[0].length; iHorizontal++) {
+        for (let iVertical = 0; iVertical < pixelMatrix.length; iVertical++) {
+
+            if (
+                horizontalOffset <= iHorizontal &&
+                iHorizontal < horizontalOffset + width &&
+                verticalOffset <= iVertical &&
+                iVertical < verticalOffset + height
+            ) {
+                const targetVertical = iVertical - verticalOffset;
+                const targetHorizontal = iHorizontal - horizontalOffset;
+                result[targetVertical] = result[targetVertical] || [];
+                result[targetVertical][targetHorizontal] = pixelMatrix[iVertical][iHorizontal];
+            }
+        }
+    }
     return result;
 }
 
