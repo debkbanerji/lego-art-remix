@@ -616,7 +616,8 @@
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a painted pixel to restore it</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color as the paintbrush color</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; The currently hovered on pixel is also highlighted in the step 4 color canvas</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4; If infinite piece counts are used, it will show up even if not in the
+                          list</p>
                       </small>
                       <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
                         Expand Picture
@@ -666,7 +667,9 @@
                         </div>
                         <div style="margin-left: 4px;" id="forced-infinite-piece-count-warning" hidden>
                           <small>
-                            <p><b>Important</b>: Infinite piece counts were used, since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section</p>
+                            <p><b>Important</b>: Infinite piece counts were used, since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section, or a variable piece type was selected in the
+                              <span style="font-weight: 550">'Pixel Piece'</span> section
+                            </p>
                           </small>
                         </div>
                         <table class="table">
@@ -879,7 +882,6 @@
               </span>
               <div id="step-4-accordion">
 
-                TODO: Deal with variable pixels here, or maybe disable? UI will be a pain
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-1-heading">
                     <h5 class="mb-0">
@@ -898,6 +900,7 @@
                         <thead>
                           <tr>
                             <th scope="col">Color</th>
+                            <th scope="col" id="pieces-used-dimensions-header" hidden>Dimensions</th>
                             <th scope="col">Number Used</th>
                           </tr>
                         </thead>

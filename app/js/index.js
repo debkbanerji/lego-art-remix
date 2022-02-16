@@ -2176,9 +2176,35 @@ function runStep4(asyncCallback) {
             // create stud map result table
             const usedPixelsStudMap = getUsedPixelsStudMap(pixelsToDraw);
             const usedPixelsTableBody = document.getElementById('studs-used-table-body');
-
             usedPixelsTableBody.innerHTML = '';
-            Object.keys(usedPixelsStudMap).forEach((color) => {
+            const variablePixelsUsed = ('' + selectedPixelPartNumber).match("^variable.*$");
+            document.getElementById('pieces-used-dimensions-header').hidden = !variablePixelsUsed;
+            let pieceCountsForTable = {}; // map piece identifier strings to counts
+            if (variablePixelsUsed) {
+                const pixelMatrix = convertPixelArrayToMatrix(
+                    pixelsToDraw,
+                    targetResolution[0]
+                );
+                step3VariablePixelPieceDimensions.forEach((row, i) => {
+                    row.forEach((pixelDimensions, j) => {
+                        if (pixelDimensions != null) {
+                            const pixelRGB = pixelMatrix[i][j];
+                            const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
+                            const sortedPixelDimensions = pixelDimensions[0] < pixelDimensions[1] ? pixelDimensions : [pixelDimensions[1], pixelDimensions[0]]
+                            studRowKey = pixelHex + '_' + sortedPixelDimensions[0] + PLATE_DIMENSIONS_DEPTH_SEPERATOR + sortedPixelDimensions[1];
+                            pieceCountsForTable[studRowKey] = (pieceCountsForTable[studRowKey] || 0) + 1
+                        }
+                    });
+                });
+            } else {
+                pieceCountsForTable = usedPixelsStudMap;
+            }
+
+            const usedColors = Object.keys(pieceCountsForTable);
+            usedColors.sort();
+            usedColors.forEach((keyString) => {
+                const pieceKey = keyString.split('_');
+                const color = pieceKey[0];
                 const studRow = document.createElement("tr");
                 studRow.style = "height: 1px;"
 
@@ -2190,20 +2216,35 @@ function runStep4(asyncCallback) {
                 colorCell.appendChild(colorLabel);
                 studRow.appendChild(colorCell);
 
+                if (pieceKey.length > 1) {
+                    const dimensionsCell = document.createElement("td");
+                    dimensionsCell.style = "height: inherit;"
+                    const dimensionsCellChild = document.createElement("div");
+                    dimensionsCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
+                    const dimensionsCellChild2 = document.createElement("div");
+                    dimensionsCellChild2.style = ""
+                    dimensionsCellChild2.innerHTML = pieceKey[1];
+
+                    dimensionsCellChild.appendChild(dimensionsCellChild2);
+                    dimensionsCell.appendChild(dimensionsCellChild);
+                    studRow.appendChild(dimensionsCell);
+                }
+
                 const numberCell = document.createElement("td");
                 numberCell.style = "height: inherit;"
                 const numberCellChild = document.createElement("div");
                 numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
                 const numberCellChild2 = document.createElement("div");
                 numberCellChild2.style = ""
-                numberCellChild2.innerHTML = usedPixelsStudMap[color];
+                numberCellChild2.innerHTML = pieceCountsForTable[keyString];
 
-                numberCellChild.appendChild(numberCellChild2)
+                numberCellChild.appendChild(numberCellChild2);
                 numberCell.appendChild(numberCellChild);
                 studRow.appendChild(numberCell);
 
-                usedPixelsTableBody.appendChild(studRow)
+                usedPixelsTableBody.appendChild(studRow);
             });
+
 
             const missingPixelsTableBody = document.getElementById('studs-missing-table-body');
             missingPixelsTableBody.innerHTML = '';
@@ -2224,7 +2265,9 @@ function runStep4(asyncCallback) {
                     ),
                     selectedStudMap,
                 );
-                Object.keys(missingPixelsStudMap).forEach((color) => {
+                const usedColors = Object.keys(missingPixelsStudMap);
+                usedColors.sort();
+                usedColors.forEach((color) => {
                     if (missingPixelsStudMap[color] > 0) {
                         missingPixelsExist = true;
                         const studRow = document.createElement("tr");

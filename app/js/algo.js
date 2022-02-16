@@ -1595,7 +1595,6 @@ function generateDepthInstructionTitlePage(
 
     const legendHorizontalOffset = pictureWidth * 0.75;
     const legendVerticalOffset = pictureHeight * 0.41;
-    // const numPlates = pixelArray.length / (4 * plateWidth * plateWidth);
     const numPlates = usedPlatesMatrices.length;
     const legendSquareSide = scalingFactor;
 
