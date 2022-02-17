@@ -933,11 +933,15 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
     ctx.fillStyle = pixelHex;
     ctx.fill();
     ctx.strokeStyle = strokeHex;
-    ctx.stroke();
+    if (!('' + pixelType).match("^variable.*$")) { // TODO: Look at perf?
+        ctx.stroke();
+    }
     if ([
             PIXEL_TYPE_OPTIONS[1].number,
             PIXEL_TYPE_OPTIONS[3].number,
-            PIXEL_TYPE_OPTIONS[4].number
+            PIXEL_TYPE_OPTIONS[4].number,
+            PIXEL_TYPE_OPTIONS[6].number,
+            PIXEL_TYPE_OPTIONS[7].number
         ].includes(pixelType)) {
         // draw a circle on top of the piece to represent a stud
         ctx.beginPath()
@@ -953,7 +957,14 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
 }
 
 // replaces square pixels with correct shape and upscales
-function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) {
+function drawStudImageOnCanvas(
+    pixels,
+    width,
+    scalingFactor,
+    canvas,
+    pixelType,
+    plateDimensionsOverlay // only used if pixelType contains 'variable'
+) {
     const ctx = canvas.getContext("2d");
 
     canvas.width = width * scalingFactor;
@@ -979,6 +990,26 @@ function drawStudImageOnCanvas(pixels, width, scalingFactor, canvas, pixelType) 
             pixelHex,
             "#111111",
             pixelType);
+    }
+
+    if (('' + pixelType).match("^variable.*$") && plateDimensionsOverlay) {
+        for (let row = 0; row < plateDimensionsOverlay.length; row++) {
+            for (let col = 0; col < plateDimensionsOverlay[0].length; col++) {
+                const part = plateDimensionsOverlay[row][col];
+                if (part != null) {
+                    ctx.strokeStyle = "#888888";
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    ctx.rect(
+                        col * 2 * radius,
+                        row * 2 * radius,
+                        2 * radius * part[1],
+                        2 * radius * part[0]
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
     }
 }
 
@@ -1037,7 +1068,9 @@ function drawStudCountForContext(
             y + scalingFactor / 8
         );
         ctx.fillStyle = "#000000";
-        ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
+        if (!('' + pixelType).match("^variable.*$")) {
+            ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
+        }
         ctx.font = `${scalingFactor / 2.5}px Arial`;
         ctx.fillText(
             HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
@@ -1155,13 +1188,15 @@ function generateInstructionPage(
     scalingFactor,
     canvas,
     plateNumber,
-    pixelType
+    pixelType,
+    variablePixelPieceDimensions
 ) {
     const ctx = canvas.getContext("2d");
 
     pictureWidth = plateWidth * scalingFactor;
     pictureHeight = ((pixelArray.length / 4) * scalingFactor) / plateWidth;
 
+    const innerPadding = scalingFactor / 12;
     const radius = scalingFactor / 2;
 
     const studMap = getUsedPixelsStudMap(pixelArray);
@@ -1241,6 +1276,34 @@ function generateInstructionPage(
         }
     }
 
+    if (variablePixelPieceDimensions != null) {
+        for (let i = 0; i < plateWidth; i++) {
+            for (let j = 0; j < plateWidth; j++) {
+                const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
+                const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
+                const piece = variablePixelPieceDimensions[i][j];
+                if (piece != null) {
+                    ctx.strokeStyle = "#888888";
+                    ctx.beginPath();
+                    ctx.rect(x - radius,
+                        y - radius,
+                        2 * radius * piece[1],
+                        2 * radius * piece[0]);
+                    ctx.stroke();
+                    ctx.strokeStyle = "#FFFFFF";
+                    ctx.beginPath();
+                    ctx.rect(
+                        x - radius + innerPadding,
+                        y - radius + innerPadding,
+                        2 * radius * piece[1] - 2 * innerPadding,
+                        2 * radius * piece[0] - 2 * innerPadding
+                    );
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
     drawStudCountForContext(
         studMap,
         availableStudHexList,
@@ -1278,6 +1341,54 @@ function getDepthSubPixelMatrix(
         }
     }
 
+    return result;
+}
+
+// TODO: Reduce this problem to the one from the previous function?
+function convertPixelArrayToMatrix(
+    pixelArray,
+    totalWidth
+) {
+    const result = [];
+    for (var i = 0; i < pixelArray.length / 4; i++) {
+        const iHorizontal = i % totalWidth;
+        const iVertical = Math.floor(i / totalWidth);
+
+        result[iVertical] = result[iVertical] || [];
+        result[iVertical][iHorizontal] = [
+            pixelArray[4 * i],
+            pixelArray[4 * i + 1],
+            pixelArray[4 * i + 2]
+        ];
+    }
+
+    return result;
+}
+
+function getSubPixelMatrix(
+    pixelMatrix,
+    horizontalOffset,
+    verticalOffset,
+    width,
+    height
+) {
+    const result = [];
+    for (let iHorizontal = 0; iHorizontal < pixelMatrix[0].length; iHorizontal++) {
+        for (let iVertical = 0; iVertical < pixelMatrix.length; iVertical++) {
+
+            if (
+                horizontalOffset <= iHorizontal &&
+                iHorizontal < horizontalOffset + width &&
+                verticalOffset <= iVertical &&
+                iVertical < verticalOffset + height
+            ) {
+                const targetVertical = iVertical - verticalOffset;
+                const targetHorizontal = iHorizontal - horizontalOffset;
+                result[targetVertical] = result[targetVertical] || [];
+                result[targetVertical][targetHorizontal] = pixelMatrix[iVertical][iHorizontal];
+            }
+        }
+    }
     return result;
 }
 
@@ -1484,7 +1595,6 @@ function generateDepthInstructionTitlePage(
 
     const legendHorizontalOffset = pictureWidth * 0.75;
     const legendVerticalOffset = pictureHeight * 0.41;
-    // const numPlates = pixelArray.length / (4 * plateWidth * plateWidth);
     const numPlates = usedPlatesMatrices.length;
     const legendSquareSide = scalingFactor;
 
@@ -1506,7 +1616,7 @@ function generateDepthInstructionTitlePage(
     ctx.strokeStyle = "#000000";
     ctx.font = `${legendSquareSide / 2}px Arial`;
 
-    for (var i = 0; i < numPlates; i++) {
+    for (let i = 0; i < numPlates; i++) {
         const horIndex = ((i * plateWidth) % targetResolution[0]) / plateWidth;
         const vertIndex = Math.floor((i * plateWidth) / targetResolution[0]);
         ctx.beginPath();
@@ -1676,27 +1786,64 @@ function getPlateDimensionsString(part) {
         `${part[1]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[0]}`;
 }
 
-const DEPTH_PLATE_TO_PART_ID = {
+
+const TILE_DIMENSIONS_TO_PART_ID = {
+    "1 X 1": '3070b',
+    "1 X 2": '3069b',
+    "1 X 3": 63864,
+    "1 X 4": 2431,
+    "1 X 6": 6636,
+    "1 X 8": 4162,
+    "2 X 2": '3068b',
+    "2 X 3": 26603,
+    "2 X 4": 87079,
+    "2 X 6": 69729,
+    // "2 X 8": ?? ,
+    // "4 X 4": ?? ,
+    // "4 X 8": ?? ,
+    // "4 X 10": ??
+};
+
+const PLATE_DIMENSIONS_TO_PART_ID = {
     "1 X 1": 3024,
     "1 X 2": 3023,
     "1 X 3": 3623,
     "1 X 4": 3710,
+    "1 X 6": 3666,
     "1 X 8": 3460,
     "2 X 2": 3022,
     "2 X 3": 3021,
     "2 X 4": 3020,
+    "2 X 6": 3795,
     "2 X 8": 3034,
     "4 X 4": 3031,
     "4 X 8": 3035,
     "4 X 10": 3030
 };
 
+const BRICK_DIMENSIONS_TO_PART_ID = {
+    "1 X 1": 3005,
+    "1 X 2": 3004,
+    "1 X 3": 3622,
+    "1 X 4": 3010,
+    "1 X 6": 3009,
+    "1 X 8": 3008,
+    "2 X 2": 3003,
+    "2 X 3": 3002,
+    "2 X 4": 3001,
+    "2 X 6": 2456,
+    "2 X 8": 3007,
+    // "4 X 4": ?? ,
+    // "4 X 8": ?? ,
+    // "4 X 10": ??
+};
+
 const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
 
-const DEPTH_FILLER_PARTS = Object.keys(DEPTH_PLATE_TO_PART_ID).map(part =>
+const DEPTH_FILLER_PARTS = Object.keys(PLATE_DIMENSIONS_TO_PART_ID).map(part =>
     part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
 );
-Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(part => {
+Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(part => {
     const splitPart = part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
     if (splitPart[0] !== splitPart[1]) {
         DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
@@ -1708,7 +1855,7 @@ function getDepthWantedListXML(depthPartsMap) {
         part =>
         `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
-      <ITEMID>${DEPTH_PLATE_TO_PART_ID[part]}</ITEMID>
+      <ITEMID>${PLATE_DIMENSIONS_TO_PART_ID[part]}</ITEMID>
       <COLOR>11</COLOR>
       <MINQTY>${depthPartsMap[part]}</MINQTY>
     </ITEM>`
@@ -1729,6 +1876,46 @@ function getWantedListXML(studMap, partID) {
       <MINQTY>${studMap[stud]}</MINQTY>
     </ITEM>`
     );
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <INVENTORY>
+    \n${items.join("\n")}\n
+  </INVENTORY>`;
+}
+
+function getVariablePixelWantedListXML(pixelColorMatrix, variablePixelPieceDimensions, pixelType) {
+    let pieceCounts = {}; // map piece identifier strings to counts
+    step3VariablePixelPieceDimensions.forEach((row, i) => {
+        row.forEach((pixelDimensions, j) => {
+            if (pixelDimensions != null) {
+                const pixelRGB = pixelColorMatrix[i][j];
+                const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
+                const sortedPixelDimensions = pixelDimensions[0] < pixelDimensions[1] ? pixelDimensions : [pixelDimensions[1], pixelDimensions[0]]
+                const pieceKey = pixelHex + '_' + sortedPixelDimensions[0] + PLATE_DIMENSIONS_DEPTH_SEPERATOR + sortedPixelDimensions[1];
+                pieceCounts[pieceKey] = (pieceCounts[pieceKey] || 0) + 1
+            }
+        });
+    });
+
+
+    const usedPieces = Object.keys(pieceCounts);
+    usedPieces.sort();
+    const items = usedPieces.map((keyString) => {
+        const pieceKey = keyString.split('_');
+        let pieceIDMap = PLATE_DIMENSIONS_TO_PART_ID;
+        if (pixelType === 'variable_tile') {
+            pieceIDMap = TILE_DIMENSIONS_TO_PART_ID;
+        } else if (pixelType === 'variable_brick') {
+            pieceIDMap = BRICK_DIMENSIONS_TO_PART_ID;
+        }
+
+        return `<ITEM>
+            <ITEMTYPE>P</ITEMTYPE>
+            <ITEMID>${pieceIDMap[pieceKey[1]]}</ITEMID>
+            <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[pieceKey[0]]]}</COLOR>
+            <MINQTY>${pieceCounts[keyString]}</MINQTY>
+         </ITEM>`
+    });
+
     return `<?xml version="1.0" encoding="UTF-8"?>
   <INVENTORY>
     \n${items.join("\n")}\n

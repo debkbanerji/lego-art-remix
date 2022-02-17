@@ -27,14 +27,15 @@
       text-decoration: none !important;
     }
 
-    .responsive-youtube {
+    #responsive-youtube {
       overflow: hidden;
       padding-bottom: 56.25%;
       position: relative;
       height: 0;
+      font-size: 24px;
     }
 
-    .responsive-youtube iframe {
+    #responsive-youtube iframe {
       left: 0;
       top: 0;
       height: 100%;
@@ -615,7 +616,8 @@
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a painted pixel to restore it</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color as the paintbrush color</p>
                         <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; The currently hovered on pixel is also highlighted in the step 4 color canvas</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4; If infinite piece counts are used, it will show up even if not in the
+                          list</p>
                       </small>
                       <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
                         Expand Picture
@@ -665,7 +667,9 @@
                         </div>
                         <div style="margin-left: 4px;" id="forced-infinite-piece-count-warning" hidden>
                           <small>
-                            <p><b>Important</b>: Infinite piece counts were used, since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section</p>
+                            <p><b>Important</b>: Infinite piece counts were used, since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section, or a variable piece type was selected in the
+                              <span style="font-weight: 550">'Pixel Piece'</span> section
+                            </p>
                           </small>
                         </div>
                         <table class="table">
@@ -720,6 +724,15 @@
                           <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
                           </div>
                         </div>
+                        <div id="pixel-dimensions-container-wrapper" hidden style=" margin-top: 8px; margin-bottom: 2px">
+                          <small>
+                            <p style="margin-bottom: 8px;"><b>Important</b>: Since a variable size pixel type was selected, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available
+                                Colors'</span> was enabled - be careful!
+                            </p>
+                          </small>
+                          <b>Available Dimensions:</b>
+                          <div id="pixel-dimensions-container"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -766,7 +779,8 @@
                       </div>
                       <div style="margin-top: 4px; margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
                         <small>
-                          <p style="margin-bottom: 8px;"><b>Important</b>: Since this is a linear error dithering algorithm, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available Colors'</span>
+                          <p style="margin-bottom: 8px;"><b>Important</b>: Since this is a linear error dithering algorithm, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available
+                              Colors'</span>
                             was enabled - be careful!
                           </p>
                         </small>
@@ -886,6 +900,7 @@
                         <thead>
                           <tr>
                             <th scope="col">Color</th>
+                            <th scope="col" id="pieces-used-dimensions-header" hidden>Dimensions</th>
                             <th scope="col">Number Used</th>
                           </tr>
                         </thead>
@@ -1167,7 +1182,7 @@
       <div class="row">
         <div class="col-sm">
           <h5>
-            <a data-toggle="collapse" href="#articles" aria-expanded="false" aria-controls="articles">
+            <a data-toggle="collapse" href="#articles" aria-expanded="false" aria-controls="articles" id="toggle-tech-talk-button">
               Tech Talk + Other Media
             </a>
           </h5>
@@ -1181,9 +1196,8 @@
             </small>
             <div class="row">
               <div class="col-12 col-md-6">
-                <div class="responsive-youtube">
-                  <iframe width="560" height="315" src="https://www.youtube.com/embed/G58ZNurxXgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
+                <div id="responsive-youtube">
+                  Loading...
                 </div>
               </div>
             </div>
@@ -1195,8 +1209,8 @@
               <ul>
                 <li><a href="https://www.instagram.com/explore/tags/legoartremix/" target="_blank">#LegoArtRemix on Instagram</a></li>
                 <li><a href="https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app" target="_blank">Global News Morning Segment</a></li>
-                <li><span style="display: flex; align-items: center;"><a href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/" target="_blank">Brothers Brick Article</a> &nbsp;<span
-                      style="font-size: 0.925em; display: flex; align-items: center;">(2020 Top 3 most popular feature)</span></span></li>
+                <li><span style="display: flex; align-items: center;"><a href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/" target="_blank">Brothers Brick Article</a>
+                    &nbsp;<span style="font-size: 0.925em; display: flex; align-items: center;">(2020 Top 3 most popular feature)</span></span></li>
                 <li><a href="http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/" target="_blank">TheBrickBlogger Article</a></li>
                 <li><a href="https://www.youtube.com/watch?v=RY4OJnD99VQ" target="_blank">DuckBricks Video</a></li>
               </ul>

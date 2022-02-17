@@ -92,7 +92,9 @@ function disableInteraction() {
 function enableInteraction() {
     interactionSelectors.forEach(button => (button.disabled = false));
     [...document.getElementsByTagName("input")].forEach(
-        button => (button.disabled = false)
+        button => {
+            button.disabled = button.className === 'always-disabled';
+        }
     );
     [...document.getElementsByClassName("btn")].forEach(
         button => (button.disabled = false)
@@ -253,21 +255,42 @@ if (window.location.href.includes("enable3d")) {
     enableDepth();
 }
 
-Object.keys(DEPTH_PLATE_TO_PART_ID).forEach(plate => {
-    const input = document.createElement("input");
-    input.type = "checkbox";
-    input.name = plate;
-    input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
-    input.disabled = plate === "1 X 1";
-    const label = document.createElement("label");
-    const plateSpan = document.createElement("span");
-    plateSpan.innerHTML = " " + plate;
-    label.appendChild(input);
-    label.appendChild(plateSpan);
-    const checkbox = document.createElement("div");
-    checkbox.style = "margin-top: 2px; margin-left: 4px";
-    checkbox.appendChild(label);
-    document.getElementById("depth-plates-container").appendChild(checkbox);
+Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
+    ["depth-plates-container", "pixel-dimensions-container"].forEach(container => {
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = plate;
+        input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
+        input.disabled = plate === "1 X 1";
+        input.className = plate === "1 X 1" ? 'always-disabled' : ''
+        const label = document.createElement("label");
+        const plateSpan = document.createElement("span");
+        plateSpan.innerHTML = " " + plate;
+        label.appendChild(input);
+        label.appendChild(plateSpan);
+        const checkbox = document.createElement("div");
+        checkbox.style = "margin-top: 2px; margin-left: 4px";
+        checkbox.appendChild(label);
+        document.getElementById(container).appendChild(checkbox);
+        if (container === "pixel-dimensions-container") {
+            checkbox.addEventListener('change', () => {
+                disableInteraction();
+                runStep3();
+            });
+            const classes = [];
+            if (PLATE_DIMENSIONS_TO_PART_ID[plate]) { // for now, this is always true
+                classes.push('variable-plate-checkbox');
+            }
+            if (TILE_DIMENSIONS_TO_PART_ID[plate]) {
+                classes.push('variable-tile-checkbox');
+            }
+            if (BRICK_DIMENSIONS_TO_PART_ID[plate]) {
+                classes.push('variable-brick-checkbox');
+            }
+            checkbox.className = classes.join(' ');
+            input.className = [input.className, ...classes].join(' ');
+        }
+    });
 });
 
 function updateStudCountText() {
@@ -323,6 +346,9 @@ let quantizationAlgorithm = defaultQuantizationAlgorithmKey;
 document.getElementById("quantization-algorithm-button").innerHTML =
     quantizationAlgorithmsInfo[defaultQuantizationAlgorithmKey].name;
 
+let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
+document.getElementById("bricklink-piece-button").innerHTML =
+    PIXEL_TYPE_OPTIONS[0].name;
 
 // TODO: Make this a function
 let overridePixelArray = new Array(
@@ -515,9 +541,6 @@ populateCustomStudSelectors(STUD_MAPS[DEFAULT_STUD_MAP], false);
 
 const mixInStudMapOptions = document.getElementById("mix-in-stud-map-options");
 
-let selectedPixelPartNumber = PIXEL_TYPE_OPTIONS[0].number;
-document.getElementById("bricklink-piece-button").innerHTML =
-    PIXEL_TYPE_OPTIONS[0].name;
 const bricklinkPieceOptions = document.getElementById(
     "bricklink-piece-options"
 );
@@ -530,6 +553,22 @@ PIXEL_TYPE_OPTIONS.forEach(part => {
     option.addEventListener("click", () => {
         document.getElementById("bricklink-piece-button").innerHTML = part.name;
         selectedPixelPartNumber = part.number;
+        const isVariable = ('' + selectedPixelPartNumber).match("^variable.*$")
+        document.getElementById('pixel-dimensions-container-wrapper').hidden = !isVariable;
+
+        if (isVariable) {
+            const availableParts = [
+                    ...document.getElementById("pixel-dimensions-container").children
+                ]
+                .forEach(input => {
+                    const className = input.className;
+                    const uniqueVariablePixelName = selectedPixelPartNumber.replace('variable_', '');
+                    return input.hidden = !className.includes(uniqueVariablePixelName);
+                });
+        }
+
+        onInfinitePieceCountChange();
+        updateForceInfinitePieceCountText();
         runStep3();
     });
     bricklinkPieceOptions.appendChild(option);
@@ -691,7 +730,9 @@ Object.keys(colorDistanceFunctionsInfo).forEach(key => {
 });
 
 function onInfinitePieceCountChange() {
-    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    const isUsingInfinite = document.getElementById("infinite-piece-count-check").checked ||
+        Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     [...document.getElementsByClassName('piece-count-input')].forEach(numberInput => numberInput.hidden = isUsingInfinite);
     [...document.getElementsByClassName('piece-count-infinity-placeholder')].forEach(placeholder => placeholder.hidden = !isUsingInfinite);
     updateStudCountText();
@@ -702,7 +743,8 @@ document.getElementById("infinite-piece-count-check").addEventListener("change",
 });
 
 function updateForceInfinitePieceCountText() {
-    const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    const isInfinitePieceCountForced = Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     document.getElementById('infinite-piece-count-check-container').hidden = isInfinitePieceCountForced;
     document.getElementById('forced-infinite-piece-count-warning').hidden = !isInfinitePieceCountForced;
 }
@@ -941,7 +983,9 @@ function getNewCustomStudRow() {
         );
         runCustomStudMap();
     });
-    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked || Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+    numberInput.hidden = document.getElementById("infinite-piece-count-check").checked ||
+        Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+        ('' + selectedPixelPartNumber).match("^variable.*$");
     infinityPlaceholder = document.createElement("div");
     infinityPlaceholder.hidden = !numberInput.hidden;
     infinityPlaceholder.className = "piece-count-infinity-placeholder";
@@ -1356,6 +1400,35 @@ function runStep2() {
     }, 1); // TODO: find better way to check that input is finished
 }
 
+function getVariablePixelAvailablePartDimensions() {
+    const availableParts = [
+            ...document.getElementById("pixel-dimensions-container").children
+        ]
+        .map(div => div.children[0])
+        .map(label => label.children[0])
+        .filter(input => input.checked)
+        .filter(input => {
+            const className = input.className;
+            const uniqueVariablePixelName = selectedPixelPartNumber.replace('variable_', '');
+            return className.includes(uniqueVariablePixelName);
+        })
+        .map(input => input.name)
+        .map(part =>
+            part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
+        );
+    const flippedParts = [];
+    availableParts.forEach(part => {
+        if (part[0] !== part[1]) {
+            flippedParts.push([part[1], part[0]]);
+        }
+    });
+    flippedParts.forEach(part => availableParts.push(part));
+    return availableParts;
+}
+
+// only non null if pixel piece is variable
+let step3VariablePixelPieceDimensions = null;
+
 function runStep3() {
     const fiteredPixelArray = getPixelArrayFromCanvas(step2Canvas);
 
@@ -1405,6 +1478,40 @@ function runStep3() {
         );
     }
 
+
+    if (('' + selectedPixelPartNumber).match("^variable.*$")) {
+        const alignedPixelMatrix = convertPixelArrayToMatrix(alignedPixelArray, targetResolution[0]);
+        step3VariablePixelPieceDimensions = new Array();
+        for (let i = 0; i < targetResolution[1]; i++) {
+            step3VariablePixelPieceDimensions.push([]);
+            step3VariablePixelPieceDimensions[i] = [];
+            for (let j = 0; j < targetResolution[0]; j++) {
+                step3VariablePixelPieceDimensions[i].push(null);
+            }
+        }
+        const uniqueColors = Object.keys(getUsedPixelsStudMap(alignedPixelArray));
+        const availableParts = getVariablePixelAvailablePartDimensions();
+        uniqueColors.forEach(colorHex => {
+            const colorRGB = hexToRgb(colorHex);
+            const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
+                alignedPixelMatrix,
+                p => !(p[0] === colorRGB[0] && p[1] === colorRGB[1] && p[2] === colorRGB[2])
+            );
+            const requiredPartMatrix = getRequiredPartMatrixFromSetPixelMatrix(
+                setPixelMatrix,
+                availableParts,
+                PLATE_WIDTH
+            )
+            requiredPartMatrix.forEach((row, i) => {
+                row.forEach((entry, j) => {
+                    step3VariablePixelPieceDimensions[i][j] = step3VariablePixelPieceDimensions[i][j] || entry;
+                });
+            });
+        });
+    } else {
+        step3VariablePixelPieceDimensions = null;
+    }
+
     step3Canvas.width = targetResolution[0];
     step3Canvas.height = targetResolution[1];
     drawPixelsOnCanvas(alignedPixelArray, step3Canvas);
@@ -1443,7 +1550,8 @@ function runStep3() {
             targetResolution[0],
             SCALING_FACTOR,
             step3CanvasUpscaled,
-            selectedPixelPartNumber
+            selectedPixelPartNumber,
+            step3VariablePixelPieceDimensions
         );
         step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
         step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
@@ -2012,8 +2120,10 @@ function runStep4(asyncCallback) {
         });
 
         // There are three reasons step 4 should be identical to step 3
-        shouldSideStepStep4 = shouldSideStepStep4 || document.getElementById("infinite-piece-count-check").checked ||
-            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm);
+        shouldSideStepStep4 = shouldSideStepStep4 ||
+            document.getElementById("infinite-piece-count-check").checked ||
+            Object.keys(quantizationAlgorithmToTraditionalDitheringKernel).includes(quantizationAlgorithm) ||
+            ('' + selectedPixelPartNumber).match("^variable.*$");
 
         if (!shouldSideStepStep4) {
             const requiredStuds = targetResolution[0] * targetResolution[1]
@@ -2089,15 +2199,42 @@ function runStep4(asyncCallback) {
                 targetResolution[0],
                 SCALING_FACTOR,
                 step4CanvasUpscaled,
-                selectedPixelPartNumber
+                selectedPixelPartNumber,
+                step3VariablePixelPieceDimensions
             );
 
             // create stud map result table
             const usedPixelsStudMap = getUsedPixelsStudMap(pixelsToDraw);
             const usedPixelsTableBody = document.getElementById('studs-used-table-body');
-
             usedPixelsTableBody.innerHTML = '';
-            Object.keys(usedPixelsStudMap).forEach((color) => {
+            const variablePixelsUsed = ('' + selectedPixelPartNumber).match("^variable.*$");
+            document.getElementById('pieces-used-dimensions-header').hidden = !variablePixelsUsed;
+            let pieceCountsForTable = {}; // map piece identifier strings to counts
+            if (variablePixelsUsed) {
+                const pixelMatrix = convertPixelArrayToMatrix(
+                    pixelsToDraw,
+                    targetResolution[0]
+                );
+                step3VariablePixelPieceDimensions.forEach((row, i) => {
+                    row.forEach((pixelDimensions, j) => {
+                        if (pixelDimensions != null) {
+                            const pixelRGB = pixelMatrix[i][j];
+                            const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
+                            const sortedPixelDimensions = pixelDimensions[0] < pixelDimensions[1] ? pixelDimensions : [pixelDimensions[1], pixelDimensions[0]]
+                            studRowKey = pixelHex + '_' + sortedPixelDimensions[0] + PLATE_DIMENSIONS_DEPTH_SEPERATOR + sortedPixelDimensions[1];
+                            pieceCountsForTable[studRowKey] = (pieceCountsForTable[studRowKey] || 0) + 1
+                        }
+                    });
+                });
+            } else {
+                pieceCountsForTable = usedPixelsStudMap;
+            }
+
+            const usedColors = Object.keys(pieceCountsForTable);
+            usedColors.sort();
+            usedColors.forEach((keyString) => {
+                const pieceKey = keyString.split('_');
+                const color = pieceKey[0];
                 const studRow = document.createElement("tr");
                 studRow.style = "height: 1px;"
 
@@ -2109,20 +2246,35 @@ function runStep4(asyncCallback) {
                 colorCell.appendChild(colorLabel);
                 studRow.appendChild(colorCell);
 
+                if (pieceKey.length > 1) {
+                    const dimensionsCell = document.createElement("td");
+                    dimensionsCell.style = "height: inherit;"
+                    const dimensionsCellChild = document.createElement("div");
+                    dimensionsCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
+                    const dimensionsCellChild2 = document.createElement("div");
+                    dimensionsCellChild2.style = ""
+                    dimensionsCellChild2.innerHTML = pieceKey[1];
+
+                    dimensionsCellChild.appendChild(dimensionsCellChild2);
+                    dimensionsCell.appendChild(dimensionsCellChild);
+                    studRow.appendChild(dimensionsCell);
+                }
+
                 const numberCell = document.createElement("td");
                 numberCell.style = "height: inherit;"
                 const numberCellChild = document.createElement("div");
                 numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center"
                 const numberCellChild2 = document.createElement("div");
                 numberCellChild2.style = ""
-                numberCellChild2.innerHTML = usedPixelsStudMap[color];
+                numberCellChild2.innerHTML = pieceCountsForTable[keyString];
 
-                numberCellChild.appendChild(numberCellChild2)
+                numberCellChild.appendChild(numberCellChild2);
                 numberCell.appendChild(numberCellChild);
                 studRow.appendChild(numberCell);
 
-                usedPixelsTableBody.appendChild(studRow)
+                usedPixelsTableBody.appendChild(studRow);
             });
+
 
             const missingPixelsTableBody = document.getElementById('studs-missing-table-body');
             missingPixelsTableBody.innerHTML = '';
@@ -2143,7 +2295,9 @@ function runStep4(asyncCallback) {
                     ),
                     selectedStudMap,
                 );
-                Object.keys(missingPixelsStudMap).forEach((color) => {
+                const usedColors = Object.keys(missingPixelsStudMap);
+                usedColors.sort();
+                usedColors.forEach((color) => {
                     if (missingPixelsStudMap[color] > 0) {
                         missingPixelsExist = true;
                         const studRow = document.createElement("tr");
@@ -2342,6 +2496,18 @@ async function generateInstructions() {
                 targetResolution[0],
                 PLATE_WIDTH
             );
+
+            const row = Math.floor(i * PLATE_WIDTH / targetResolution[0]);
+            const col = i % (targetResolution[0] / PLATE_WIDTH);
+
+            const variablePixelPieceDimensionsForPage = step3VariablePixelPieceDimensions == null ? null :
+                getSubPixelMatrix(
+                    step3VariablePixelPieceDimensions,
+                    (col) * PLATE_WIDTH,
+                    (row) * PLATE_WIDTH,
+                    PLATE_WIDTH,
+                    PLATE_WIDTH
+                );
             generateInstructionPage(
                 subPixelArray,
                 PLATE_WIDTH,
@@ -2349,7 +2515,8 @@ async function generateInstructions() {
                 SCALING_FACTOR,
                 instructionPageCanvas,
                 i + 1,
-                selectedPixelPartNumber
+                selectedPixelPartNumber,
+                variablePixelPieceDimensionsForPage
             );
 
             setDPI(instructionPageCanvas, isHighQuality ? HIGH_DPI : LOW_DPI);
@@ -2643,6 +2810,15 @@ document
         disableInteraction();
         navigator.clipboard
             .writeText(
+                ('' + selectedPixelPartNumber).match("^variable.*$") ?
+                getVariablePixelWantedListXML(
+                    convertPixelArrayToMatrix(
+                        getPixelArrayFromCanvas(bricklinkCacheCanvas),
+                        targetResolution[0]
+                    ),
+                    step3VariablePixelPieceDimensions,
+                    selectedPixelPartNumber
+                ) :
                 getWantedListXML(
                     getUsedPixelsStudMap(
                         getPixelArrayFromCanvas(bricklinkCacheCanvas)
@@ -3005,5 +3181,16 @@ window.addEventListener('appinstalled', () => {
         .ref("pwa-install-count/per-day/" + loggingTimestamp)
         .transaction(incrementTransaction);
 });
+
+document.getElementById('toggle-tech-talk-button')
+    .addEventListener('click', () => {
+        // small hack so the iframe only renders when open
+        const youtubeWrapper = document.getElementById('responsive-youtube');
+        if (youtubeWrapper.innerHTML.match(/.*Loading.*/i)) {
+            youtubeWrapper.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/G58ZNurxXgQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>`;
+        }
+    });
+
 
 enableInteraction(); // enable interaction once everything has loaded in
