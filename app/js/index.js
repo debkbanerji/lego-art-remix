@@ -93,7 +93,7 @@ function enableInteraction() {
     interactionSelectors.forEach(button => (button.disabled = false));
     [...document.getElementsByTagName("input")].forEach(
         button => {
-            button.disabled = button.className === 'always-disabled';
+            button.disabled = button.className.includes('always-disabled');
         }
     );
     [...document.getElementsByClassName("btn")].forEach(
