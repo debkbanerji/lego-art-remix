@@ -931,15 +931,45 @@
                   </div>
                 </div>
 
-                <div class="card accordion-card">
+                <div class="card accordion-card" id="bricklink-export-card">
                   <div class="card-header" id="step-4-2-heading">
                     <h5 class="mb-0">
                       <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
-                        Instructions
+                        Export Piece List
                       </button>
                     </h5>
                   </div>
                   <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
+                    <div class="card-body accordion-card-body">
+                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
+                      <br />
+                      <small>
+                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of piece used depends on 'Pixel Piece' under step 3</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px;">Frame elements are not exported</p>
+                        <p style=" margin-left: 4px; margin-bottom: 4px;">
+                          <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
+                            Bricklink Upload Page
+                          </a>
+                        </p>
+                        <p style=" margin-left: 4px">
+                          <a href="https://www.lego.com/en-us/page/static/pick-a-brick" target="_blank">
+                            U.S. Pick a Brick Page
+                          </a>
+                        </p>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-4-3-heading">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
+                        Instructions
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
                     <div class="card-body accordion-card-body">
                       <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
                         <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
@@ -971,35 +1001,6 @@
                   </div>
                 </div>
 
-                <div class="card accordion-card" id="bricklink-export-card">
-                  <div class="card-header" id="step-4-3-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
-                        Export Piece List
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
-                    <div class="card-body accordion-card-body">
-                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
-                      <br />
-                      <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of piece used depends on 'Pixel Piece' under step 3</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">Frame elements are not exported</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">
-                          <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
-                            Bricklink Upload Page
-                          </a>
-                        </p>
-                        <p style=" margin-left: 4px">
-                          <a href="https://www.lego.com/en-us/page/static/pick-a-brick" target="_blank">
-                            U.S. Pick a Brick Page
-                          </a>
-                        </p>
-                      </small>
-                    </div>
-                  </div>
-                </div>
               </div>
 
             </div>
