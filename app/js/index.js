@@ -2810,6 +2810,15 @@ document
         disableInteraction();
         navigator.clipboard
             .writeText(
+                ('' + selectedPixelPartNumber).match("^variable.*$") ?
+                getVariablePixelWantedListXML(
+                    convertPixelArrayToMatrix(
+                        getPixelArrayFromCanvas(bricklinkCacheCanvas),
+                        targetResolution[0]
+                    ),
+                    step3VariablePixelPieceDimensions,
+                    selectedPixelPartNumber
+                ) :
                 getWantedListXML(
                     getUsedPixelsStudMap(
                         getPixelArrayFromCanvas(bricklinkCacheCanvas)

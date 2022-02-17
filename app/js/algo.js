@@ -1881,3 +1881,43 @@ function getWantedListXML(studMap, partID) {
     \n${items.join("\n")}\n
   </INVENTORY>`;
 }
+
+function getVariablePixelWantedListXML(pixelColorMatrix, variablePixelPieceDimensions, pixelType) {
+    let pieceCounts = {}; // map piece identifier strings to counts
+    step3VariablePixelPieceDimensions.forEach((row, i) => {
+        row.forEach((pixelDimensions, j) => {
+            if (pixelDimensions != null) {
+                const pixelRGB = pixelColorMatrix[i][j];
+                const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
+                const sortedPixelDimensions = pixelDimensions[0] < pixelDimensions[1] ? pixelDimensions : [pixelDimensions[1], pixelDimensions[0]]
+                const pieceKey = pixelHex + '_' + sortedPixelDimensions[0] + PLATE_DIMENSIONS_DEPTH_SEPERATOR + sortedPixelDimensions[1];
+                pieceCounts[pieceKey] = (pieceCounts[pieceKey] || 0) + 1
+            }
+        });
+    });
+
+
+    const usedPieces = Object.keys(pieceCounts);
+    usedPieces.sort();
+    const items = usedPieces.map((keyString) => {
+        const pieceKey = keyString.split('_');
+        let pieceIDMap = PLATE_DIMENSIONS_TO_PART_ID;
+        if (pixelType === 'variable_tile') {
+            pieceIDMap = TILE_DIMENSIONS_TO_PART_ID;
+        } else if (pixelType === 'variable_brick') {
+            pieceIDMap = BRICK_DIMENSIONS_TO_PART_ID;
+        }
+
+        return `<ITEM>
+            <ITEMTYPE>P</ITEMTYPE>
+            <ITEMID>${pieceIDMap[pieceKey[1]]}</ITEMID>
+            <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[pieceKey[0]]]}</COLOR>
+            <MINQTY>${pieceCounts[keyString]}</MINQTY>
+         </ITEM>`
+    });
+
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <INVENTORY>
+    \n${items.join("\n")}\n
+  </INVENTORY>`;
+}
