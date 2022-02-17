@@ -277,6 +277,18 @@ Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
                 disableInteraction();
                 runStep3();
             });
+            const classes = [];
+            if (PLATE_DIMENSIONS_TO_PART_ID[plate]) { // for now, this is always true
+                classes.push('variable-plate-checkbox');
+            }
+            if (TILE_DIMENSIONS_TO_PART_ID[plate]) {
+                classes.push('variable-tile-checkbox');
+            }
+            if (BRICK_DIMENSIONS_TO_PART_ID[plate]) {
+                classes.push('variable-brick-checkbox');
+            }
+            checkbox.className = classes.join(' ');
+            input.className = [input.className, ...classes].join(' ');
         }
     });
 });
@@ -541,7 +553,20 @@ PIXEL_TYPE_OPTIONS.forEach(part => {
     option.addEventListener("click", () => {
         document.getElementById("bricklink-piece-button").innerHTML = part.name;
         selectedPixelPartNumber = part.number;
-        document.getElementById('pixel-dimensions-container-wrapper').hidden = !('' + selectedPixelPartNumber).match("^variable.*$");
+        const isVariable = ('' + selectedPixelPartNumber).match("^variable.*$")
+        document.getElementById('pixel-dimensions-container-wrapper').hidden = !isVariable;
+
+        if (isVariable) {
+            const availableParts = [
+                    ...document.getElementById("pixel-dimensions-container").children
+                ]
+                .forEach(input => {
+                    const className = input.className;
+                    const uniqueVariablePixelName = selectedPixelPartNumber.replace('variable_', '');
+                    return input.hidden = !className.includes(uniqueVariablePixelName);
+                });
+        }
+
         onInfinitePieceCountChange();
         updateForceInfinitePieceCountText();
         runStep3();
@@ -1382,6 +1407,11 @@ function getVariablePixelAvailablePartDimensions() {
         .map(div => div.children[0])
         .map(label => label.children[0])
         .filter(input => input.checked)
+        .filter(input => {
+            const className = input.className;
+            const uniqueVariablePixelName = selectedPixelPartNumber.replace('variable_', '');
+            return className.includes(uniqueVariablePixelName);
+        })
         .map(input => input.name)
         .map(part =>
             part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
