@@ -2032,7 +2032,7 @@ function create3dPreview() {
 document.getElementById("step-4-depth-tab").addEventListener("click", () => {
     const targetWidth = step4CanvasUpscaled.clientWidth;
     step4Canvas3dUpscaled.clientWidth = targetWidth;
-    setTimeout(create3dPreview, 5);
+    setTimeout(create3dPreview, 20);
 });
 
 function depthPreviewResize() {
