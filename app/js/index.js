@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.2.16";
+const VERSION_NUMBER = "v2022.2.18";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
