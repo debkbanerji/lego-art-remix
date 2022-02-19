@@ -1543,6 +1543,7 @@ function runStep3() {
                 ALL_BRICKLINK_SOLID_COLORS.map(color => color.hex)
             )
         ) : alignedPixelArray;
+    step3DepthCanvasPixelsForHover = adjustedDepthPixelArray;
 
     const step3QuantizationError = getAverageQuantizationError(fiteredPixelArray, alignedPixelArray, colorDistanceFunction);
     document.getElementById('step-3-quantization-error').innerHTML = step3QuantizationError.toFixed(3);
@@ -1895,8 +1896,8 @@ step3DepthCanvasUpscaled.addEventListener(
 );
 
 let step3CanvasHoveredPixel = null;
-let step3CanvasHoveredHex = null;
-let step3CanvasPixelsForHover = null; // only used for perrf
+let step3CanvasPixelsForHover = null; // only used for perf
+let step3DepthCanvasPixelsForHover = null; // only used for perf
 [step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
     toHoverCanvas.addEventListener("mousemove", function(event) {
         if (
@@ -1951,15 +1952,11 @@ let step3CanvasPixelsForHover = null; // only used for perrf
             );
             let hoveredPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
             const hoveredPixelHex = rgbToHex(hoveredPixelRGB[0], hoveredPixelRGB[1], hoveredPixelRGB[2]);
-            ctx.fillStyle = inverseHex(hoveredPixelHex);
+            ctx.fillStyle = toHoverCanvas == step3CanvasUpscaled ? inverseHex(hoveredPixelHex) : DEFAULT_COLOR;
             ctx.fill();
 
             if (step3CanvasHoveredPixel != null) {
-                // TODO: Read in override
                 const i = step3CanvasHoveredPixel[0] * width + step3CanvasHoveredPixel[1];
-
-                let originalPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
-                const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
 
                 ctx.beginPath();
                 ctx.arc(
@@ -1969,7 +1966,16 @@ let step3CanvasPixelsForHover = null; // only used for perrf
                     0,
                     2 * Math.PI
                 );
-                ctx.fillStyle = originalPixelHex;
+
+                let originalPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
+                const depthValue = step3DepthCanvasPixelsForHover[i * 4];
+                const scaledDepthValue = Math.round(Math.min((255 * (depthValue + 1)) / document.getElementById("num-depth-levels-slider").value, 255))
+                const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
+                const originalDepthPixelHex = rgbToHex(scaledDepthValue, scaledDepthValue, scaledDepthValue);
+
+                ctx.fillStyle = toHoverCanvas == step3CanvasUpscaled ?
+                    originalPixelHex :
+                    originalDepthPixelHex;
                 ctx.fill();
             }
             step3CanvasHoveredPixel = [pixelRow, pixelCol];
