@@ -1478,6 +1478,16 @@ function runStep3() {
         );
     }
 
+    step3DepthCanvas.width = targetResolution[0];
+    step3DepthCanvas.height = targetResolution[1];
+    const inputDepthPixelArray = getPixelArrayFromCanvas(step2DepthCanvas);
+
+    const adjustedDepthPixelArray = getArrayWithOverridesApplied(
+        inputDepthPixelArray,
+        overrideDepthPixelArray
+    );
+
+    drawPixelsOnCanvas(adjustedDepthPixelArray, step3DepthCanvas);
 
     if (('' + selectedPixelPartNumber).match("^variable.*$")) {
         const alignedPixelMatrix = convertPixelArrayToMatrix(alignedPixelArray, targetResolution[0]);
@@ -1491,23 +1501,34 @@ function runStep3() {
         }
         const uniqueColors = Object.keys(getUsedPixelsStudMap(alignedPixelArray));
         const availableParts = getVariablePixelAvailablePartDimensions();
-        uniqueColors.forEach(colorHex => {
-            const colorRGB = hexToRgb(colorHex);
-            const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
-                alignedPixelMatrix,
-                p => !(p[0] === colorRGB[0] && p[1] === colorRGB[1] && p[2] === colorRGB[2])
-            );
-            const requiredPartMatrix = getRequiredPartMatrixFromSetPixelMatrix(
-                setPixelMatrix,
-                availableParts,
-                PLATE_WIDTH
-            )
-            requiredPartMatrix.forEach((row, i) => {
-                row.forEach((entry, j) => {
-                    step3VariablePixelPieceDimensions[i][j] = step3VariablePixelPieceDimensions[i][j] || entry;
+        for (
+            let depthLevel = 0;
+            depthLevel <
+            Number(
+                document.getElementById("num-depth-levels-slider").value
+            ); depthLevel++
+        ) {
+            uniqueColors.forEach(colorHex => {
+                const colorRGB = hexToRgb(colorHex);
+                const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
+                    alignedPixelMatrix,
+                    (p, i, j) => {
+                        return !((!depthEnabled || depthLevel === adjustedDepthPixelArray[4 * (i * targetResolution[0] + j)]) &&
+                            p[0] === colorRGB[0] && p[1] === colorRGB[1] && p[2] === colorRGB[2]);
+                    }
+                );
+                const requiredPartMatrix = getRequiredPartMatrixFromSetPixelMatrix(
+                    setPixelMatrix,
+                    availableParts,
+                    PLATE_WIDTH
+                )
+                requiredPartMatrix.forEach((row, i) => {
+                    row.forEach((entry, j) => {
+                        step3VariablePixelPieceDimensions[i][j] = step3VariablePixelPieceDimensions[i][j] || entry;
+                    });
                 });
             });
-        });
+        }
     } else {
         step3VariablePixelPieceDimensions = null;
     }
@@ -1518,18 +1539,6 @@ function runStep3() {
 
     const step3QuantizationError = getAverageQuantizationError(fiteredPixelArray, alignedPixelArray, colorDistanceFunction);
     document.getElementById('step-3-quantization-error').innerHTML = step3QuantizationError.toFixed(3);
-
-
-    step3DepthCanvas.width = targetResolution[0];
-    step3DepthCanvas.height = targetResolution[1];
-    const inputDepthPixelArray = getPixelArrayFromCanvas(step2DepthCanvas);
-
-    const adjustedDepthPixelArray = getArrayWithOverridesApplied(
-        inputDepthPixelArray,
-        overrideDepthPixelArray
-    );
-
-    drawPixelsOnCanvas(adjustedDepthPixelArray, step3DepthCanvas);
 
     setTimeout(() => {
         if (!isStep3ViewExpanded) {
@@ -2608,7 +2617,7 @@ function getUsedPlateMatrices(depthPixelArray) {
             ) {
                 const setPixelMatrix = getSetPixelMatrixFromInputMatrix(
                     depthSubPixelMatrix,
-                    depthPixel => depthPixel <= depthLevel
+                    (depthPixel, _i, _j) => depthPixel <= depthLevel
                 );
                 perDepthLevelMatrices.push(
                     getRequiredPartMatrixFromSetPixelMatrix(

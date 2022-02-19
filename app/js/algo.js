@@ -1772,7 +1772,8 @@ function getSetPixelMatrixFromInputMatrix(inputMatrix, isSetFunction) {
     for (let i = 0; i < inputMatrix.length; i++) {
         result[i] = [];
         for (let j = 0; j < inputMatrix[0].length; j++) {
-            result[i][j] = isSetFunction(inputMatrix[i][j]);
+            // TODO: don't pass in inputMatrix[i][j]?
+            result[i][j] = isSetFunction(inputMatrix[i][j], i, j);
         }
     }
     return result;
