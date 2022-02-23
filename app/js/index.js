@@ -184,8 +184,13 @@ let targetResolution = [
     Number(document.getElementById("width-slider").value),
     Number(document.getElementById("height-slider").value)
 ];
+const PIXEL_WIDTH_CM = 0.8;
+const INCHES_IN_CM = 0.393701;
 const SCALING_FACTOR = 40;
 const PLATE_WIDTH = 16;
+
+document.getElementById('width-measurement').innerHTML = `${(targetResolution[0] * PIXEL_WIDTH_CM).toFixed(1)} cm, ${(targetResolution[0] * PIXEL_WIDTH_CM * INCHES_IN_CM).toFixed(1)}″`;
+document.getElementById('height-measurement').innerHTML = `${(targetResolution[1] * PIXEL_WIDTH_CM).toFixed(1)} cm, ${(targetResolution[1] * PIXEL_WIDTH_CM * INCHES_IN_CM).toFixed(1)}″`;
 
 let inputImageCropper
 
@@ -365,6 +370,8 @@ function handleResolutionChange() {
     overrideDepthPixelArray = new Array(
         targetResolution[0] * targetResolution[1] * 4
     ).fill(null);
+    document.getElementById('width-measurement').innerHTML = `${(targetResolution[0] * PIXEL_WIDTH_CM).toFixed(1)} cm, ${(targetResolution[0] * PIXEL_WIDTH_CM * INCHES_IN_CM).toFixed(1)}″`;
+    document.getElementById('height-measurement').innerHTML = `${(targetResolution[1] * PIXEL_WIDTH_CM).toFixed(1)} cm, ${(targetResolution[1] * PIXEL_WIDTH_CM * INCHES_IN_CM).toFixed(1)}″`;
     initializeCropper();
     runStep1();
 }
