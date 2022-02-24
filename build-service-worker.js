@@ -1,5 +1,5 @@
 // IMPORTANT: Run rebuild steps when making logic changes
-const VERSION_NUMBER = "v2022.2.22"
+const VERSION_NUMBER = "v2022.2.23"
 
 // Rebuild steps
 // TODO: add a package.json and script to run all deployment steps
