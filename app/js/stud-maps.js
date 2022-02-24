@@ -273,6 +273,48 @@ STUD_MAPS = {
             "#f88379": 601
         }
     },
+    batman: {
+        // TODO: Cross check this once the part list is on bricklink
+        name: "Batman (31205) (Early Estimate)",
+        officialName: "Jim Lee Batman collection (31205)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/jim-lee-batman-collection-31205\" target=\"_blank\">Jim Lee Batman collection (Set #31203)</a>. Note that this one is based on info from early reviews of the set, so the exact colors/counts might be slightly off.",
+        sortedStuds: [
+            "#212121",
+            "#6b5a5a",
+            "#595d60",
+            "#afb5c7",
+            "#ffffff",
+            "#ccffff",
+            "#42c0fb",
+            "#0057a6",
+            "#143044",
+            "#89351d",
+            "#b35408",
+            "#e3a05b",
+            "#dec69c",
+            "#10cb31",
+            "#885e9e",
+            "#b30006",
+        ],
+        studMap: {
+            "#212121": 566,
+            "#6b5a5a": 432, // TODO : see if this is 'Titanium metallic'
+            "#595d60": 216,
+            "#afb5c7": 277,
+            "#ffffff": 257,
+            "#ccffff": 194,
+            "#42c0fb": 139,
+            "#0057a6": 293,
+            "#143044": 423,
+            "#89351d": 165,
+            "#b35408": 55,
+            "#e3a05b": 153,
+            "#dec69c": 380,
+            "#10cb31": 210,
+            "#885e9e": 95,
+            "#b30006": 112,
+        }
+    },
     // personalized_portrait_6000: {
     //     name: "Personalised Portrait - New 6002 Piece Version (40179)",
     //     officialName:

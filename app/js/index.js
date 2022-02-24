@@ -788,7 +788,7 @@ Object.keys(quantizationAlgorithmsInfo).forEach(key => {
 
 const DIVIDER = 'DIVIDER';
 const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
-const NUM_SET_STUD_MAPS = 9;
+const NUM_SET_STUD_MAPS = 10;
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER)
 
 STUD_MAP_KEYS

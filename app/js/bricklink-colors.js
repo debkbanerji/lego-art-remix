@@ -501,7 +501,9 @@ const KNOWN_BRICKLINK_STUD_COLOR_NAMES = [
     "Pearl Light Gray",
     "Metallic Silver",
     "Glow In Dark Opaque",
-    "Glow In Dark White"
+    "Glow In Dark White",
+    "Medium Lavender", // manually added from Batman
+    "Light Aqua" // manually added from Batman
 ];
 
 const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
