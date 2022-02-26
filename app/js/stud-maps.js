@@ -273,6 +273,48 @@ STUD_MAPS = {
             "#f88379": 601
         }
     },
+    elvis: {
+        // TODO: Cross check this once the part list is on bricklink
+        name: "Elvis (31204) (Early Estimate)",
+        officialName: "Elvis Presley \“The King\” (31205)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/https://www.lego.com/en-us/product/elvis-presley-the-king-31204\" target=\"_blank\">Jim Lee Batman collection (Set #31203)</a>. Note that this one is based on info from early reviews of the set, so the exact colors/counts might be slightly off.",
+        sortedStuds: [
+            "#212121",
+            "#143044",
+            "#61afff",
+            "#5a7184",
+            "#595d60",
+            "#afb5c7",
+            "#ffffff",
+            "#dec69c",
+            "#feccb0",
+            "#ffaf7d",
+            "#e3a05b",
+            "#b35408",
+            "#89351d",
+            "#330000",
+            "#6a0e15",
+            "#b30006",
+        ],
+        studMap: {
+            "#212121": 596,
+            "#143044": 206,
+            "#61afff": 230,
+            "#5a7184": 175,
+            "#595d60": 52,
+            "#afb5c7": 26,
+            "#ffffff": 71,
+            "#dec69c": 106,
+            "#feccb0": 360,
+            "#ffaf7d": 200,
+            "#e3a05b": 182,
+            "#b35408": 179,
+            "#89351d": 233,
+            "#330000": 206,
+            "#6a0e15": 339,
+            "#b30006": 80,
+        }
+    },
     batman: {
         // TODO: Cross check this once the part list is on bricklink
         name: "Batman (31205) (Early Estimate)",
