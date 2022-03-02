@@ -275,9 +275,9 @@ STUD_MAPS = {
     },
     elvis: {
         // TODO: Cross check this once the part list is on bricklink
-        name: "Elvis (31204) (Early Estimate)",
-        officialName: "Elvis Presley \“The King\” (31205)",
-        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/https://www.lego.com/en-us/product/elvis-presley-the-king-31204\" target=\"_blank\">Jim Lee Batman collection (Set #31203)</a>. Note that this one is based on info from early reviews of the set, so the exact colors/counts might be slightly off.",
+        name: "Elvis (31204)",
+        officialName: "Elvis Presley \“The King\” (31204)",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/elvis-presley-the-king-31204\" target=\"_blank\">Elvis Presley \“The King\” (Set #31204)</a>",
         sortedStuds: [
             "#212121",
             "#143044",
@@ -298,7 +298,7 @@ STUD_MAPS = {
         ],
         studMap: {
             "#212121": 596,
-            "#143044": 206,
+            "#143044": 152,
             "#61afff": 230,
             "#5a7184": 175,
             "#595d60": 52,
@@ -306,7 +306,7 @@ STUD_MAPS = {
             "#ffffff": 71,
             "#dec69c": 106,
             "#feccb0": 360,
-            "#ffaf7d": 200,
+            "#ffaf7d": 258,
             "#e3a05b": 182,
             "#b35408": 179,
             "#89351d": 233,
@@ -317,12 +317,12 @@ STUD_MAPS = {
     },
     batman: {
         // TODO: Cross check this once the part list is on bricklink
-        name: "Batman (31205) (Early Estimate)",
+        name: "Batman (31205)",
         officialName: "Jim Lee Batman collection (31205)",
-        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/jim-lee-batman-collection-31205\" target=\"_blank\">Jim Lee Batman collection (Set #31203)</a>. Note that this one is based on info from early reviews of the set, so the exact colors/counts might be slightly off.",
+        descriptionHTML: "Only use pieces available in <a href=\"https://www.lego.com/en-us/product/jim-lee-batman-collection-31205\" target=\"_blank\">Jim Lee Batman collection (Set #31205)</a>",
         sortedStuds: [
             "#212121",
-            "#6b5a5a",
+            "#666660",
             "#595d60",
             "#afb5c7",
             "#ffffff",
@@ -340,7 +340,7 @@ STUD_MAPS = {
         ],
         studMap: {
             "#212121": 566,
-            "#6b5a5a": 432, // TODO : see if this is 'Titanium metallic'
+            "#666660": 432,
             "#595d60": 216,
             "#afb5c7": 277,
             "#ffffff": 257,
