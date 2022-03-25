@@ -120,7 +120,7 @@ let ALL_BRICKLINK_SOLID_COLORS = [{
     },
     {
         name: "Medium Brown",
-        hex: "#774125",
+        hex: "#a16c42",
         id: 91
     },
     {
