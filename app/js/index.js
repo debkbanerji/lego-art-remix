@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.3.24";
+const VERSION_NUMBER = "v2022.4.23";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -465,7 +465,7 @@ try {
                 name: color,
                 hex: color
             };
-        });
+        }).concat(ALL_VALID_BRICKLINK_COLORS);
         ALL_BRICKLINK_SOLID_COLORS = ALL_VALID_BRICKLINK_COLORS;
         const studMap = {};
         availableColors.forEach(color => {
@@ -477,7 +477,8 @@ try {
                 officialName: "Colors from URL",
                 sortedStuds: availableColors,
                 studMap: studMap
-            }
+            },
+            all_solid_colors: STUD_MAPS["all_solid_colors"]
         };
         DEFAULT_STUD_MAP = "url_colors";
         document.getElementById("bricklink-export-card").hidden = true;
