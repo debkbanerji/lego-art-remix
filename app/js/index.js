@@ -304,6 +304,7 @@ function updateStudCountText() {
     if (document.getElementById("infinite-piece-count-check").checked) {
         document.getElementById("available-studs").innerHTML = '∞';
         document.getElementById("missing-studs").innerHTML = '0';
+        document.getElementById('nonzero-missing-pieces-warning').hidden = true;
     } else {
         let availableStuds = 0;
         Array.from(customStudTableBody.children).forEach(stud => {
@@ -312,6 +313,7 @@ function updateStudCountText() {
         const missingStuds = Math.max(requiredStuds - availableStuds, 0);
         document.getElementById("available-studs").innerHTML = availableStuds;
         document.getElementById("missing-studs").innerHTML = missingStuds;
+        document.getElementById('nonzero-missing-pieces-warning').hidden = missingStuds === 0;
     }
 }
 

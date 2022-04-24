@@ -84,6 +84,10 @@
       margin-left: 2px;
     }
 
+    #nonzero-missing-pieces-warning {
+      color: #dc3545;
+    }
+
     table {
       border-top: 1px solid rgb(222, 226, 230);
       border-left: 1px solid rgb(222, 226, 230);
@@ -938,6 +942,7 @@
               <h4>Step 4</h4>
               <small className="step-header-subtitle">Correct for available pieces, if piece counts are limited</small>
               <br />
+              <div className="step-header-subtitle text-danger" id="nonzero-missing-pieces-warning" hidden><small>'Missing Pieces' under 'Available Colors' must be 0 </small></div>
               <span data-toggle="tooltip"
                 title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Pieces Missing From Step 3' under 'Pieces Used' to determine which additional pieces can be used to improve the image."
                 data-placement="top">
