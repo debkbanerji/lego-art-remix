@@ -88,6 +88,10 @@
       color: #dc3545;
     }
 
+    .checkbox-clickable {
+      cursor: pointer;
+    }
+
     table {
       border-top: 1px solid rgb(222, 226, 230);
       border-left: 1px solid rgb(222, 226, 230);
@@ -727,8 +731,8 @@
                           </button>
                         </div>
                         <div class="checkbox" style="margin-top: 4px; margin-left: 4px" id="infinite-piece-count-check-container">
-                          <label>
-                            <input type="checkbox" id="infinite-piece-count-check">
+                          <label class="checkbox-clickable">
+                            <input type="checkbox" class="checkbox-clickable" id="infinite-piece-count-check">
                             <span style="font-size: 13px;">Infinite Piece Counts</span>
                           </label>
                         </div>
@@ -1045,8 +1049,8 @@
                       <div id="instructions-canvas-container" hidden></div>
                       <button type="button" id="download-instructions-button" class="btn btn-info" style="margin-top: 8px">Generate Instructions PDF</button>
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                        <label>
-                          <input type="checkbox" id="high-quality-instructions-check">
+                        <label class="checkbox-clickable">
+                          <input type="checkbox" class="checkbox-clickable" id="high-quality-instructions-check">
                           <span style="font-size: 13px;">High quality pdf</span>
                         </label>
                       </div>
@@ -1145,9 +1149,9 @@
                       </button>
                       <div id="depth-instructions-canvas-container" hidden></div>
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
-                        <label>
-                          <input type="checkbox" id="high-quality-depth-instructions-check">
-                          Generate high quality pdf
+                        <label class="checkbox-clickable">
+                          <input type="checkbox" class="checkbox-clickable" id="high-quality-depth-instructions-check">
+                          <span style="font-size: 13px;">High quality pdf</span>
                         </label>
                       </div>
                       <small>

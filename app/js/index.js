@@ -267,8 +267,9 @@ Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(plate => {
         input.name = plate;
         input.checked = !DEFAULT_DISABLED_DEPTH_PLATES.includes(plate);
         input.disabled = plate === "1 X 1";
-        input.className = plate === "1 X 1" ? 'always-disabled' : ''
+        input.className = plate === "1 X 1" ? 'always-disabled' : 'checkbox-clickable'
         const label = document.createElement("label");
+        label.className = plate === "1 X 1" ? '' : 'checkbox-clickable';
         const plateSpan = document.createElement("span");
         plateSpan.innerHTML = " " + plate;
         label.appendChild(input);
