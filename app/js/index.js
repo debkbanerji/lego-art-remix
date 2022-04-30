@@ -1628,61 +1628,6 @@ let isStep3ViewExpanded = false;
     })
 );
 
-function onPixelOverride(row, col, colorHex) {
-    if (
-        !document.getElementById("step-3-1-collapse").className.includes("show")
-    ) {
-        return; // only override if the refine image section is expanded
-    }
-    const colorRGB = hexToRgb(colorHex);
-    const pixelIndex = 4 * (row * targetResolution[0] + col);
-    const isAlreadySet =
-        colorRGB[0] === overridePixelArray[pixelIndex] &&
-        colorRGB[1] === overridePixelArray[pixelIndex + 1] &&
-        colorRGB[2] === overridePixelArray[pixelIndex + 2];
-    if (isAlreadySet) {
-        for (var i = 0; i < 4; i++) {
-            overridePixelArray[pixelIndex + i] = null;
-        }
-    } else {
-        for (var i = 0; i < 3; i++) {
-            overridePixelArray[pixelIndex + i] = colorRGB[i];
-        }
-        overridePixelArray[pixelIndex + 3] = 255;
-    }
-    if (isStep3ViewExpanded) {
-        // do stuff directly on the canvas for perf
-        const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
-        const pixelHex = isAlreadySet ?
-            rgbToHex(
-                step3PixelArray[pixelIndex],
-                step3PixelArray[pixelIndex + 1],
-                step3PixelArray[pixelIndex + 2]
-            ) :
-            rgbToHex(
-                overridePixelArray[pixelIndex],
-                overridePixelArray[pixelIndex + 1],
-                overridePixelArray[pixelIndex + 2]
-            );
-        const radius = SCALING_FACTOR / 2;
-        const i = pixelIndex / 4;
-        const ctx = step3CanvasUpscaledContext;
-        const width = targetResolution[0];
-        ctx.beginPath();
-        ctx.arc(
-            ((i % width) * 2 + 1) * radius,
-            (Math.floor(i / width) * 2 + 1) * radius,
-            radius,
-            0,
-            2 * Math.PI
-        );
-        ctx.fillStyle = pixelHex;
-        ctx.fill();
-    } else {
-        runStep3();
-    }
-}
-
 function onDepthOverrideDecrease(row, col) {
     onDepthOverrideChange(row, col, false);
 }
@@ -1807,9 +1752,25 @@ function onCherryPickColor(row, col) {
     $('[data-toggle="tooltip"]').tooltip();
 }
 
+let activePaintbrushHex = null; // null iff we don't want to paint
+let wasPaintbrushUsed = false; // only propogate changes on mouse leave if this is true
+let step3CanvasHoveredPixel = null;
+let step3CanvasPixelsForHover = null; // only used for perf
+
+function onStep3PaintingMouseLift() {
+    activePaintbrushHex = null;
+    // propogate changes to step 4
+    if (!isStep3ViewExpanded && wasPaintbrushUsed) {
+        disableInteraction();
+        runStep3();
+        wasPaintbrushUsed = false;
+    }
+}
+
 step3CanvasUpscaled.addEventListener(
-    "click",
+    "mousedown",
     function(event) {
+        wasPaintbrushUsed = true;
         const rawRow =
             event.clientY -
             step3CanvasUpscaled.getBoundingClientRect().y -
@@ -1833,9 +1794,148 @@ step3CanvasUpscaled.addEventListener(
             .replace(")", "")
             .split(/,\s*/)
             .map(shade => parseInt(shade));
-        const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
-        onPixelOverride(row, col, hex);
+        activePaintbrushHex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+        onMouseMoveOverStep3Canvas(event); // so we paint on a single click
     },
+    false
+);
+
+function onMouseMoveOverStep3Canvas(event) {
+    if (
+        !document
+        .getElementById("step-3-1-collapse")
+        .className.includes("show")
+    ) {
+        return; // only do stuff if the refine section is expanded
+    }
+    const rawRow =
+        event.clientY -
+        step3CanvasUpscaled.getBoundingClientRect().y -
+        step3CanvasUpscaled.offsetHeight / targetResolution[1] / 2;
+    const rawCol =
+        event.clientX -
+        step3CanvasUpscaled.getBoundingClientRect().x -
+        step3CanvasUpscaled.offsetWidth / targetResolution[0] / 2;
+    const row = Math.round(
+        (rawRow * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
+    );
+    const col = Math.round(
+        (rawCol * targetResolution[0]) / step3CanvasUpscaled.offsetWidth
+    );
+
+    const pixelIndex = 4 * (row * targetResolution[0] + col);
+    const i = pixelIndex / 4;
+    const ctx = step3CanvasUpscaledContext;
+    const width = targetResolution[0];
+    const radius = SCALING_FACTOR / 2;
+
+    // console.log(activePaintbrushHex)
+    if (activePaintbrushHex != null) {
+        // mouse is clicked down, so we're painting
+        const colorRGB = hexToRgb(activePaintbrushHex);
+        // we want to paint - update the override pixel array
+        // do stuff directly on the canvas for perf
+        const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius,
+            0,
+            2 * Math.PI
+        );
+        ctx.fillStyle = activePaintbrushHex;
+        ctx.fill();
+
+        // update the override pixel array in place
+        overridePixelArray[pixelIndex] = colorRGB[0];
+        overridePixelArray[pixelIndex + 1] = colorRGB[1];
+        overridePixelArray[pixelIndex + 2] = colorRGB[2];
+    } else if (pixelIndex + 2 < step3CanvasPixelsForHover.length) {
+        // we're not painting - highlight the pixel instead
+        const hoveredPixelRGB = [step3CanvasPixelsForHover[pixelIndex], step3CanvasPixelsForHover[pixelIndex + 1], step3CanvasPixelsForHover[pixelIndex + 2]];
+        const hoveredPixelHex = rgbToHex(hoveredPixelRGB[0], hoveredPixelRGB[1], hoveredPixelRGB[2]);
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius / 2,
+            0,
+            2 * Math.PI
+        );
+        ctx.fillStyle = inverseHex(hoveredPixelHex);
+        ctx.fill();
+    }
+
+    if (step3CanvasHoveredPixel != null && (step3CanvasHoveredPixel[0] !== row || step3CanvasHoveredPixel[1] !== col)) {
+        // Clear out old highlight
+        const i = step3CanvasHoveredPixel[0] * width + step3CanvasHoveredPixel[1];
+        const pixelIndex = i * 4;
+
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius / 2,
+            0,
+            2 * Math.PI
+        );
+
+        let originalPixelRGB = [overridePixelArray[pixelIndex] || step3CanvasPixelsForHover[pixelIndex],
+            overridePixelArray[pixelIndex + 1] || step3CanvasPixelsForHover[pixelIndex + 1],
+            overridePixelArray[pixelIndex + 2] || step3CanvasPixelsForHover[pixelIndex + 2]
+        ];
+        const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
+
+        ctx.fillStyle = originalPixelHex
+        ctx.fill();
+    }
+    step3CanvasHoveredPixel = [row, col];
+}
+
+step3CanvasUpscaled.addEventListener(
+    "mouseup",
+    onStep3PaintingMouseLift,
+    false
+);
+
+step3CanvasUpscaled.addEventListener(
+    "mouseleave",
+    () => {
+        if (step3CanvasHoveredPixel != null) {
+            // Clear out old highlight
+            const i = step3CanvasHoveredPixel[0] * targetResolution[0] + step3CanvasHoveredPixel[1];
+            const pixelIndex = i * 4;
+
+            const radius = SCALING_FACTOR / 2;
+            step3CanvasUpscaledContext.beginPath();
+            step3CanvasUpscaledContext.arc(
+                ((i % targetResolution[0]) * 2 + 1) * radius,
+                (Math.floor(i / targetResolution[0]) * 2 + 1) * radius,
+                radius / 2,
+                0,
+                2 * Math.PI
+            );
+
+            let originalPixelRGB = [overridePixelArray[pixelIndex] || step3CanvasPixelsForHover[pixelIndex],
+                overridePixelArray[pixelIndex + 1] || step3CanvasPixelsForHover[pixelIndex + 1],
+                overridePixelArray[pixelIndex + 2] || step3CanvasPixelsForHover[pixelIndex + 2]
+            ];
+            const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
+
+            step3CanvasUpscaledContext.fillStyle = originalPixelHex
+            step3CanvasUpscaledContext.fill();
+        }
+
+        step3CanvasHoveredPixel = null;
+        onStep3PaintingMouseLift();
+    },
+    false
+);
+
+step3CanvasUpscaled.addEventListener(
+    "mousemove",
+    onMouseMoveOverStep3Canvas,
     false
 );
 
@@ -1908,52 +2008,61 @@ step3DepthCanvasUpscaled.addEventListener(
     false
 );
 
-let step3CanvasHoveredPixel = null;
-let step3CanvasPixelsForHover = null; // only used for perf
 let step3DepthCanvasPixelsForHover = null; // only used for perf
-[step3CanvasUpscaled, step3DepthCanvasUpscaled].forEach(toHoverCanvas => {
-    toHoverCanvas.addEventListener("mousemove", function(event) {
-        if (
-            toHoverCanvas == step3CanvasUpscaled ?
-            !document
-            .getElementById("step-3-1-collapse")
-            .className.includes("show") :
-            !document
-            .getElementById("step-3-depth-1-collapse")
-            .className.includes("show")
-        ) {
-            return; // only highlight if the refine section is expanded
-        }
+step3DepthCanvasUpscaled.addEventListener("mousemove", function(event) {
+    if (
+        !document
+        .getElementById("step-3-depth-1-collapse")
+        .className.includes("show")
+    ) {
+        return; // only highlight if the refine section is expanded
+    }
 
-        const rawRow =
-            event.clientY -
-            toHoverCanvas.getBoundingClientRect().y -
-            toHoverCanvas.offsetHeight / targetResolution[1] / 2;
-        const rawCol =
-            event.clientX -
-            toHoverCanvas.getBoundingClientRect().x -
-            toHoverCanvas.offsetWidth / targetResolution[0] / 2;
-        const pixelRow = Math.round(
-            (rawRow * targetResolution[1]) / toHoverCanvas.offsetHeight
+    const rawRow =
+        event.clientY -
+        step3DepthCanvasUpscaled.getBoundingClientRect().y -
+        step3DepthCanvasUpscaled.offsetHeight / targetResolution[1] / 2;
+    const rawCol =
+        event.clientX -
+        step3DepthCanvasUpscaled.getBoundingClientRect().x -
+        step3DepthCanvasUpscaled.offsetWidth / targetResolution[0] / 2;
+    const pixelRow = Math.round(
+        (rawRow * targetResolution[1]) / step3DepthCanvasUpscaled.offsetHeight
+    );
+    const pixelCol = Math.round(
+        (rawCol * targetResolution[0]) / step3DepthCanvasUpscaled.offsetWidth
+    );
+
+    if (
+        step3CanvasHoveredPixel == null ||
+        step3CanvasHoveredPixel[0] != pixelRow ||
+        step3CanvasHoveredPixel[1] != pixelCol
+    ) {
+        const ctx = step3DepthCanvasUpscaled.getContext("2d");
+
+        ctx.lineWidth = 3;
+        step4CanvasUpscaledContext.lineWidth = 3;
+
+        const radius = SCALING_FACTOR / 2;
+        const width = targetResolution[0];
+
+        const i = pixelRow * width + pixelCol;
+
+        ctx.beginPath();
+        ctx.arc(
+            ((i % width) * 2 + 1) * radius,
+            (Math.floor(i / width) * 2 + 1) * radius,
+            radius / 2,
+            0,
+            2 * Math.PI
         );
-        const pixelCol = Math.round(
-            (rawCol * targetResolution[0]) / toHoverCanvas.offsetWidth
-        );
+        let hoveredPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
+        const hoveredPixelHex = rgbToHex(hoveredPixelRGB[0], hoveredPixelRGB[1], hoveredPixelRGB[2]);
+        ctx.fillStyle = DEFAULT_COLOR;
+        ctx.fill();
 
-        if (
-            step3CanvasHoveredPixel == null ||
-            step3CanvasHoveredPixel[0] != pixelRow ||
-            step3CanvasHoveredPixel[1] != pixelCol
-        ) {
-            const ctx = toHoverCanvas.getContext("2d");
-
-            ctx.lineWidth = 3;
-            step4CanvasUpscaledContext.lineWidth = 3;
-
-            const radius = SCALING_FACTOR / 2;
-            const width = targetResolution[0];
-
-            const i = pixelRow * width + pixelCol;
+        if (step3CanvasHoveredPixel != null) {
+            const i = step3CanvasHoveredPixel[0] * width + step3CanvasHoveredPixel[1];
 
             ctx.beginPath();
             ctx.arc(
@@ -1963,59 +2072,40 @@ let step3DepthCanvasPixelsForHover = null; // only used for perf
                 0,
                 2 * Math.PI
             );
-            let hoveredPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
-            const hoveredPixelHex = rgbToHex(hoveredPixelRGB[0], hoveredPixelRGB[1], hoveredPixelRGB[2]);
-            ctx.fillStyle = toHoverCanvas == step3CanvasUpscaled ? inverseHex(hoveredPixelHex) : DEFAULT_COLOR;
+
+            let originalPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
+            const depthValue = step3DepthCanvasPixelsForHover[i * 4];
+            const scaledDepthValue = Math.round(Math.min((255 * (depthValue + 1)) / document.getElementById("num-depth-levels-slider").value, 255))
+            const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
+            const originalDepthPixelHex = rgbToHex(scaledDepthValue, scaledDepthValue, scaledDepthValue);
+
+            ctx.fillStyle = originalDepthPixelHex;
             ctx.fill();
-
-            if (step3CanvasHoveredPixel != null) {
-                const i = step3CanvasHoveredPixel[0] * width + step3CanvasHoveredPixel[1];
-
-                ctx.beginPath();
-                ctx.arc(
-                    ((i % width) * 2 + 1) * radius,
-                    (Math.floor(i / width) * 2 + 1) * radius,
-                    radius / 2,
-                    0,
-                    2 * Math.PI
-                );
-
-                let originalPixelRGB = [step3CanvasPixelsForHover[i * 4], step3CanvasPixelsForHover[i * 4 + 1], step3CanvasPixelsForHover[i * 4 + 2]];
-                const depthValue = step3DepthCanvasPixelsForHover[i * 4];
-                const scaledDepthValue = Math.round(Math.min((255 * (depthValue + 1)) / document.getElementById("num-depth-levels-slider").value, 255))
-                const originalPixelHex = rgbToHex(originalPixelRGB[0], originalPixelRGB[1], originalPixelRGB[2]);
-                const originalDepthPixelHex = rgbToHex(scaledDepthValue, scaledDepthValue, scaledDepthValue);
-
-                ctx.fillStyle = toHoverCanvas == step3CanvasUpscaled ?
-                    originalPixelHex :
-                    originalDepthPixelHex;
-                ctx.fill();
-            }
-            step3CanvasHoveredPixel = [pixelRow, pixelCol];
         }
-    });
+        step3CanvasHoveredPixel = [pixelRow, pixelCol];
+    }
+});
 
-    toHoverCanvas.addEventListener("mouseleave", function(event) {
-        const ctx = toHoverCanvas.getContext("2d");
+step3DepthCanvasUpscaled.addEventListener("mouseleave", function(event) {
+    const ctx = step3DepthCanvasUpscaled.getContext("2d");
 
-        if (step3CanvasHoveredPixel != null) {
-            ctx.beginPath();
-            ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
-                SCALING_FACTOR,
-                SCALING_FACTOR);
-            ctx.strokeStyle = '#000000';
-            ctx.stroke();
-            step4CanvasUpscaledContext.beginPath();
-            step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
-                step3CanvasHoveredPixel[0] * SCALING_FACTOR,
-                SCALING_FACTOR,
-                SCALING_FACTOR);
-            step4CanvasUpscaledContext.strokeStyle = "#000000";
-            step4CanvasUpscaledContext.stroke();
-        }
-        step3CanvasHoveredPixel = null;
-    });
+    if (step3CanvasHoveredPixel != null) {
+        ctx.beginPath();
+        ctx.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+            step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+            SCALING_FACTOR,
+            SCALING_FACTOR);
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
+        step4CanvasUpscaledContext.beginPath();
+        step4CanvasUpscaledContext.rect(step3CanvasHoveredPixel[1] * SCALING_FACTOR,
+            step3CanvasHoveredPixel[0] * SCALING_FACTOR,
+            SCALING_FACTOR,
+            SCALING_FACTOR);
+        step4CanvasUpscaledContext.strokeStyle = "#000000";
+        step4CanvasUpscaledContext.stroke();
+    }
+    step3CanvasHoveredPixel = null;
 });
 
 window.depthPreviewOptions = {};
