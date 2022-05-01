@@ -1995,12 +1995,10 @@ step3CanvasUpscaled.addEventListener("touchmove", function(e) {
     const {
         clientX,
         clientY,
-        pageX,
-        pageY
     } = e.touches[0];
 
     let mouseEventType = "mousemove";
-    if (step3CanvasUpscaled !== document.elementFromPoint(pageX, pageY)) {
+    if (step3CanvasUpscaled !== document.elementFromPoint(clientX, clientY)) {
         isTouchInBounds = false;
         mouseEventType = "mouseleave";
     }
