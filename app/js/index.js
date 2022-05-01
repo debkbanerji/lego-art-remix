@@ -1758,8 +1758,8 @@ let step3CanvasPixelsForHover = null; // only used for perf
 
 function onStep3PaintingMouseLift() {
     activePaintbrushHex = null;
-    // propogate changes to step 4
-    if (wasPaintbrushUsed) {
+    // propogate changes
+    if (!isStep3ViewExpanded && wasPaintbrushUsed) {
         disableInteraction();
         runStep3();
         wasPaintbrushUsed = false;
