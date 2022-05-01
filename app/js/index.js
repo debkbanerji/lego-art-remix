@@ -1759,7 +1759,7 @@ let step3CanvasPixelsForHover = null; // only used for perf
 function onStep3PaintingMouseLift() {
     activePaintbrushHex = null;
     // propogate changes to step 4
-    if (!isStep3ViewExpanded && wasPaintbrushUsed) {
+    if (wasPaintbrushUsed) {
         disableInteraction();
         runStep3();
         wasPaintbrushUsed = false;
@@ -1812,6 +1812,9 @@ Array.from(document.getElementById('paintbrush-tool-selection-dropdown-options')
 let step3PixelArrayForEraser = null;
 
 function onMouseMoveOverStep3Canvas(event) {
+    if (!document.getElementById("universal-loading-progress").hidden) {
+        return; // ignore this - interaction is disabled because we're loading/working
+    }
     const rawRow =
         event.clientY -
         step3CanvasUpscaled.getBoundingClientRect().y -
