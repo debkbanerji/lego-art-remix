@@ -109,7 +109,6 @@ function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
 function alignPixelsToStudMap(
     inputPixels,
     studMap,
-    overridePixels,
     colorDistanceFunction
 ) {
     const alignedPixels = [...inputPixels]; // initialize this way just so we keep 4th pixel values
@@ -143,11 +142,6 @@ function alignPixelsToStudMap(
         for (let j = 0; j < 3; j++) {
             alignedPixels[targetPixelIndex + j] =
                 anchorPixels[closestAnchorPixel][j];
-        }
-    }
-    for (let i = 0; i < alignedPixels.length; i++) {
-        if (overridePixels[i] != null) {
-            alignedPixels[i] = overridePixels[i];
         }
     }
     return alignedPixels;
@@ -585,7 +579,6 @@ function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
 function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
     availableStudMap,
     originalPixels,
-    overridePixelArray,
     imageWidth,
     colorDistanceFunction,
     skipDithering,
@@ -727,7 +720,6 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
 function alignPixelsWithTraditionalDithering(
     availableStudMap,
     originalPixels,
-    overridePixelArray,
     imageWidth,
     colorDistanceFunction,
     kernel

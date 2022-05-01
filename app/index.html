@@ -58,6 +58,21 @@
       border-width: 0
     }
 
+    .paintbrush-controls-button {
+      background-color: #f6f6f6;
+      border: 1px solid rgba(0, 0, 0, .125);
+      height: 100%;
+      margin-right: 4px;
+    }
+
+    .paintbrush-controls-button:hover:enabled {
+      background-color: #6c6c6c;
+    }
+
+    #step-3-canvas-upscaled {
+      /* cursor: crosshair; TODO: Better cursor*/
+    }
+
     .card {
       background-color: rgba(255, 255, 255, 0.6);
     }
@@ -660,43 +675,75 @@
                 <small>Average</small> &#x3F5;: <small id="step-3-quantization-error"></small>
               </span>
 
-              <div id="step-3-accordion">
-                <div class="card accordion-card">
-                  <div class="card-header" id="step-3-1-heading">
-                    <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-1-collapse" aria-expanded="false" aria-controls="step-3-1-collapse">
+              <div style="display: flex; flex-direction: row; flex-wrap: wrap; margin-bottom: 4px;">
+                <div>
+                  <div class="btn-group">
+                    <button class="btn dropdown-toggle paintbrush-controls-button" type="button" id="paintbrush-tool-selection-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                        <path
+                          d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z" />
+                      </svg>
+                    </button>
+                    <div class="dropdown-menu" id="paintbrush-tool-selection-dropdown-options" aria-labelledby="paintbrush-tool-selection-dropdown">
+                      <a class="dropdown-item btn" id="paintbrush-tool-dropdown-option">
+                        <span>
+                          <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path
+                              d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z" />
+                          </svg>
+                        </span>
                         Paintbrush
-                      </button>
-                    </h5>
-                  </div>
-                  <div id="step-3-1-collapse" class="collapse" aria-labelledby="step-3-1-heading" data-parent="#step-3-accordion">
-                    <div class="card-body accordion-card-body">
-                      <div style="margin-left: 4px">
-                        <small>&#9679; I recommend tweaking the quantization settings before using the paintbrush</small>
-                        <div style="margin-bottom: 4px; display: flex; flex-direction: row; align-items: center;">
-                          <span style="font-weight: 600">Paintbrush color: &nbsp;</span>
-                          <span id="paintbrush-controls">
-                          </span>
-                        </div>
-                        <button class="btn btn-warning" type="button" id="clear-overrides-button">
-                          Clear Paintbrush Overrides
-                        </button>
-                      </div>
-                      <small>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a pixel to override its color with the selected paintbrush color</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Click a painted pixel to restore it</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Right click a pixel to use its color as the paintbrush color</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure to add your paintbrush color to 'Available Colors' below for it to show up in step 4; If infinite piece counts are used, it will show up even if not in the
-                          list</p>
-                      </small>
-                      <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-expansion-button">
-                        Expand Picture
-                      </button>
+                      </a>
+                      <a class="dropdown-item btn" id="eraser-tool-dropdown-option"> <span>
+
+                          <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path
+                              d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z" />
+                          </svg>
+                        </span>
+                        Eraser
+                      </a>
+                      <a class="dropdown-item btn" id="dropdown-tool-dropdown-option">
+                        <span>
+                          <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path
+                              d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z" />
+                          </svg>
+                        </span>
+                        Dropper
+                      </a>
                     </div>
                   </div>
                 </div>
+                <span id="paintbrush-controls">
+                </span>
+                <div>
+                  <button class="btn paintbrush-controls-button" type="button" id="clear-overrides-button" data-toggle="tooltip" title="Erase all paintbrush changes" data-placement="top">
+                    <svg width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                      <path
+                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                    </svg>
+                  </button>
+                </div>
+                <div>
+                  <button class="btn paintbrush-controls-button" type="button" id="toggle-expansion-button" data-toggle="tooltip" title="Expand picture" data-placement="top">
+                    <div id="expand-picture-svg">
+                      <svg width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z" />
+                      </svg>
+                    </div>
+                    <div id="collapse-picture-svg" hidden>
+                      <svg width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z" />
+                      </svg>
+                    </div>
+                  </button>
 
-
+                </div>
+              </div>
+              <div id="step-3-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">

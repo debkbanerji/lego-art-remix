@@ -915,7 +915,10 @@ function getColorSquare(hex) {
     return result;
 }
 
-function getColorSelectorDropdown() {
+function getColorSelectorDropdown(tooltipPosition) {
+    if (!tooltipPosition) {
+        tooltipPosition = "left";
+    }
     const container = document.createElement("div");
     const id = "color-selector" + uuidv4();
 
@@ -955,7 +958,7 @@ function getColorSelectorDropdown() {
     });
 
     container.setAttribute("data-toggle", "tooltip");
-    container.setAttribute("data-placement", "left");
+    container.setAttribute("data-placement", tooltipPosition);
     container.setAttribute("title", DEFAULT_COLOR_NAME);
     setTimeout(() => $('[data-toggle="tooltip"]').tooltip(), 10);
     container.appendChild(button);
@@ -963,7 +966,10 @@ function getColorSelectorDropdown() {
     return container;
 }
 
-const paintbrushDropdown = getColorSelectorDropdown();
+const paintbrushDropdown = getColorSelectorDropdown('top');
+paintbrushDropdown.children[0].id = 'paintbrush-color-dropdown';
+paintbrushDropdown.children[0].className = 'btn paintbrush-controls-button';
+paintbrushDropdown.style = "height: 100%;";
 document.getElementById("paintbrush-controls").appendChild(paintbrushDropdown);
 
 function getNewCustomStudRow() {
@@ -1447,33 +1453,26 @@ function runStep3() {
 
     let alignedPixelArray;
 
+    // TODO: Apply overrides separately
     if (quantizationAlgorithm === 'twoPhase') {
         alignedPixelArray = alignPixelsToStudMap(
             fiteredPixelArray,
             isBleedthroughEnabled() ?
             getDarkenedStudMap(selectedStudMap) :
             selectedStudMap,
-            isBleedthroughEnabled() ?
-            getDarkenedImage(overridePixelArray) :
-            overridePixelArray,
             colorDistanceFunction
         );
     } else if (quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering') {
-        // quantizationAlgorithm === 'greedy' || quantizationAlgorithm === 'greedyWithDithering'
         alignedPixelArray = correctPixelsForAvailableStudsWithGreedyDynamicDithering(
             isBleedthroughEnabled() ?
             getDarkenedStudMap(selectedStudMap) :
             selectedStudMap,
             fiteredPixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedImage(overridePixelArray) :
-            overridePixelArray,
             targetResolution[0],
             colorDistanceFunction,
             quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
             true, // assumeInfinitePixelCounts
         );
-
     } else {
         // assume we're dealing with a traditional error dithering algorithm
         const ditheringKernel = quantizationAlgorithmToTraditionalDitheringKernel[quantizationAlgorithm];
@@ -1482,14 +1481,19 @@ function runStep3() {
             getDarkenedStudMap(selectedStudMap) :
             selectedStudMap,
             fiteredPixelArray,
-            isBleedthroughEnabled() ?
-            getDarkenedImage(overridePixelArray) :
-            overridePixelArray,
             targetResolution[0],
             colorDistanceFunction,
             ditheringKernel
         );
     }
+
+    step3PixelArrayForEraser = alignedPixelArray;
+    alignedPixelArray = getArrayWithOverridesApplied(
+        alignedPixelArray,
+        isBleedthroughEnabled() ?
+        getDarkenedImage(overridePixelArray) :
+        overridePixelArray
+    );
 
     step3DepthCanvas.width = targetResolution[0];
     step3DepthCanvas.height = targetResolution[1];
@@ -1611,20 +1615,24 @@ let isStep3ViewExpanded = false;
         );
         if (isStep3ViewExpanded) {
             toToggleElements.forEach(element => (element.hidden = true));
-            document.getElementById("toggle-expansion-button").innerHTML =
-                "Collapse Picture";
+            document.getElementById("toggle-expansion-button").title =
+                "Collapse picture";
             document.getElementById("toggle-depth-expansion-button").innerHTML =
                 "Collapse Picture";
             document.getElementById("step-3").className = "col-12";
         } else {
             toToggleElements.forEach(element => (element.hidden = false));
-            document.getElementById("toggle-expansion-button").innerHTML =
-                "Expand Picture";
+            document.getElementById("toggle-expansion-button").title =
+                "Expand picture";
             document.getElementById("toggle-depth-expansion-button").innerHTML =
                 "Expand Picture";
             document.getElementById("step-3").className = "col-6 col-md-3";
             runStep1();
         }
+        document.getElementById('expand-picture-svg').hidden = isStep3ViewExpanded;
+        document.getElementById('collapse-picture-svg').hidden = !isStep3ViewExpanded;
+        $('[data-toggle="tooltip"]').tooltip('dispose');
+        $('[data-toggle="tooltip"]').tooltip();
     })
 );
 
@@ -1704,15 +1712,6 @@ function onDepthOverrideChange(row, col, isIncrease) {
 }
 
 function onCherryPickColor(row, col) {
-    const existingRGB = document
-        .getElementById("paintbrush-controls")
-        .children[0].children[0].children[0].style.backgroundColor.replace(
-            "rgb(",
-            ""
-        )
-        .replace(")", "")
-        .split(/,\s*/)
-        .map(shade => parseInt(shade));
     const pixelIndex = 4 * (row * targetResolution[0] + col);
     const isOverridden =
         overridePixelArray[pixelIndex] !== null &&
@@ -1800,14 +1799,19 @@ step3CanvasUpscaled.addEventListener(
     false
 );
 
+let selectedPaintbrushTool = "paintbrush-tool-dropdown-option";
+Array.from(document.getElementById('paintbrush-tool-selection-dropdown-options').children).forEach(item => {
+    const value = item.id;
+    item.addEventListener("click", () => {
+        selectedPaintbrushTool = value;
+        document.getElementById('paintbrush-color-dropdown').disabled = value !== "paintbrush-tool-dropdown-option"
+        document.getElementById('paintbrush-tool-selection-dropdown').innerHTML = item.children[0].innerHTML;
+    });
+});
+
+let step3PixelArrayForEraser = null;
+
 function onMouseMoveOverStep3Canvas(event) {
-    if (
-        !document
-        .getElementById("step-3-1-collapse")
-        .className.includes("show")
-    ) {
-        return; // only do stuff if the refine section is expanded
-    }
     const rawRow =
         event.clientY -
         step3CanvasUpscaled.getBoundingClientRect().y -
@@ -1829,28 +1833,55 @@ function onMouseMoveOverStep3Canvas(event) {
     const width = targetResolution[0];
     const radius = SCALING_FACTOR / 2;
 
-    // console.log(activePaintbrushHex)
     if (activePaintbrushHex != null) {
-        // mouse is clicked down, so we're painting
-        const colorRGB = hexToRgb(activePaintbrushHex);
-        // we want to paint - update the override pixel array
-        // do stuff directly on the canvas for perf
-        const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
-        ctx.beginPath();
-        ctx.arc(
-            ((i % width) * 2 + 1) * radius,
-            (Math.floor(i / width) * 2 + 1) * radius,
-            radius,
-            0,
-            2 * Math.PI
-        );
-        ctx.fillStyle = activePaintbrushHex;
-        ctx.fill();
+        // mouse is clicked down, so we're handling the click
 
-        // update the override pixel array in place
-        overridePixelArray[pixelIndex] = colorRGB[0];
-        overridePixelArray[pixelIndex + 1] = colorRGB[1];
-        overridePixelArray[pixelIndex + 2] = colorRGB[2];
+        if (selectedPaintbrushTool === "paintbrush-tool-dropdown-option") {
+            const colorRGB = hexToRgb(activePaintbrushHex);
+            // we want to paint - update the override pixel array
+            // do stuff directly on the canvas for perf
+            ctx.beginPath();
+            ctx.arc(
+                ((i % width) * 2 + 1) * radius,
+                (Math.floor(i / width) * 2 + 1) * radius,
+                radius,
+                0,
+                2 * Math.PI
+            );
+            ctx.fillStyle = activePaintbrushHex;
+            ctx.fill();
+
+            // update the override pixel array in place
+            overridePixelArray[pixelIndex] = colorRGB[0];
+            overridePixelArray[pixelIndex + 1] = colorRGB[1];
+            overridePixelArray[pixelIndex + 2] = colorRGB[2];
+        } else if (selectedPaintbrushTool === "eraser-tool-dropdown-option") {
+            // null out the override
+            if (overridePixelArray[pixelIndex] != null && overridePixelArray[pixelIndex + 1] != null && overridePixelArray[pixelIndex + 2] != null) {
+                // do stuff directly on the canvas for perf
+                ctx.beginPath();
+                ctx.arc(
+                    ((i % width) * 2 + 1) * radius,
+                    (Math.floor(i / width) * 2 + 1) * radius,
+                    radius,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fillStyle = rgbToHex(
+                    step3PixelArrayForEraser[pixelIndex],
+                    step3PixelArrayForEraser[pixelIndex + 1],
+                    step3PixelArrayForEraser[pixelIndex + 2]
+                );
+                ctx.fill();
+
+                // update the override pixel array in place
+                overridePixelArray[pixelIndex] = null;
+                overridePixelArray[pixelIndex + 1] = null;
+                overridePixelArray[pixelIndex + 2] = null;
+            }
+        } else { // dropper tool
+            onCherryPickColor(row, col);
+        }
     } else if (pixelIndex + 2 < step3CanvasPixelsForHover.length) {
         // we're not painting - highlight the pixel instead
         const hoveredPixelRGB = [step3CanvasPixelsForHover[pixelIndex], step3CanvasPixelsForHover[pixelIndex + 1], step3CanvasPixelsForHover[pixelIndex + 2]];
@@ -1938,26 +1969,6 @@ step3CanvasUpscaled.addEventListener(
     onMouseMoveOverStep3Canvas,
     false
 );
-
-step3CanvasUpscaled.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-    const rawRow =
-        event.clientY -
-        step3CanvasUpscaled.getBoundingClientRect().y -
-        step3CanvasUpscaled.offsetHeight / targetResolution[1] / 2;
-    const rawCol =
-        event.clientX -
-        step3CanvasUpscaled.getBoundingClientRect().x -
-        step3CanvasUpscaled.offsetWidth / targetResolution[0] / 2;
-    const row = Math.round(
-        (rawRow * targetResolution[1]) / step3CanvasUpscaled.offsetHeight
-    );
-    const col = Math.round(
-        (rawCol * targetResolution[0]) / step3CanvasUpscaled.offsetWidth
-    );
-
-    onCherryPickColor(row, col);
-});
 
 step3DepthCanvasUpscaled.addEventListener(
     "contextmenu",
@@ -2292,10 +2303,12 @@ function runStep4(asyncCallback) {
                 isBleedthroughEnabled() ?
                 getDarkenedStudMap(selectedStudMap) :
                 selectedStudMap,
-                step2PixelArray,
-                isBleedthroughEnabled() ?
-                getDarkenedImage(overridePixelArray) :
-                overridePixelArray,
+                getArrayWithOverridesApplied(
+                    step2PixelArray,
+                    isBleedthroughEnabled() ?
+                    getDarkenedImage(overridePixelArray) :
+                    overridePixelArray
+                ), // apply overrides before running GGD
                 targetResolution[0],
                 colorDistanceFunction,
                 quantizationAlgorithm !== 'greedyWithDithering', // skipDithering
