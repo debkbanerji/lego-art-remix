@@ -1970,19 +1970,9 @@ step3CanvasUpscaled.addEventListener(
     false
 );
 
-
-// Get the position of a touch relative to the canvas
-function getTouchPos(canvasDom, touchEvent) {
-    const rect = canvasDom.getBoundingClientRect();
-    return {
-        x: touchEvent.touches[0].clientX - rect.left,
-        y: touchEvent.touches[0].clientY - rect.top
-    };
-}
-
+let isTouchInBounds = false
 step3CanvasUpscaled.addEventListener("touchstart", function(e) {
-    e.preventDefault(); // prevent scrolling
-    mousePos = getTouchPos(step3CanvasUpscaled, e);
+    isTouchInBounds = true;
     const {
         clientX,
         clientY
@@ -1994,17 +1984,27 @@ step3CanvasUpscaled.addEventListener("touchstart", function(e) {
     step3CanvasUpscaled.dispatchEvent(mouseEvent);
 }, false);
 step3CanvasUpscaled.addEventListener("touchend", function(e) {
-    e.preventDefault(); // prevent scrolling
     const mouseEvent = new MouseEvent("mouseup", {});
     step3CanvasUpscaled.dispatchEvent(mouseEvent);
 }, false);
 step3CanvasUpscaled.addEventListener("touchmove", function(e) {
     e.preventDefault(); // prevent scrolling
+    if (!isTouchInBounds) {
+        return;
+    }
     const {
         clientX,
-        clientY
+        clientY,
+        pageX,
+        pageY
     } = e.touches[0];
-    const mouseEvent = new MouseEvent("mousemove", {
+
+    let mouseEventType = "mousemove";
+    if (step3CanvasUpscaled !== document.elementFromPoint(pageX, pageY)) {
+        isTouchInBounds = false;
+        mouseEventType = "mouseleave";
+    }
+    const mouseEvent = new MouseEvent(mouseEventType, {
         clientX,
         clientY
     });
