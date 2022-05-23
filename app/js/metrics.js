@@ -6,23 +6,20 @@ try {
         perfLoggingDatabase
             .ref("/input-image-count/per-day")
             .once("value")
-            .then(snapshot => {
+            .then((snapshot) => {
                 document.getElementById("metrics-card").hidden = false;
                 const val = snapshot.val();
                 if (val != null) {
                     const mergedTSMap = {};
-                    Object.keys(val).forEach(rawTS => {
-                        const roundedTS =
-                            Math.round(rawTS / TS_ROUND_GRANULARITY) *
-                            TS_ROUND_GRANULARITY;
-                        mergedTSMap[roundedTS] =
-                            (mergedTSMap[roundedTS] || 0) + Number(val[rawTS]);
+                    Object.keys(val).forEach((rawTS) => {
+                        const roundedTS = Math.round(rawTS / TS_ROUND_GRANULARITY) * TS_ROUND_GRANULARITY;
+                        mergedTSMap[roundedTS] = (mergedTSMap[roundedTS] || 0) + Number(val[rawTS]);
                     });
-                    const dataPoints = Object.keys(mergedTSMap).map(ts => {
-                        return {ts: ts, count: mergedTSMap[ts]};
+                    const dataPoints = Object.keys(mergedTSMap).map((ts) => {
+                        return { ts: ts, count: mergedTSMap[ts] };
                     });
                     dataPoints.sort((d1, d2) => d2.ts - d1.ts);
-                    dataPoints.forEach(point => {
+                    dataPoints.forEach((point) => {
                         const row = document.createElement("tr");
                         const cell1 = document.createElement("td");
                         cell1.innerHTML = new Date(
@@ -33,9 +30,7 @@ try {
                         cell2.innerHTML = point.count;
                         row.appendChild(cell1);
                         row.appendChild(cell2);
-                        document
-                            .getElementById("input-image-count-table")
-                            .appendChild(row);
+                        document.getElementById("input-image-count-table").appendChild(row);
                     });
                 }
             });

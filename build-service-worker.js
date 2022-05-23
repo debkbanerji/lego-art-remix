@@ -1,5 +1,5 @@
 // IMPORTANT: Run rebuild steps when making logic changes
-const VERSION_NUMBER = "v2022.4.30"
+const VERSION_NUMBER = "v2022.5.22";
 
 // Rebuild steps
 // TODO: add a package.json and script to run all deployment steps
@@ -9,18 +9,16 @@ const VERSION_NUMBER = "v2022.4.30"
 // 4. Run `node build-service-worker.js`
 // 5. Copy files from `app` into the static deployment thingy
 
-const workboxBuild = require('workbox-build');
+const workboxBuild = require("workbox-build");
 const buildSW = () => {
-  return workboxBuild.generateSW({
-    globDirectory: 'app',
-    globPatterns: [
-      '**/*.{html,json,js,css,pdf,png,onnx}',
-    ],
-    swDest: 'app/service-worker.js',
-    sourcemap: false,
-    cacheId: VERSION_NUMBER,
-    cleanupOutdatedCaches: true,
-  });
+    return workboxBuild.generateSW({
+        globDirectory: "app",
+        globPatterns: ["**/*.{html,json,js,css,pdf,png,onnx}"],
+        swDest: "app/service-worker.js",
+        sourcemap: false,
+        cacheId: VERSION_NUMBER,
+        cleanupOutdatedCaches: true,
+    });
 };
 
 buildSW();

@@ -4,7 +4,6 @@ about: Create a bug report to help improve the project
 title: "[Bug] (Bug description here)"
 labels: bug
 assignees: debkbanerji
-
 ---
 
 **Bug Description**
@@ -12,6 +11,7 @@ A description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. See error

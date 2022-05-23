@@ -1,250 +1,254 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.css"
+      integrity="sha512-6QxSiaKfNSQmmqwqpTNyhHErr+Bbm8u8HHSiinMEz0uimy9nu7lc/2NaXJiUJj2y4BApd5vgDjSHyLzC8nP6Ng=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link href="assets/png/icon-192x192.png" rel="icon" type="image/x-icon" />
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.css" integrity="sha512-6QxSiaKfNSQmmqwqpTNyhHErr+Bbm8u8HHSiinMEz0uimy9nu7lc/2NaXJiUJj2y4BApd5vgDjSHyLzC8nP6Ng==" crossorigin="anonymous"
-    referrerpolicy="no-referrer" />
-  <link href="assets/png/icon-192x192.png" rel="icon" type="image/x-icon" />
+    <title>Lego Art Remix</title>
 
-  <title>Lego Art Remix</title>
+    <meta property="og:title" content="Lego Art Remix" />
+    <meta property="og:image" content="https://lego-art-remix.com/assets/png/icon-960x960.png" />
+    <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
+    <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
+    <meta name="thumbnail" content="https://lego-art-remix.com/assets/png/icon-512x512.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FCE4EC" />
+    <link rel="manifest" href="/manifest.json" />
 
-  <meta property="og:title" content="Lego Art Remix" />
-  <meta property="og:image" content="https://lego-art-remix.com/assets/png/icon-960x960.png" />
-  <meta property="og:description" content="The Intelligent, Easy to Use Lego Mosaic Maker" />
-  <meta name="description" content="The Intelligent, Easy to Use Lego Mosaic Maker">
-  <meta name="thumbnail" content="https://lego-art-remix.com/assets/png/icon-512x512.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#FCE4EC">
-  <link rel="manifest" href="/manifest.json">
+    <PageMap>
+      <DataObject type="thumbnail">
+        <Attribute name="src" value="https://lego-art-remix.com/assets/png/icon-512x512.png" />
+        <Attribute name="width" value="512" />
+        <Attribute name="height" value="512" />
+      </DataObject>
+    </PageMap>
 
-  <PageMap>
-    <DataObject type="thumbnail">
-      <Attribute name="src" value="https://lego-art-remix.com/assets/png/icon-512x512.png" />
-      <Attribute name="width" value="512" />
-      <Attribute name="height" value="512" />
-    </DataObject>
-  </PageMap>
-
-  <style>
-    a {
-      text-decoration: none !important;
-    }
-
-    #responsive-youtube {
-      overflow: hidden;
-      padding-bottom: 56.25%;
-      position: relative;
-      height: 0;
-      font-size: 24px;
-    }
-
-    #responsive-youtube iframe {
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 100%;
-      position: absolute;
-    }
-
-    .btn-link {
-      text-decoration: none !important;
-      width: 100%;
-      border-width: 0
-    }
-
-    .paintbrush-controls-button {
-      background-color: #f6f6f6;
-      border: 1px solid rgba(0, 0, 0, .125);
-      height: 100%;
-      margin-right: 4px;
-    }
-
-    .paintbrush-controls-button:hover:enabled {
-      background-color: #6c6c6c;
-    }
-
-    #step-3-canvas-upscaled {
-      /* cursor: crosshair; TODO: Better cursor*/
-    }
-
-    .card {
-      background-color: rgba(255, 255, 255, 0.6);
-    }
-
-    .card-header {
-      padding: 0;
-      border: 0;
-    }
-
-    .accordion-card {
-      margin-bottom: 4px;
-    }
-
-    .accordion-card-body {
-      padding: 4px;
-    }
-
-    h4 {
-      line-height: 20px;
-      margin-bottom: 0;
-    }
-
-    step-header-subtitle {
-      margin-left: 2px;
-    }
-
-    #nonzero-missing-pieces-warning {
-      color: #dc3545;
-    }
-
-    .checkbox-clickable {
-      cursor: pointer;
-    }
-
-    table {
-      border-top: 1px solid rgb(222, 226, 230);
-      border-left: 1px solid rgb(222, 226, 230);
-      border-bottom: 0;
-      border-right: 0;
-    }
-
-    td,
-    th {
-      border-top: 0;
-      border-left: 0;
-      border-bottom: 1px solid rgb(222, 226, 230);
-      border-right: 1px solid rgb(222, 226, 230);
-    }
-
-    .piece-count-infinity-placeholder {
-      padding-left: 2px;
-      padding-right: 2px;
-      font-weight: 600;
-      font-size: 18px;
-    }
-
-    .cropper-img {
-      display: block;
-
-      max-width: 100%;
-    }
-
-    .progress-bar.indeterminate {
-      position: relative;
-      animation: progress-indeterminate 3s linear infinite;
-    }
-
-    @keyframes progress-indeterminate {
-      from {
-        left: -50%;
-        width: 50%;
+    <style>
+      a {
+        text-decoration: none !important;
       }
 
-      to {
-        left: 100%;
-        width: 50%;
+      #responsive-youtube {
+        overflow: hidden;
+        padding-bottom: 56.25%;
+        position: relative;
+        height: 0;
+        font-size: 24px;
       }
-    }
 
-    footer {
-      bottom: 0;
-      width: 100%;
-    }
+      #responsive-youtube iframe {
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+      }
 
-    .footer {
-      height: 50px;
-      text-align: center;
-    }
-  </style>
+      .btn-link {
+        text-decoration: none !important;
+        width: 100%;
+        border-width: 0;
+      }
 
-  <style class="dark-mode-stylesheet" disabled>
-    html,
-    body {
-      background-color: black;
-    }
+      .paintbrush-controls-button {
+        background-color: #f6f6f6;
+        border: 1px solid rgba(0, 0, 0, 0.125);
+        height: 100%;
+        margin-right: 4px;
+      }
 
-    html,
-    body,
-    .table,
-    .btn-outline-dark {
-      color: #d3d3d3;
-    }
+      .paintbrush-controls-button:hover:enabled {
+        background-color: #6c6c6c;
+      }
 
-    .btn {
-      color: #ffffff
-    }
+      #step-3-canvas-upscaled {
+        /* cursor: crosshair; TODO: Better cursor*/
+      }
 
-    .paintbrush-controls-button {
-      background-color: #1c1c1c;
-    }
+      .card {
+        background-color: rgba(255, 255, 255, 0.6);
+      }
 
-    .btn-warning,
-    .dropdown-item {
-      color: #212529;
-    }
+      .card-header {
+        padding: 0;
+        border: 0;
+      }
 
-    .card {
-      background-color: rgb(33, 33, 33, 0.6);
-    }
+      .accordion-card {
+        margin-bottom: 4px;
+      }
 
-    .nav-tabs .nav-item.show .nav-link,
-    .nav-tabs .nav-link.active {
-      background-color: rgb(33, 33, 33, 0.6);
-      border-color: rgb(50, 50, 50);
-    }
+      .accordion-card-body {
+        padding: 4px;
+      }
 
-    .nav-tabs {
-      border-bottom: 0
-    }
+      h4 {
+        line-height: 20px;
+        margin-bottom: 0;
+      }
 
-    table {
-      border-top: 1px solid rgb(50, 50, 50);
-      border-left: 1px solid rgb(50, 50, 50);
-    }
+      step-header-subtitle {
+        margin-left: 2px;
+      }
 
-    td,
-    th {
-      border-bottom: 1px solid rgb(50, 50, 50);
-      border-right: 1px solid rgb(50, 50, 50);
-    }
+      #nonzero-missing-pieces-warning {
+        color: #dc3545;
+      }
 
-    .table thead th {
-      border-bottom: 1px solid rgb(50, 50, 50);
-      border-top: 1px solid rgb(50, 50, 50);
-    }
-  </style>
+      .checkbox-clickable {
+        cursor: pointer;
+      }
 
-</head>
+      table {
+        border-top: 1px solid rgb(222, 226, 230);
+        border-left: 1px solid rgb(222, 226, 230);
+        border-bottom: 0;
+        border-right: 0;
+      }
 
-<body>
-  <div style="margin: 10px; padding-bottom: 30px; overflow: hidden; min-height: calc(100vh - 60px);">
-    <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
-    <div style="margin-bottom: 10px; margin-left: 6px">
-      <small>
-        The Intelligent, Easy to Use Lego Mosaic Maker
-      </small>
-      <div style="margin-bottom: 5px;">
-        <small>
-          <span>Made with ♥ by Deb</span> &bull;
-          <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
-        </small>
-      </div>
-    </div>
-    <canvas id="background-image-cache-canvas" hidden></canvas>
+      td,
+      th {
+        border-top: 0;
+        border-left: 0;
+        border-bottom: 1px solid rgb(222, 226, 230);
+        border-right: 1px solid rgb(222, 226, 230);
+      }
 
-    <div>
-      <div class="progress" style="height:8px; margin-bottom: 2px" id="universal-loading-progress">
-        <div class="progress-bar indeterminate style=" height:10px"">
+      .piece-count-infinity-placeholder {
+        padding-left: 2px;
+        padding-right: 2px;
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      .cropper-img {
+        display: block;
+
+        max-width: 100%;
+      }
+
+      .progress-bar.indeterminate {
+        position: relative;
+        animation: progress-indeterminate 3s linear infinite;
+      }
+
+      @keyframes progress-indeterminate {
+        from {
+          left: -50%;
+          width: 50%;
+        }
+
+        to {
+          left: 100%;
+          width: 50%;
+        }
+      }
+
+      footer {
+        bottom: 0;
+        width: 100%;
+      }
+
+      .footer {
+        height: 50px;
+        text-align: center;
+      }
+    </style>
+
+    <style class="dark-mode-stylesheet" disabled>
+      html,
+      body {
+        background-color: black;
+      }
+
+      html,
+      body,
+      .table,
+      .btn-outline-dark {
+        color: #d3d3d3;
+      }
+
+      .btn {
+        color: #ffffff;
+      }
+
+      .paintbrush-controls-button {
+        background-color: #1c1c1c;
+      }
+
+      .btn-warning,
+      .dropdown-item {
+        color: #212529;
+      }
+
+      .card {
+        background-color: rgb(33, 33, 33, 0.6);
+      }
+
+      .nav-tabs .nav-item.show .nav-link,
+      .nav-tabs .nav-link.active {
+        background-color: rgb(33, 33, 33, 0.6);
+        border-color: rgb(50, 50, 50);
+      }
+
+      .nav-tabs {
+        border-bottom: 0;
+      }
+
+      table {
+        border-top: 1px solid rgb(50, 50, 50);
+        border-left: 1px solid rgb(50, 50, 50);
+      }
+
+      td,
+      th {
+        border-bottom: 1px solid rgb(50, 50, 50);
+        border-right: 1px solid rgb(50, 50, 50);
+      }
+
+      .table thead th {
+        border-bottom: 1px solid rgb(50, 50, 50);
+        border-top: 1px solid rgb(50, 50, 50);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="margin: 10px; padding-bottom: 30px; overflow: hidden; min-height: calc(100vh - 60px)">
+      <h1 style="margin-bottom: 0; margin-left: 4px">Lego Art Remix</h1>
+      <div style="margin-bottom: 10px; margin-left: 6px">
+        <small> The Intelligent, Easy to Use Lego Mosaic Maker </small>
+        <div style="margin-bottom: 5px">
+          <small>
+            <span>Made with ♥ by Deb</span> &bull;
+            <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
+          </small>
         </div>
       </div>
-      <div style="height:8px; margin-bottom: 2px" id="universal-loading-progress-complement" hidden>
+      <canvas id="background-image-cache-canvas" hidden></canvas>
+
+      <div>
+        <div class="progress" style="height: 8px; margin-bottom: 2px" id="universal-loading-progress">
+          <div class="progress-bar indeterminate style=" height:10px"">
+        </div>
       </div>
+      <div style="height: 8px; margin-bottom: 2px" id="universal-loading-progress-complement" hidden></div>
     </div>
 
     <div class="row" id="steps-row" hidden>
@@ -252,14 +256,37 @@
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
             <li class="nav-item">
-              <a class="nav-link active" id="step-1-color-tab" data-toggle="tab" href="#step-1-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+              <a
+                class="nav-link active"
+                id="step-1-color-tab"
+                data-toggle="tab"
+                href="#step-1-color-tab-content"
+                role="tab"
+                aria-controls="step-1-color-tab-content"
+                aria-selected="true"
+                >Color</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="step-1-depth-tab" data-toggle="tab" href="#step-1-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+              <a
+                class="nav-link"
+                id="step-1-depth-tab"
+                data-toggle="tab"
+                href="#step-1-depth-tab-content"
+                role="tab"
+                aria-controls="step-1-color-depth-content"
+                aria-selected="false"
+                >Depth</a
+              >
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="step-1-color-tab-content" role="tabpanel" aria-labelledby="step-1-color-tab">
+            <div
+              class="tab-pane fade show active"
+              id="step-1-color-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-1-color-tab"
+            >
               <div style="width: 100%">
                 <canvas id="step-1-canvas-upscaled" style="width: 100%" class="cropper-img"></canvas>
               </div>
@@ -269,21 +296,56 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-1-collapse" aria-expanded="false" aria-controls="step-1-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-1-collapse"
+                      >
                         Resolution
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-1-collapse" class="collapse" aria-labelledby="step-1-1-heading" data-parent="#step-1-accordion">
+                  <div
+                    id="step-1-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-1-heading"
+                    data-parent="#step-1-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <b>Target Resolution:</b>
                       <div style="width: 100%">
-                        <div>Width: <span id="width-text" data-toggle="tooltip" title="" data-placement="top">48</span></div>
-                        <input type="range" id="width-slider" name="points" min="16" max="128" step="16" value="48" style="width: 100%">
+                        <div>
+                          Width:
+                          <span id="width-text" data-toggle="tooltip" title="" data-placement="top">48</span>
+                        </div>
+                        <input
+                          type="range"
+                          id="width-slider"
+                          name="points"
+                          min="16"
+                          max="128"
+                          step="16"
+                          value="48"
+                          style="width: 100%"
+                        />
                       </div>
                       <div style="width: 100%">
-                        <div>Height: <span id="height-text" data-toggle="tooltip" title="" data-placement="top">48</span></div>
-                        <input type="range" id="height-slider" name="points" min="16" max="128" step="16" value="48" style="width: 100%">
+                        <div>
+                          Height:
+                          <span id="height-text" data-toggle="tooltip" title="" data-placement="top">48</span>
+                        </div>
+                        <input
+                          type="range"
+                          id="height-slider"
+                          name="points"
+                          min="16"
+                          max="128"
+                          step="16"
+                          value="48"
+                          style="width: 100%"
+                        />
                       </div>
                     </div>
                   </div>
@@ -292,22 +354,34 @@
                 <div class="card accordion-card" id="enable-depth-button-container">
                   <div class="card-header" id="step-1-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-2-collapse" aria-expanded="false" aria-controls="step-1-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-2-collapse"
+                      >
                         3D
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-2-collapse" class="collapse" aria-labelledby="step-1-2-heading" data-parent="#step-1-accordion">
+                  <div
+                    id="step-1-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-2-heading"
+                    data-parent="#step-1-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <button class="btn btn-info" type="button" id="enable-depth-button" style="margin-top: 8px">
                         Enable 3D
                       </button>
                       <small>
                         <div>
-                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px;">
-                            Enabling 3D mode allows for designing pictures with multiple layers, where some pixels protrude further out than others
+                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px">
+                            Enabling 3D mode allows for designing pictures with multiple layers, where some pixels
+                            protrude further out than others
                           </p>
-                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px;">
+                          <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 8px">
                             This may not be a good fit for all images, but can work quite well in many cases
                           </p>
                         </div>
@@ -319,17 +393,32 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-3-collapse" aria-expanded="false" aria-controls="step-1-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-3-collapse"
+                      >
                         Input Image
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-3-collapse" class="collapse" aria-labelledby="step-1-3-heading" data-parent="#step-1-accordion">
+                  <div
+                    id="step-1-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-3-heading"
+                    data-parent="#step-1-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div id="image-input-new"></div>
                       <small>
-                        <p style="margin-left: 4px; margin-top: 4px;">Supported image formats are dependent on your browser's compatibility</p>
-                        <p style="margin-bottom: 0; margin-left: 4px;">Due to the nature of the Lego Art sets, images with transparency aren't fully supported</p>
+                        <p style="margin-left: 4px; margin-top: 4px">
+                          Supported image formats are dependent on your browser's compatibility
+                        </p>
+                        <p style="margin-bottom: 0; margin-left: 4px">
+                          Due to the nature of the Lego Art sets, images with transparency aren't fully supported
+                        </p>
                       </small>
                     </div>
                   </div>
@@ -338,22 +427,38 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-4-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-4-collapse" aria-expanded="false" aria-controls="step-1-4-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-4-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-4-collapse"
+                      >
                         Increase Limit
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-4-collapse" class="collapse" aria-labelledby="step-1-4-heading" data-parent="#step-1-accordion">
+                  <div
+                    id="step-1-4-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-4-heading"
+                    data-parent="#step-1-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <button class="btn btn-warning" type="button" id="resolution-limit-increase-button" style="margin-bottom: 12px; margin-top:8px;">
+                      <button
+                        class="btn btn-warning"
+                        type="button"
+                        id="resolution-limit-increase-button"
+                        style="margin-bottom: 12px; margin-top: 8px"
+                      >
                         Increase Resolution Limit
                       </button>
                       <small>
                         <div>
-                          <b style="color: #ff4c00;">Important</b>
+                          <b style="color: #ff4c00">Important</b>
                           <p>
-                            Be careful when using high resolutions - this can cause performance issues on
-                            less powerful machines, especially during pdf generation and for 3D previews
+                            Be careful when using high resolutions - this can cause performance issues on less powerful
+                            machines, especially during pdf generation and for 3D previews
                           </p>
                         </div>
                       </small>
@@ -362,7 +467,12 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane fade" id="step-1-depth-tab-content" role="tabpanel" aria-labelledby="step-1-depth-tab-content">
+            <div
+              class="tab-pane fade"
+              id="step-1-depth-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-1-depth-tab-content"
+            >
               <canvas id="web-worker-input-canvas" hidden></canvas>
               <canvas id="web-worker-output-canvas" hidden></canvas>
               <canvas id="step-1-depth-canvas" hidden></canvas>
@@ -374,20 +484,42 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-depth-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-1-collapse" aria-expanded="false" aria-controls="step-1-depth-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-depth-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-depth-1-collapse"
+                      >
                         Select
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-depth-1-collapse" class="collapse" aria-labelledby="step-1-depth-1-heading" data-parent="#step-1-depth-accordion">
+                  <div
+                    id="step-1-depth-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-depth-1-heading"
+                    data-parent="#step-1-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <input type="file" id="input-depth-image-selector-hidden" name="input-depth-image-selector-hidden" hidden />
-                      <button class="btn btn-success" type="button" id="input-depth-image-selector" style="margin-top: 8px">
+                      <input
+                        type="file"
+                        id="input-depth-image-selector-hidden"
+                        name="input-depth-image-selector-hidden"
+                        hidden
+                      />
+                      <button
+                        class="btn btn-success"
+                        type="button"
+                        id="input-depth-image-selector"
+                        style="margin-top: 8px"
+                      >
                         Select Depth Map Image
                       </button>
                       <br />
-                      <small>If you have a depth map corresponding to your image you can select it here. If you don't,
-                        you can generate an approximation in the 'generate' section.
+                      <small
+                        >If you have a depth map corresponding to your image you can select it here. If you don't, you
+                        can generate an approximation in the 'generate' section.
                       </small>
                     </div>
                   </div>
@@ -396,38 +528,56 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-1-depth-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-1-depth-2-collapse" aria-expanded="false" aria-controls="step-1-depth-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-1-depth-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-1-depth-2-collapse"
+                      >
                         Generate
                       </button>
                     </h5>
                   </div>
-                  <div id="step-1-depth-2-collapse" class="collapse" aria-labelledby="step-1-depth-2-heading" data-parent="#step-1-depth-accordion">
+                  <div
+                    id="step-1-depth-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-1-depth-2-heading"
+                    data-parent="#step-1-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <button class="btn btn-success" type="button" id="generate-depth-image" style="margin-top: 8px">
                         Compute Using DNN
                       </button>
                       <br />
-                      <small>This will compute an approximation of the depth map if you do not have one
-                      </small>
-                      <h5 style="margin-top: 4px;" id="web-worker-loading-message" hidden></h5>
+                      <small>This will compute an approximation of the depth map if you do not have one </small>
+                      <h5 style="margin-top: 4px" id="web-worker-loading-message" hidden></h5>
                       <div>
                         <small>
                           <b style="color: #ff4c00">Important</b>
                           <br />
-                          <p>Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be careful, especially if you have a less powerful device.
+                          <p>
+                            Computing the depth map can be computationally expensive. Be prepared to wait a bit, and be
+                            careful, especially if you have a less powerful device.
                           </p>
                           <b>How does this work?</b>
-                          <p>The depth map is computed using a DNN (deep neural network).
-                            For the reasons described in the 'about' section, everything is run entirely within the browser, using a modified version of <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>.
-                            The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
-                              target="_blank">here</a>.
+                          <p>
+                            The depth map is computed using a DNN (deep neural network). For the reasons described in
+                            the 'about' section, everything is run entirely within the browser, using a modified version
+                            of
+                            <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>. The model used is
+                            <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>
+                            - more specifically, the small ONNX version which can be found
+                            <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1" target="_blank">here</a>.
                           </p>
-                          <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 2px;">
+                          <div class="card" style="margin-top: 4px; margin-bottom: 16px; padding: 2px">
                             <b>Citation for Model Used</b>
                             <span>
-                              Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on
-                                Pattern
-                                Analysis and Machine Intelligence</i></span>
+                              Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun.
+                              "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset
+                              transfer." (2020).
+                              <i>IEEE Transactions on Pattern Analysis and Machine Intelligence</i></span
+                            >
                           </div>
                         </small>
                       </div>
@@ -440,19 +590,41 @@
         </div>
       </div>
 
-
       <div id="step-2" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
             <li class="nav-item">
-              <a class="nav-link active" id="step-2-color-tab" data-toggle="tab" href="#step-2-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+              <a
+                class="nav-link active"
+                id="step-2-color-tab"
+                data-toggle="tab"
+                href="#step-2-color-tab-content"
+                role="tab"
+                aria-controls="step-1-color-tab-content"
+                aria-selected="true"
+                >Color</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="step-2-depth-tab" data-toggle="tab" href="#step-2-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+              <a
+                class="nav-link"
+                id="step-2-depth-tab"
+                data-toggle="tab"
+                href="#step-2-depth-tab-content"
+                role="tab"
+                aria-controls="step-1-color-depth-content"
+                aria-selected="false"
+                >Depth</a
+              >
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="step-2-color-tab-content" role="tabpanel" aria-labelledby="step-2-color-tab">
+            <div
+              class="tab-pane fade show active"
+              id="step-2-color-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-2-color-tab"
+            >
               <canvas id="step-2-canvas" hidden></canvas>
               <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2</h4>
@@ -461,58 +633,79 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-1-collapse" aria-expanded="false" aria-controls="step-2-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-1-collapse"
+                      >
                         HSV
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-1-collapse" class="collapse" aria-labelledby="step-2-1-heading" data-parent="#step-2-accordion">
+                  <div
+                    id="step-2-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-1-heading"
+                    data-parent="#step-2-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div>Hue adjustment:
+                        <div>
+                          Hue adjustment:
                           <span id="hue-text">0<span>&#176;</span></span>
                         </div>
-                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
-                          <button class="btn btn-sm" id="hue-decrement" style="flex-grow: 0">
-                            -
-                          </button>
-                          <input type="range" id="hue-slider" name="points" min="-180" max="180" style="flex-grow: 1; min-width: 10px">
-                          <button class="btn btn-sm" id="hue-increment" style="flex-grow: 0">
-                            +
-                          </button>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px">
+                          <button class="btn btn-sm" id="hue-decrement" style="flex-grow: 0">-</button>
+                          <input
+                            type="range"
+                            id="hue-slider"
+                            name="points"
+                            min="-180"
+                            max="180"
+                            style="flex-grow: 1; min-width: 10px"
+                          />
+                          <button class="btn btn-sm" id="hue-increment" style="flex-grow: 0">+</button>
                         </div>
                       </div>
                       <div style="width: 100%">
-                        <div>Saturation adjustment:
+                        <div>
+                          Saturation adjustment:
                           <span id="saturation-text">0%</span>
                         </div>
-                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
-                          <button class="btn btn-sm" id="saturation-decrement" style="flex-grow: 0">
-                            -
-                          </button>
-                          <input type="range" id="saturation-slider" name="points" min="-100" max="100" style="flex-grow: 1; min-width: 10px">
-                          <button class="btn btn-sm" id="saturation-increment" style="flex-grow: 0">
-                            +
-                          </button>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px">
+                          <button class="btn btn-sm" id="saturation-decrement" style="flex-grow: 0">-</button>
+                          <input
+                            type="range"
+                            id="saturation-slider"
+                            name="points"
+                            min="-100"
+                            max="100"
+                            style="flex-grow: 1; min-width: 10px"
+                          />
+                          <button class="btn btn-sm" id="saturation-increment" style="flex-grow: 0">+</button>
                         </div>
                       </div>
                       <div style="width: 100%">
-                        <div>Value adjustment:
+                        <div>
+                          Value adjustment:
                           <span id="value-text">0%</span>
                         </div>
-                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
-                          <button class="btn btn-sm" id="value-decrement" style="flex-grow: 0">
-                            -
-                          </button>
-                          <input type="range" id="value-slider" name="points" min="-100" max="100" style="flex-grow: 1; min-width: 10px">
-                          <button class="btn btn-sm" id="value-increment" style="flex-grow: 0">
-                            +
-                          </button>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px">
+                          <button class="btn btn-sm" id="value-decrement" style="flex-grow: 0">-</button>
+                          <input
+                            type="range"
+                            id="value-slider"
+                            name="points"
+                            min="-100"
+                            max="100"
+                            style="flex-grow: 1; min-width: 10px"
+                          />
+                          <button class="btn btn-sm" id="value-increment" style="flex-grow: 0">+</button>
                         </div>
                       </div>
-                      <button class="btn btn-info" type="button" id="reset-hsv-button">
-                        Reset HSV
-                      </button>
+                      <button class="btn btn-info" type="button" id="reset-hsv-button">Reset HSV</button>
                     </div>
                   </div>
                 </div>
@@ -520,30 +713,43 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-2-collapse" aria-expanded="false" aria-controls="step-2-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-2-collapse"
+                      >
                         Brightness
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-2-collapse" class="collapse" aria-labelledby="step-2-2-heading" data-parent="#step-2-accordion">
+                  <div
+                    id="step-2-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-2-heading"
+                    data-parent="#step-2-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div>Brightness adjustment:
+                        <div>
+                          Brightness adjustment:
                           <span id="brightness-text">0</span>
                         </div>
-                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
-                          <button class="btn btn-sm" id="brightness-decrement" style="flex-grow: 0">
-                            -
-                          </button>
-                          <input type="range" id="brightness-slider" name="points" min="-128" max="128" style="flex-grow: 1; min-width: 10px">
-                          <button class="btn btn-sm" id="brightness-increment" style="flex-grow: 0">
-                            +
-                          </button>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px">
+                          <button class="btn btn-sm" id="brightness-decrement" style="flex-grow: 0">-</button>
+                          <input
+                            type="range"
+                            id="brightness-slider"
+                            name="points"
+                            min="-128"
+                            max="128"
+                            style="flex-grow: 1; min-width: 10px"
+                          />
+                          <button class="btn btn-sm" id="brightness-increment" style="flex-grow: 0">+</button>
                         </div>
                       </div>
-                      <button class="btn btn-info" type="button" id="reset-brightness-button">
-                        Reset Brightness
-                      </button>
+                      <button class="btn btn-info" type="button" id="reset-brightness-button">Reset Brightness</button>
                     </div>
                   </div>
                 </div>
@@ -551,61 +757,100 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-3-collapse" aria-expanded="false" aria-controls="step-2-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-3-collapse"
+                      >
                         Contrast
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-3-collapse" class="collapse" aria-labelledby="step-2-3-heading" data-parent="#step-2-accordion">
+                  <div
+                    id="step-2-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-3-heading"
+                    data-parent="#step-2-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div>Contrast adjustment:
+                        <div>
+                          Contrast adjustment:
                           <span id="contrast-text">0</span>
                         </div>
-                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px;">
-                          <button class="btn btn-sm" id="contrast-decrement" style="flex-grow: 0">
-                            -
-                          </button>
-                          <input type="range" id="contrast-slider" name="points" min="-128" max="128" style="flex-grow: 1; min-width: 10px">
-                          <button class="btn btn-sm" id="contrast-increment" style="flex-grow: 0">
-                            +
-                          </button>
+                        <div style="display: flex; direction: horizontal; width: 100%; margin-bottom: 8px">
+                          <button class="btn btn-sm" id="contrast-decrement" style="flex-grow: 0">-</button>
+                          <input
+                            type="range"
+                            id="contrast-slider"
+                            name="points"
+                            min="-128"
+                            max="128"
+                            style="flex-grow: 1; min-width: 10px"
+                          />
+                          <button class="btn btn-sm" id="contrast-increment" style="flex-grow: 0">+</button>
                         </div>
                       </div>
-                      <button class="btn btn-info" type="button" id="reset-contrast-button">
-                        Reset Contrast
-                      </button>
+                      <button class="btn btn-info" type="button" id="reset-contrast-button">Reset Contrast</button>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
-            <div class="tab-pane fade" id="step-2-depth-tab-content" role="tabpanel" aria-labelledby="step-2-depth-tab-content">
+            <div
+              class="tab-pane fade"
+              id="step-2-depth-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-2-depth-tab-content"
+            >
               <canvas id="step-2-depth-canvas-cropper-buffer" hidden></canvas>
               <canvas id="step-2-depth-canvas" hidden></canvas>
               <canvas id="step-2-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2</h4>
               <small className="step-header-subtitle">Make depth discrete</small>
               <div id="step-2-depth-accordion">
-
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-depth-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-1-collapse" aria-expanded="false" aria-controls="step-2-depth-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-depth-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-depth-1-collapse"
+                      >
                         Level Count
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-depth-1-collapse" class="collapse" aria-labelledby="step-2-depth-1-heading" data-parent="#step-2-depth-accordion">
+                  <div
+                    id="step-2-depth-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-depth-1-heading"
+                    data-parent="#step-2-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div><b>Number of depth levels: <span id="num-depth-levels-text">3</span></b></div>
                         <div>
-                          <small>Determines how many discrete levels of depth you want the pixels of the image to have, where
-                            each level is one Lego plate deep</small>
+                          <b>Number of depth levels: <span id="num-depth-levels-text">3</span></b>
                         </div>
-                        <input type="range" id="num-depth-levels-slider" name="num-depth-levels-slider" min="2" max="4" style="width: 100%" value="3">
+                        <div>
+                          <small
+                            >Determines how many discrete levels of depth you want the pixels of the image to have,
+                            where each level is one Lego plate deep</small
+                          >
+                        </div>
+                        <input
+                          type="range"
+                          id="num-depth-levels-slider"
+                          name="num-depth-levels-slider"
+                          min="2"
+                          max="4"
+                          style="width: 100%"
+                          value="3"
+                        />
                       </div>
                     </div>
                   </div>
@@ -614,21 +859,36 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-depth-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-2-collapse" aria-expanded="false" aria-controls="step-2-depth-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-depth-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-depth-2-collapse"
+                      >
                         Thresholds
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-depth-2-collapse" class="collapse" aria-labelledby="step-2-depth-2-heading" data-parent="#step-2-depth-accordion">
+                  <div
+                    id="step-2-depth-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-depth-2-heading"
+                    data-parent="#step-2-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div><b>Depth threshold<span class="threshold-plural-s" hidden>s</span></b></div>
                         <div>
-                          <small>Adjusts the threshold<span class="threshold-plural-s" hidden>s</span>
-                            for separating the discrete depth levels</small>
+                          <b>Depth threshold<span class="threshold-plural-s" hidden>s</span></b>
+                        </div>
+                        <div>
+                          <small
+                            >Adjusts the threshold<span class="threshold-plural-s" hidden>s</span> for separating the
+                            discrete depth levels</small
+                          >
                         </div>
                         <div id="depth-threshold-sliders-containers">
-                          <input type="range" min="0" max="255" style="width: 100%" value="128">
+                          <input type="range" min="0" max="255" style="width: 100%" value="128" />
                         </div>
                       </div>
                     </div>
@@ -638,16 +898,29 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-depth-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-2-depth-3-collapse" aria-expanded="false" aria-controls="step-2-depth-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-depth-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-depth-3-collapse"
+                      >
                         Troubleshooting
                       </button>
                     </h5>
                   </div>
-                  <div id="step-2-depth-3-collapse" class="collapse" aria-labelledby="step-2-depth-3-heading" data-parent="#step-2-depth-accordion">
+                  <div
+                    id="step-2-depth-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-depth-3-heading"
+                    data-parent="#step-2-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <small>If the discretized depth map is blank, make sure you've selected or computed a depth map in step 1,
-                        and adjust the threshold<span class="threshold-plural-s" hidden>s</span> so that they are between the sections
-                        of the image you want to separate</small>
+                      <small
+                        >If the discretized depth map is blank, make sure you've selected or computed a depth map in
+                        step 1, and adjust the threshold<span class="threshold-plural-s" hidden>s</span> so that they
+                        are between the sections of the image you want to separate</small
+                      >
                     </div>
                   </div>
                 </div>
@@ -657,52 +930,93 @@
         </div>
       </div>
 
-
       <div id="step-3" class="col-6 col-md-3">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
             <li class="nav-item">
-              <a class="nav-link active" id="step-3-color-tab" data-toggle="tab" href="#step-3-color-tab-content" role="tab" aria-controls="step-1-color-tab-content" aria-selected="true">Color</a>
+              <a
+                class="nav-link active"
+                id="step-3-color-tab"
+                data-toggle="tab"
+                href="#step-3-color-tab-content"
+                role="tab"
+                aria-controls="step-1-color-tab-content"
+                aria-selected="true"
+                >Color</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="step-3-depth-tab" data-toggle="tab" href="#step-3-depth-tab-content" role="tab" aria-controls="step-1-color-depth-content" aria-selected="false">Depth</a>
+              <a
+                class="nav-link"
+                id="step-3-depth-tab"
+                data-toggle="tab"
+                href="#step-3-depth-tab-content"
+                role="tab"
+                aria-controls="step-1-color-depth-content"
+                aria-selected="false"
+                >Depth</a
+              >
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="step-3-color-tab-content" role="tabpanel" aria-labelledby="step-3-color-tab">
+            <div
+              class="tab-pane fade show active"
+              id="step-3-color-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-3-color-tab"
+            >
               <canvas id="step-3-canvas" hidden></canvas>
               <canvas id="step-3-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 3</h4>
               <small className="step-header-subtitle">Align to closest pixel from available colors</small>
               <br />
-              <span data-toggle="tooltip" title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function)" data-placement="top">
-                <small>Average</small> &#x3F5;: <small id="step-3-quantization-error"></small>
+              <span
+                data-toggle="tooltip"
+                title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function)"
+                data-placement="top"
+              >
+                <small>Average</small> &#x3F5;:
+                <small id="step-3-quantization-error"></small>
               </span>
 
-              <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-                <div style="margin-bottom: 4px;">
+              <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+                <div style="margin-bottom: 4px">
                   <div class="btn-group">
-                    <button class="btn dropdown-toggle paintbrush-controls-button" type="button" id="paintbrush-tool-selection-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button
+                      class="btn dropdown-toggle paintbrush-controls-button"
+                      type="button"
+                      id="paintbrush-tool-selection-dropdown"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
                       <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                         <path
-                          d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z" />
+                          d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z"
+                        />
                       </svg>
                     </button>
-                    <div class="dropdown-menu" id="paintbrush-tool-selection-dropdown-options" aria-labelledby="paintbrush-tool-selection-dropdown">
+                    <div
+                      class="dropdown-menu"
+                      id="paintbrush-tool-selection-dropdown-options"
+                      aria-labelledby="paintbrush-tool-selection-dropdown"
+                    >
                       <a class="dropdown-item btn" id="paintbrush-tool-dropdown-option">
                         <span>
                           <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path
-                              d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z" />
+                              d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z"
+                            />
                           </svg>
                         </span>
                         Paintbrush
                       </a>
-                      <a class="dropdown-item btn" id="eraser-tool-dropdown-option"> <span>
-
+                      <a class="dropdown-item btn" id="eraser-tool-dropdown-option">
+                        <span>
                           <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path
-                              d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z" />
+                              d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828l6.879-6.879zm.66 11.34L3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293l.16-.16z"
+                            />
                           </svg>
                         </span>
                         Eraser
@@ -711,7 +1025,8 @@
                         <span>
                           <svg width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                             <path
-                              d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z" />
+                              d="M13.354.646a1.207 1.207 0 0 0-1.708 0L8.5 3.793l-.646-.647a.5.5 0 1 0-.708.708L8.293 5l-7.147 7.146A.5.5 0 0 0 1 12.5v1.793l-.854.853a.5.5 0 1 0 .708.707L1.707 15H3.5a.5.5 0 0 0 .354-.146L11 7.707l1.146 1.147a.5.5 0 0 0 .708-.708l-.647-.646 3.147-3.146a1.207 1.207 0 0 0 0-1.708l-2-2zM2 12.707l7-7L10.293 7l-7 7H2v-1.293z"
+                            />
                           </svg>
                         </span>
                         Dropper
@@ -719,60 +1034,104 @@
                     </div>
                   </div>
                 </div>
-                <span id="paintbrush-controls" style="margin-bottom: 4px;">
-                </span>
-                <div style="margin-bottom: 4px;">
-                  <button class="btn paintbrush-controls-button" type="button" id="clear-overrides-button" data-toggle="tooltip" title="Erase all paintbrush changes" data-placement="top">
+                <span id="paintbrush-controls" style="margin-bottom: 4px"> </span>
+                <div style="margin-bottom: 4px">
+                  <button
+                    class="btn paintbrush-controls-button"
+                    type="button"
+                    id="clear-overrides-button"
+                    data-toggle="tooltip"
+                    title="Erase all paintbrush changes"
+                    data-placement="top"
+                  >
                     <svg width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                       <path
-                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"
+                      />
                     </svg>
                   </button>
                 </div>
-                <div style="margin-bottom: 4px;">
-                  <button class="btn paintbrush-controls-button" type="button" id="toggle-expansion-button" data-toggle="tooltip" title="Expand picture" data-placement="top">
+                <div style="margin-bottom: 4px">
+                  <button
+                    class="btn paintbrush-controls-button"
+                    type="button"
+                    id="toggle-expansion-button"
+                    data-toggle="tooltip"
+                    title="Expand picture"
+                    data-placement="top"
+                  >
                     <div id="expand-picture-svg">
-                      <svg width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z" />
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-fullscreen"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707z"
+                        />
                       </svg>
                     </div>
                     <div id="collapse-picture-svg" hidden>
-                      <svg width="16" height="16" fill="currentColor" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd"
-                          d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z" />
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        class="bi bi-arrows-fullscreen"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M.172 15.828a.5.5 0 0 0 .707 0l4.096-4.096V14.5a.5.5 0 1 0 1 0v-3.975a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1h2.768L.172 15.121a.5.5 0 0 0 0 .707zM15.828.172a.5.5 0 0 0-.707 0l-4.096 4.096V1.5a.5.5 0 1 0-1 0v3.975a.5.5 0 0 0 .5.5H14.5a.5.5 0 0 0 0-1h-2.768L15.828.879a.5.5 0 0 0 0-.707z"
+                        />
                       </svg>
                     </div>
                   </button>
-
                 </div>
               </div>
               <div id="step-3-accordion">
                 <div class="card accordion-card">
                   <div class="card-header" id="step-3-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-2-collapse" aria-expanded="false" aria-controls="step-3-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-3-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-3-2-collapse"
+                      >
                         Available Colors
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-2-collapse" class="collapse" aria-labelledby="step-3-2-heading" data-parent="#step-3-accordion">
+                  <div
+                    id="step-3-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-3-2-heading"
+                    data-parent="#step-3-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div id="custom-stud-map-controls" style="margin-top: 4px; margin-bottom: 20px">
                         <div style="margin-bottom: 20px">
                           <small>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This section specifies how many pieces of each color you have available to create the image
+                            <p style="margin-left: 4px; margin-bottom: 8px">
+                              &#9679; This section specifies how many pieces of each color you have available to create
+                              the image
                             </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Color names are bricklink colors
+                            <p style="margin-left: 4px; margin-bottom: 8px">&#9679; Color names are bricklink colors</p>
+                            <p style="margin-left: 4px; margin-bottom: 8px">
+                              &#9679; Step 4 of the algorithm cannot run unless you select enough pieces to fill the
+                              picture ('Missing Pieces' must be 0)
                             </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Step 4 of the algorithm cannot run unless you select enough pieces to fill the picture ('Missing Pieces' must be 0)
+                            <p style="margin-left: 4px; margin-bottom: 8px">
+                              &#9679; If you're working with an existing set, then clear the available pieces and use
+                              the mix in option to add in the pieces from your set.
                             </p>
-                            <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; If you're working with an existing set,
-                              then clear the available pieces and use the mix in option to add in the pieces from your set.
-                            </p>
-                            <b>Required Pieces: <span id="required-studs"></span></b><br>
-                            <b>Available Pieces: <span id="available-studs"></span></b><br>
-                            <b>Missing Pieces: <span id="missing-studs"></span></b><br>
+                            <b>Required Pieces: <span id="required-studs"></span></b><br />
+                            <b>Available Pieces: <span id="available-studs"></span></b><br />
+                            <b>Missing Pieces: <span id="missing-studs"></span></b><br />
                           </small>
                         </div>
                         <div style="padding-bottom: 10px">
@@ -780,22 +1139,33 @@
                             Clear Available Pieces
                           </button>
                         </div>
-                        <div class="checkbox" style="margin-top: 4px; margin-left: 4px" id="infinite-piece-count-check-container">
+                        <div
+                          class="checkbox"
+                          style="margin-top: 4px; margin-left: 4px"
+                          id="infinite-piece-count-check-container"
+                        >
                           <label class="checkbox-clickable">
-                            <input type="checkbox" class="checkbox-clickable" id="infinite-piece-count-check">
-                            <span style="font-size: 13px;">Infinite Piece Counts</span>
+                            <input type="checkbox" class="checkbox-clickable" id="infinite-piece-count-check" />
+                            <span style="font-size: 13px">Infinite Piece Counts</span>
                           </label>
                         </div>
-                        <div style="margin-left: 4px;" id="forced-infinite-piece-count-warning" hidden>
+                        <div style="margin-left: 4px" id="forced-infinite-piece-count-warning" hidden>
                           <small>
-                            <p><b>Important</b>: Infinite piece counts were used, since a linear error dithering algorithm was selected in the <span style="font-weight: 550">'Quantization'</span> section, or a variable piece type was selected in the
-                              <span style="font-weight: 550">'Pixel Piece'</span> section
+                            <p>
+                              <b>Important</b>: Infinite piece counts were used, since a linear error dithering
+                              algorithm was selected in the
+                              <span style="font-weight: 550">'Quantization'</span>
+                              section, or a variable piece type was selected in the
+                              <span style="font-weight: 550">'Pixel Piece'</span>
+                              section
                             </p>
                           </small>
                         </div>
-                        <div style="margin-left: 4px;">
+                        <div style="margin-left: 4px">
                           <small>
-                            <p><b>Note</b>: Any colors painted using the paintbrush are assumed to exist when infinite piece counts are enabled
+                            <p>
+                              <b>Note</b>: Any colors painted using the paintbrush are assumed to exist when infinite
+                              piece counts are enabled
                             </p>
                           </small>
                         </div>
@@ -806,28 +1176,40 @@
                               <th scope="col">Number Available</th>
                             </tr>
                           </thead>
-                          <tbody id="custom-stud-table-body">
-                          </tbody>
+                          <tbody id="custom-stud-table-body"></tbody>
                         </table>
                         <div style="padding-bottom: 10px">
                           <button class="btn btn-success" id="add-custom-stud-button">
-                            <span class="glyphicon glyphicon-plus"></span>+ Add Stud</button>
+                            <span class="glyphicon glyphicon-plus"></span>+ Add Stud
+                          </button>
                         </div>
                         <div style="padding-bottom: 10px">
-                          <a id="export-stud-map-button" download="selected-studs.json" href=””>
+                          <a id="export-stud-map-button" download="selected-studs.json" href="””">
                             <button class="btn btn-info" type="button">Export Selected Studs</button>
                           </a>
                         </div>
                         <div class="btn-group">
-                          <button class="btn dropdown-toggle btn-info" type="button" id="mix-in-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button
+                            class="btn dropdown-toggle btn-info"
+                            type="button"
+                            id="mix-in-stud-map-button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
                             Mix in Studs From Existing Set
                           </button>
-                          <div class="dropdown-menu" id="mix-in-stud-map-options" aria-labelledby="mix-in-stud-map-button">
-                          </div>
+                          <div
+                            class="dropdown-menu"
+                            id="mix-in-stud-map-options"
+                            aria-labelledby="mix-in-stud-map-button"
+                          ></div>
                           <input type="file" id="import-stud-map-file-input" name="import-stud-map-file-input" hidden />
                         </div>
-                        <br>
-                        <small style=" margin-left: 4px"><b>Mixed in studs are added to studs already selected</b></small>
+                        <br />
+                        <small style="margin-left: 4px"
+                          ><b>Mixed in studs are added to studs already selected</b></small
+                        >
                       </div>
                     </div>
                   </div>
@@ -836,25 +1218,50 @@
                 <div class="card accordion-card hide-on-step-3-expansion">
                   <div class="card-header" id="step-3-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-3-collapse" aria-expanded="false" aria-controls="step-3-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-3-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-3-3-collapse"
+                      >
                         Pixel Piece
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-3-collapse" class="collapse" aria-labelledby="step-3-3-heading" data-parent="#step-3-accordion">
+                  <div
+                    id="step-3-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-3-3-heading"
+                    data-parent="#step-3-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <div class="btn-group">
-                          <button class="btn dropdown-toggle btn-outline-dark" type="button" id="bricklink-piece-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <button
+                            class="btn dropdown-toggle btn-outline-dark"
+                            type="button"
+                            id="bricklink-piece-button"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
                             Bricklink Pixel Piece
                           </button>
-                          <div class="dropdown-menu" id="bricklink-piece-options" aria-labelledby="stud-map-button">
-                          </div>
+                          <div
+                            class="dropdown-menu"
+                            id="bricklink-piece-options"
+                            aria-labelledby="stud-map-button"
+                          ></div>
                         </div>
-                        <div id="pixel-dimensions-container-wrapper" hidden style=" margin-top: 8px; margin-bottom: 2px">
+                        <div id="pixel-dimensions-container-wrapper" hidden style="margin-top: 8px; margin-bottom: 2px">
                           <small>
-                            <p style="margin-bottom: 8px;"><b>Important</b>: Since a variable size pixel type was selected, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available
-                                Colors'</span> was enabled - be careful!
+                            <p style="margin-bottom: 8px">
+                              <b>Important</b>: Since a variable size pixel type was selected,
+                              <span style="font-weight: 550">'Infinite Piece Counts'</span>
+                              under
+                              <span style="font-weight: 550">'Available Colors'</span>
+                              was enabled - be careful!
                             </p>
                           </small>
                           <b>Available Dimensions:</b>
@@ -868,73 +1275,121 @@
                 <div class="card accordion-card hide-on-step-3-expansion">
                   <div class="card-header" id="step-3-4-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-4-collapse" aria-expanded="false" aria-controls="step-3-4-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-3-4-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-3-4-collapse"
+                      >
                         Quantization
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-4-collapse" class="collapse" aria-labelledby="step-3-4-heading" data-parent="#step-3-accordion">
+                  <div
+                    id="step-3-4-collapse"
+                    class="collapse"
+                    aria-labelledby="step-3-4-heading"
+                    data-parent="#step-3-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <div style="margin-left: 4px;">
+                      <div style="margin-left: 4px">
                         <small>
-                          <b style="margin-bottom: 2px">Color Distance Function
-                          </b>
-                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; This setting determines which distance function is used to align pixels to
-                            their closest Lego colors
+                          <b style="margin-bottom: 2px">Color Distance Function </b>
+                          <p style="margin-bottom: 8px; margin-top: 4px">
+                            &#9679; This setting determines which distance function is used to align pixels to their
+                            closest Lego colors
                           </p>
                         </small>
-                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="distance-function-button" data-toggle="dropdown">
+                        <button
+                          class="btn dropdown-toggle btn-outline-dark"
+                          type="button"
+                          id="distance-function-button"
+                          data-toggle="dropdown"
+                        >
                           Euclidean RGB
                         </button>
-                        <div class="dropdown-menu" id="distance-function-options">
-                        </div>
+                        <div class="dropdown-menu" id="distance-function-options"></div>
                       </div>
-                      <div style="margin-top: 12px; margin-left: 4px;">
+                      <div style="margin-top: 12px; margin-left: 4px">
                         <small>
-                          <b style="margin-bottom: 2px">Quantization Algorithm
-                          </b>
-                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; This determines what strategy is used for aligning pixels
+                          <b style="margin-bottom: 2px">Quantization Algorithm </b>
+                          <p style="margin-bottom: 8px; margin-top: 4px">
+                            &#9679; This determines what strategy is used for aligning pixels
                           </p>
-                          <p style="margin-bottom: 8px; margin-top: 4px;">&#9679; Some algorithms run faster than others - be careful when running the greedy algorithms on larger images
+                          <p style="margin-bottom: 8px; margin-top: 4px">
+                            &#9679; Some algorithms run faster than others - be careful when running the greedy
+                            algorithms on larger images
                           </p>
                         </small>
-                        <button class="btn dropdown-toggle btn-outline-dark" type="button" id="quantization-algorithm-button" data-toggle="dropdown">
+                        <button
+                          class="btn dropdown-toggle btn-outline-dark"
+                          type="button"
+                          id="quantization-algorithm-button"
+                          data-toggle="dropdown"
+                        >
                           2 Phase
                         </button>
-                        <div class="dropdown-menu" id="quantization-algorithm-options">
-                        </div>
+                        <div class="dropdown-menu" id="quantization-algorithm-options"></div>
                       </div>
-                      <div style="margin-top: 4px; margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                      <div
+                        style="margin-top: 4px; margin-left: 4px"
+                        class="traditional-dithering-algorithm-warning"
+                        hidden
+                      >
                         <small>
-                          <p style="margin-bottom: 8px;"><b>Important</b>: Since this is a linear error dithering algorithm, <span style="font-weight: 550">'Infinite Piece Counts'</span> under <span style="font-weight: 550">'Available
-                              Colors'</span>
+                          <p style="margin-bottom: 8px">
+                            <b>Important</b>: Since this is a linear error dithering algorithm,
+                            <span style="font-weight: 550">'Infinite Piece Counts'</span>
+                            under
+                            <span style="font-weight: 550">'Available Colors'</span>
                             was enabled - be careful!
                           </p>
                         </small>
                       </div>
-                      <div style="margin-left: 4px;" class="traditional-dithering-algorithm-warning" hidden>
+                      <div style="margin-left: 4px" class="traditional-dithering-algorithm-warning" hidden>
                         <small>
-                          <p>It's often best to use <span style="font-weight: 550">'Euclidean RGB'</span> for the color distance function, for mathematical cleanliness</p>
+                          <p>
+                            It's often best to use
+                            <span style="font-weight: 550">'Euclidean RGB'</span>
+                            for the color distance function, for mathematical cleanliness
+                          </p>
                         </small>
                       </div>
-                      <div style="margin-top: 12px; margin-left: 4px;" id="color-ties-resolution-section">
+                      <div style="margin-top: 12px; margin-left: 4px" id="color-ties-resolution-section">
                         <small>
-                          <b style="margin-bottom: 2px">Color Tie Resolution Strategy
-                          </b>
-                          <p style="margin-bottom: 4px">Changing this is useful if you have a large background
-                            but not enough pieces to fill it out uniformly in step 4
+                          <b style="margin-bottom: 2px">Color Tie Resolution Strategy </b>
+                          <p style="margin-bottom: 4px">
+                            Changing this is useful if you have a large background but not enough pieces to fill it out
+                            uniformly in step 4
                           </p>
                         </small>
                         <div class="btn-group">
-                          <button class="btn dropdown-toggle btn-outline-dark" type="button" id="color-ties-resolution-button" data-toggle="dropdown">
+                          <button
+                            class="btn dropdown-toggle btn-outline-dark"
+                            type="button"
+                            id="color-ties-resolution-button"
+                            data-toggle="dropdown"
+                          >
                             Strategy: Alternating Mod
                           </button>
-                          <div class="dropdown-menu" id="color-ties-resolution-options">
-                          </div>
+                          <div class="dropdown-menu" id="color-ties-resolution-options"></div>
                         </div>
                         <div style="padding-top: 4px; padding-right: 12px; width: 100%">
-                          <div>Blocking Factor: <span id="color-tie-grouping-factor-text">1</span></div>
-                          <input type="range" id="color-tie-grouping-factor-slider" name="color-tie-grouping-factor-slider" min="1" max="5" step="1" value="1" style="width: 100%">
+                          <div>
+                            Blocking Factor:
+                            <span id="color-tie-grouping-factor-text">1</span>
+                          </div>
+                          <input
+                            type="range"
+                            id="color-tie-grouping-factor-slider"
+                            name="color-tie-grouping-factor-slider"
+                            min="1"
+                            max="5"
+                            step="1"
+                            value="1"
+                            style="width: 100%"
+                          />
                         </div>
                       </div>
                     </div>
@@ -943,7 +1398,12 @@
               </div>
             </div>
 
-            <div class="tab-pane fade" id="step-3-depth-tab-content" role="tabpanel" aria-labelledby="step-3-depth-tab-content">
+            <div
+              class="tab-pane fade"
+              id="step-3-depth-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-3-depth-tab-content"
+            >
               <canvas id="step-3-depth-canvas" hidden></canvas>
               <canvas id="step-3-depth-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 3</h4>
@@ -952,12 +1412,23 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-3-depth-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-3-depth-1-collapse" aria-expanded="false" aria-controls="step-3-depth-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-3-depth-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-3-depth-1-collapse"
+                      >
                         Edit Depth
                       </button>
                     </h5>
                   </div>
-                  <div id="step-3-depth-1-collapse" class="collapse" aria-labelledby="step-3-depth-1-heading" data-parent="#step-3-depth-accordion">
+                  <div
+                    id="step-3-depth-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-3-depth-1-heading"
+                    data-parent="#step-3-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px; margin-top: 8px">
                         <button class="btn btn-warning" type="button" id="clear-depth-overrides-button">
@@ -965,12 +1436,20 @@
                         </button>
                       </div>
                       <small>
-                        <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 4px">&#9679; Click a pixel to increase its height
+                        <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 4px">
+                          &#9679; Click a pixel to increase its height
                         </p>
-                        <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 4px">&#9679; Click a pixel to decrease its height</p>
+                        <p style="margin-top: 4px; margin-left: 4px; margin-bottom: 4px">
+                          &#9679; Click a pixel to decrease its height
+                        </p>
                       </small>
 
-                      <button style="margin-top: 8px; margin-left: 4px" class="btn btn-info" type="button" id="toggle-depth-expansion-button">
+                      <button
+                        style="margin-top: 8px; margin-left: 4px"
+                        class="btn btn-info"
+                        type="button"
+                        id="toggle-depth-expansion-button"
+                      >
                         Expand Picture
                       </button>
                     </div>
@@ -982,46 +1461,82 @@
         </div>
       </div>
 
-
       <div id="step-4" class="col-6 col-md-3 hide-on-step-3-expansion">
         <div class="card" style="padding: 10px; margin-bottom: 10px">
           <ul class="nav nav-tabs 3d-selector-tabs" role="tablist" hidden>
             <li class="nav-item">
-              <a class="nav-link active" id="step-4-color-tab" data-toggle="tab" href="#step-4-color-tab-content" role="tab" aria-controls="step-4-color-tab-content" aria-selected="true">Color</a>
+              <a
+                class="nav-link active"
+                id="step-4-color-tab"
+                data-toggle="tab"
+                href="#step-4-color-tab-content"
+                role="tab"
+                aria-controls="step-4-color-tab-content"
+                aria-selected="true"
+                >Color</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link" id="step-4-depth-tab" data-toggle="tab" href="#step-4-depth-tab-content" role="tab" aria-controls="step-4-depth-tab-content" aria-selected="true">Depth</a>
+              <a
+                class="nav-link"
+                id="step-4-depth-tab"
+                data-toggle="tab"
+                href="#step-4-depth-tab-content"
+                role="tab"
+                aria-controls="step-4-depth-tab-content"
+                aria-selected="true"
+                >Depth</a
+              >
             </li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane fade show active" id="step-4-color-tab-content" role="tabpanel" aria-labelledby="step-4-color-tab">
+            <div
+              class="tab-pane fade show active"
+              id="step-4-color-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-4-color-tab"
+            >
               <canvas id="step-4-canvas" hidden></canvas>
               <canvas id="bricklink-cache-canvas" hidden></canvas>
               <canvas id="step-4-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 4</h4>
               <small className="step-header-subtitle">Correct for available pieces, if piece counts are limited</small>
               <br />
-              <div className="step-header-subtitle text-danger" id="nonzero-missing-pieces-warning" hidden><small>'Missing Pieces' under 'Available Colors' must be 0 </small></div>
-              <span data-toggle="tooltip"
+              <div className="step-header-subtitle text-danger" id="nonzero-missing-pieces-warning" hidden>
+                <small>'Missing Pieces' under 'Available Colors' must be 0 </small>
+              </div>
+              <span
+                data-toggle="tooltip"
                 title="This is the average per pixel quantization error. The lower this value is, the closer this image is to the image in step 2 (according to the chosen color distance function). If this is significantly higher than the quantization error from step 3, see 'Pieces Missing From Step 3' under 'Pieces Used' to determine which additional pieces can be used to improve the image."
-                data-placement="top">
-                <small>Average</small> &#x3F5;: <small id="step-4-quantization-error"></small>
+                data-placement="top"
+              >
+                <small>Average</small> &#x3F5;:
+                <small id="step-4-quantization-error"></small>
               </span>
               <div id="step-4-accordion">
-
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-1-collapse" aria-expanded="false" aria-controls="step-4-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-1-collapse"
+                      >
                         Pieces Used
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-1-collapse" class="collapse" aria-labelledby="step-4-1-heading" data-parent="#step-4-accordion">
+                  <div
+                    id="step-4-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-1-heading"
+                    data-parent="#step-4-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                        <b>Pieces Used in Final Image
-                        </b>
+                        <b>Pieces Used in Final Image </b>
                       </div>
                       <table class="table">
                         <thead>
@@ -1031,16 +1546,15 @@
                             <th scope="col">Number Used</th>
                           </tr>
                         </thead>
-                        <tbody id="studs-used-table-body">
-                        </tbody>
+                        <tbody id="studs-used-table-body"></tbody>
                       </table>
                       <div id="studs-missing-container" hidden>
                         <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                          <b>Pieces Missing From Step 3
-                          </b>
+                          <b>Pieces Missing From Step 3 </b>
                         </div>
                         <div style="margin-left: 4px; margin-bottom: 2px; margin-top: 8px">
-                          <small>Adding these pieces will allow the image from step 4 to match the image from step 3
+                          <small
+                            >Adding these pieces will allow the image from step 4 to match the image from step 3
                           </small>
                         </div>
                         <table class="table">
@@ -1050,8 +1564,7 @@
                               <th scope="col">Number Missing</th>
                             </tr>
                           </thead>
-                          <tbody id="studs-missing-table-body">
-                          </tbody>
+                          <tbody id="studs-missing-table-body"></tbody>
                         </table>
                       </div>
                     </div>
@@ -1061,24 +1574,44 @@
                 <div class="card accordion-card" id="bricklink-export-card">
                   <div class="card-header" id="step-4-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-2-collapse" aria-expanded="false" aria-controls="step-4-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-2-collapse"
+                      >
                         Export Piece List
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-2-collapse" class="collapse" aria-labelledby="step-4-2-heading" data-parent="#step-4-accordion">
+                  <div
+                    id="step-4-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-2-heading"
+                    data-parent="#step-4-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <button type="button" id="export-to-bricklink-button" class="btn btn-info" style="margin-bottom: 10px; margin-top: 8px;">Copy Bricklink XML to Clipboard</button>
+                      <button
+                        type="button"
+                        id="export-to-bricklink-button"
+                        class="btn btn-info"
+                        style="margin-bottom: 10px; margin-top: 8px"
+                      >
+                        Copy Bricklink XML to Clipboard
+                      </button>
                       <br />
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">The type of piece used depends on 'Pixel Piece' under step 3</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">Frame elements are not exported</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px;">
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          The type of piece used depends on 'Pixel Piece' under step 3
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">Frame elements are not exported</p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
                           <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
                             Bricklink Upload Page
                           </a>
                         </p>
-                        <p style=" margin-left: 4px">
+                        <p style="margin-left: 4px">
                           <a href="https://www.lego.com/en-us/page/static/pick-a-brick" target="_blank">
                             U.S. Pick a Brick Page
                           </a>
@@ -1091,74 +1624,137 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-3-collapse" aria-expanded="false" aria-controls="step-4-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-3-collapse"
+                      >
                         Instructions
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-3-collapse" class="collapse" aria-labelledby="step-4-3-heading" data-parent="#step-4-accordion">
+                  <div
+                    id="step-4-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-3-heading"
+                    data-parent="#step-4-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <div class="progress" style="height: 37px;" id="pdf-progress-container" hidden>
-                        <div class="progress-bar" id="pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
+                      <div class="progress" style="height: 37px" id="pdf-progress-container" hidden>
+                        <div
+                          class="progress-bar"
+                          id="pdf-progress-bar"
+                          role="progressbar"
+                          style="background-color: #17a2b8; transition: none"
+                        ></div>
                       </div>
                       <div id="instructions-canvas-container" hidden></div>
-                      <button type="button" id="download-instructions-button" class="btn btn-info" style="margin-top: 8px">Generate Instructions PDF</button>
+                      <button
+                        type="button"
+                        id="download-instructions-button"
+                        class="btn btn-info"
+                        style="margin-top: 8px"
+                      >
+                        Generate Instructions PDF
+                      </button>
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <label class="checkbox-clickable">
-                          <input type="checkbox" class="checkbox-clickable" id="high-quality-instructions-check">
-                          <span style="font-size: 13px;">High quality pdf</span>
+                          <input type="checkbox" class="checkbox-clickable" id="high-quality-instructions-check" />
+                          <span style="font-size: 13px">High quality pdf</span>
                         </label>
                       </div>
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">Color names are Bricklink colors</p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          Longer instructions may be split into multiple files
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">Color names are Bricklink colors</p>
                       </small>
                       <div style="margin-left: 4px; margin-bottom: 4px">
                         <small>
                           <b style="color: #ff4c00">Important</b>
                           <p>
-                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                            Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                            Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
-                            so I recommend starting at the default and then going up.
+                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few
+                            seconds to generate. Be prepared to wait if you're generating instructions for larger
+                            resolutions, especially for high quality pdfs. Larger resolutions may also cause some
+                            slowness on the page or may not work at all on less powerful devices, so I recommend
+                            starting at the default and then going up.
                           </p>
                         </small>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
-
             </div>
-            <div class="tab-pane fade show" id="step-4-depth-tab-content" role="tabpanel" aria-labelledby="step-4-depth-tab">
-              <div id="step-4-canvas-3d-upscaled" style="width: 100%">
-              </div>
-              <h4 style="margin-top: 4px; padding-bottom: 4px;">3D Preview</h4>
-              <small className="step-header-subtitle">If you can't see the 3D effect when hovering your mouse over the image, check the input from depth step 1</small>
+            <div
+              class="tab-pane fade show"
+              id="step-4-depth-tab-content"
+              role="tabpanel"
+              aria-labelledby="step-4-depth-tab"
+            >
+              <div id="step-4-canvas-3d-upscaled" style="width: 100%"></div>
+              <h4 style="margin-top: 4px; padding-bottom: 4px">3D Preview</h4>
+              <small className="step-header-subtitle"
+                >If you can't see the 3D effect when hovering your mouse over the image, check the input from depth step
+                1</small
+              >
               <div id="step-4-depth-accordion">
-
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-depth-1-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-1-collapse" aria-expanded="false" aria-controls="step-4-depth-1-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-depth-1-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-depth-1-collapse"
+                      >
                         Tips
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-depth-1-collapse" class="collapse" aria-labelledby="step-4-depth-1-heading" data-parent="#step-4-depth-accordion">
+                  <div
+                    id="step-4-depth-1-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-depth-1-heading"
+                    data-parent="#step-4-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <div style="width: 100%">
-                        <div><small id="height-text"><b>Preview effect intensity</b></small></div>
-                        <input type="range" id="3d-effect-intensity" name="points" min="0.015" max="0.03" step="0.005" value="0.01" style="width: 100%">
+                        <div>
+                          <small id="height-text"><b>Preview effect intensity</b></small>
+                        </div>
+                        <input
+                          type="range"
+                          id="3d-effect-intensity"
+                          name="points"
+                          min="0.015"
+                          max="0.03"
+                          step="0.005"
+                          value="0.01"
+                          style="width: 100%"
+                        />
                       </div>
                       <small>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is a (very) rough preview of what the 3D effect might look like</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Hover your mouse over the image to vary the perspective</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Make sure your depth map is not blank</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; This is unlikely to work well on less powerful devices, since this is generated dynamically</p>
-                        <p style="margin-left: 4px; margin-bottom: 8px;">&#9679; Keep in mind that the effect varies from browser to browser, can be subtle,
-                          and may not be 100% representative of what the physical art piece would look like</p>
+                        <p style="margin-left: 4px; margin-bottom: 8px">
+                          &#9679; This is a (very) rough preview of what the 3D effect might look like
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px">
+                          &#9679; Hover your mouse over the image to vary the perspective
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px">
+                          &#9679; Make sure your depth map is not blank
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px">
+                          &#9679; This is unlikely to work well on less powerful devices, since this is generated
+                          dynamically
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 8px">
+                          &#9679; Keep in mind that the effect varies from browser to browser, can be subtle, and may
+                          not be 100% representative of what the physical art piece would look like
+                        </p>
                       </small>
                     </div>
                   </div>
@@ -1167,19 +1763,36 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-depth-4-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-4-collapse" aria-expanded="false" aria-controls="step-4-depth-4-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-depth-4-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-depth-4-collapse"
+                      >
                         Depth Plates
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-depth-4-collapse" class="collapse" aria-labelledby="step-4-depth-4-heading" data-parent="#step-4-depth-accordion">
+                  <div
+                    id="step-4-depth-4-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-depth-4-heading"
+                    data-parent="#step-4-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; This is the set of plates that may be used to generate depth instructions and piece
-                          lists</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; These pieces are used as padding so that the correct pixels protrude outwards</p>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">&#9679; Note that larger plates may be difficult to attach/detach from the base</p>
-                        <b style=" margin-left: 4px; margin-bottom: 2px">Available Plates:</b>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          &#9679; This is the set of plates that may be used to generate depth instructions and piece
+                          lists
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          &#9679; These pieces are used as padding so that the correct pixels protrude outwards
+                        </p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          &#9679; Note that larger plates may be difficult to attach/detach from the base
+                        </p>
+                        <b style="margin-left: 4px; margin-bottom: 2px">Available Plates:</b>
                       </small>
                       <div id="depth-plates-container"></div>
                     </div>
@@ -1189,37 +1802,65 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-depth-2-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-2-collapse" aria-expanded="false" aria-controls="step-4-depth-2-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-depth-2-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-depth-2-collapse"
+                      >
                         Instructions
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-depth-2-collapse" class="collapse" aria-labelledby="step-4-depth-2-heading" data-parent="#step-4-depth-accordion">
+                  <div
+                    id="step-4-depth-2-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-depth-2-heading"
+                    data-parent="#step-4-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <div class="progress" style="height: 37px;" id="depth-pdf-progress-container" hidden>
-                        <div class="progress-bar" id="depth-pdf-progress-bar" role="progressbar" style="background-color: #17a2b8; transition: none;"></div>
+                      <div class="progress" style="height: 37px" id="depth-pdf-progress-container" hidden>
+                        <div
+                          class="progress-bar"
+                          id="depth-pdf-progress-bar"
+                          role="progressbar"
+                          style="background-color: #17a2b8; transition: none"
+                        ></div>
                       </div>
-                      <button type="button" id="download-depth-instructions-button" class="btn btn-info" style="margin-top: 8px">
+                      <button
+                        type="button"
+                        id="download-depth-instructions-button"
+                        class="btn btn-info"
+                        style="margin-top: 8px"
+                      >
                         Generate Depth Instructions PDF
                       </button>
                       <div id="depth-instructions-canvas-container" hidden></div>
                       <div class="checkbox" style="margin-top: 4px; margin-left: 4px">
                         <label class="checkbox-clickable">
-                          <input type="checkbox" class="checkbox-clickable" id="high-quality-depth-instructions-check">
-                          <span style="font-size: 13px;">High quality pdf</span>
+                          <input
+                            type="checkbox"
+                            class="checkbox-clickable"
+                            id="high-quality-depth-instructions-check"
+                          />
+                          <span style="font-size: 13px">High quality pdf</span>
                         </label>
                       </div>
                       <small>
-                        <p style=" margin-left: 4px; margin-bottom: 4px">Longer instructions may be split into multiple files</p>
+                        <p style="margin-left: 4px; margin-bottom: 4px">
+                          Longer instructions may be split into multiple files
+                        </p>
                       </small>
                       <div style="margin-left: 4px; margin-bottom: 4px">
                         <small>
                           <b style="color: #ff4c00">Important</b>
                           <p>
-                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few seconds to generate.
-                            Be prepared to wait if you're generating instructions for larger resolutions, especially for high quality pdfs.
-                            Larger resolutions may also cause some slowness on the page or may not work at all on less powerful devices,
-                            so I recommend starting at the default and then going up.
+                            Depending on your hardware and the resolution you've chosen, the pdf can take quite a few
+                            seconds to generate. Be prepared to wait if you're generating instructions for larger
+                            resolutions, especially for high quality pdfs. Larger resolutions may also cause some
+                            slowness on the page or may not work at all on less powerful devices, so I recommend
+                            starting at the default and then going up.
                           </p>
                         </small>
                       </div>
@@ -1230,23 +1871,40 @@
                 <div class="card accordion-card">
                   <div class="card-header" id="step-4-depth-3-heading">
                     <h5 class="mb-0">
-                      <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#step-4-depth-3-collapse" aria-expanded="false" aria-controls="step-4-depth-3-collapse">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-4-depth-3-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-4-depth-3-collapse"
+                      >
                         Pieces Used
                       </button>
                     </h5>
                   </div>
-                  <div id="step-4-depth-3-collapse" class="collapse" aria-labelledby="step-4-depth-3-heading" data-parent="#step-4-depth-accordion">
+                  <div
+                    id="step-4-depth-3-collapse"
+                    class="collapse"
+                    aria-labelledby="step-4-depth-3-heading"
+                    data-parent="#step-4-depth-accordion"
+                  >
                     <div class="card-body accordion-card-body">
-                      <button type="button" id="export-depth-to-bricklink-button" class="btn btn-info" disabled style="margin-bottom: 10px; margin-top: 8px;">
+                      <button
+                        type="button"
+                        id="export-depth-to-bricklink-button"
+                        class="btn btn-info"
+                        disabled
+                        style="margin-bottom: 10px; margin-top: 8px"
+                      >
                         Copy Bricklink XML to Clipboard
                       </button>
-                      <small style=" margin-left: 4px">
+                      <small style="margin-left: 4px">
                         <a href="https://www.bricklink.com/v2/wanted/upload.page" target="_blank">
                           Bricklink Upload Page
                         </a>
                       </small>
                       <br />
-                      <small style=" margin-left: 4px">
+                      <small style="margin-left: 4px">
                         <a href="https://www.lego.com/en-us/page/static/pick-a-brick" target="_blank">
                           U.S. Pick a Brick Page
                         </a>
@@ -1259,26 +1917,42 @@
           </div>
         </div>
       </div>
-
     </div>
 
     <div id="image-input-card" class="card card-body" style="padding-bottom: 10px">
       <div class="row">
         <div class="col-sm">
           <h3 style="font-weight: 600">Get Started</h3>
-          <span class="btn-group" style="margin-top: 8px;">
+          <span class="btn-group" style="margin-top: 8px">
             <div class="row" style="margin-left: 0px">
-              <div style="margin-right: 4px;">
-                <span style="margin-left: 4px; margin-right: 8px; margin-top: 4px; font-weight: 600">Input Pieces:</span>
-                <span data-toggle="tooltip" title="This can also be changed or adjusted piece by piece later" data-placement="top">
-                  <button class="btn dropdown-toggle btn-outline-dark btn-sm" type="button" id="select-starting-custom-stud-map-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
+              <div style="margin-right: 4px">
+                <span style="margin-left: 4px; margin-right: 8px; margin-top: 4px; font-weight: 600"
+                  >Input Pieces:</span
+                >
+                <span
+                  data-toggle="tooltip"
+                  title="This can also be changed or adjusted piece by piece later"
+                  data-placement="top"
+                >
+                  <button
+                    class="btn dropdown-toggle btn-outline-dark btn-sm"
+                    type="button"
+                    id="select-starting-custom-stud-map-button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    disabled
+                  >
                     Input set
                   </button>
-                  <div class="dropdown-menu" id="select-starting-custom-stud-map-options" aria-labelledby="select-starting-custom-stud-map-button">
-                  </div>
+                  <div
+                    class="dropdown-menu"
+                    id="select-starting-custom-stud-map-options"
+                    aria-labelledby="select-starting-custom-stud-map-button"
+                  ></div>
                 </span>
               </div>
-              <div style="margin-left: 2px;">
+              <div style="margin-left: 2px">
                 <small style="margin-top: 10px" class="text-muted" id="input-stud-map-description"></small>
               </div>
             </div>
@@ -1287,20 +1961,31 @@
           <canvas id="input-depth-canvas" hidden></canvas>
           <span id="image-input">
             <input type="file" id="input-image-selector-hidden" name="input-image-selector-hidden" hidden />
-            <div style="margin-top: 12px;">
+            <div style="margin-top: 12px">
               <button class="btn btn-success" type="button" id="input-image-selector" disabled>
                 Select Input Image
               </button>
             </div>
           </span>
-          <small hidden><a target="_blank" id="hogwarts-crest-example-instructions-link" href="assets/pdf/lego-art-remix-discount-hogwarts-crest-instructions.pdf">
-              Example use case</a> - this is a full Hogwarts crest created by the algorithm with just 1 copy of
-            <a target="_blank" id="31201-lego-website-link" href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201">set 31201</a></small>
+          <small hidden
+            ><a
+              target="_blank"
+              id="hogwarts-crest-example-instructions-link"
+              href="assets/pdf/lego-art-remix-discount-hogwarts-crest-instructions.pdf"
+            >
+              Example use case</a
+            >
+            - this is a full Hogwarts crest created by the algorithm with just 1 copy of
+            <a
+              target="_blank"
+              id="31201-lego-website-link"
+              href="https://www.lego.com/en-us/product/harry-potter-hogwarts-crests-31201"
+              >set 31201</a
+            ></small
+          >
           <span id="run-example-input-container" hidden>
             <span style="margin-left: 8px; margin-right: 8px; font-weight: 600">Or</span>
-            <button class="btn btn-success" type="button" id="run-example-input" disabled>
-              See an Example
-            </button>
+            <button class="btn btn-success" type="button" id="run-example-input" disabled>See an Example</button>
           </span>
         </div>
       </div>
@@ -1310,40 +1995,88 @@
       <div class="row">
         <div class="col-sm">
           <h5>
-            <a data-toggle="collapse" href="#articles" aria-expanded="false" aria-controls="articles" id="toggle-tech-talk-button">
+            <a
+              data-toggle="collapse"
+              href="#articles"
+              aria-expanded="false"
+              aria-controls="articles"
+              id="toggle-tech-talk-button"
+            >
               Tech Talk + Other Media
             </a>
           </h5>
           <div class="collapse" id="articles">
             <p style="margin-bottom: 4px; font-weight: 600">Below is a recording of my tech talk from BrickCon 2021</p>
             <small>
-              <p style="margin-bottom: 4px;">If you're interested in understanding how this site works, the talk goes over the techniques and algorithms that were used</p>
-              <p style="margin-bottom: 4px;">It also goes over some ideas that haven't (yet) been implemented within the tool, so it functions fairly well as a more general overview of the Lego mosaic space</p>
-              <p style="margin-bottom: 4px;">You can find the slide deck used in the talk <a href="https://github.com/debkbanerji/lego-art-remix/blob/master/media/Lego%20Mosaic%20Presentation.pdf" target="_blank">here</a>,
-                and if the video doesn't load, you can find it directly on BrickCon's YouTube channel <a href="https://www.youtube.com/watch?v=G58ZNurxXgQ" target="_blank">here</a></p>
+              <p style="margin-bottom: 4px">
+                If you're interested in understanding how this site works, the talk goes over the techniques and
+                algorithms that were used
+              </p>
+              <p style="margin-bottom: 4px">
+                It also goes over some ideas that haven't (yet) been implemented within the tool, so it functions fairly
+                well as a more general overview of the Lego mosaic space
+              </p>
+              <p style="margin-bottom: 4px">
+                You can find the slide deck used in the talk
+                <a
+                  href="https://github.com/debkbanerji/lego-art-remix/blob/master/media/Lego%20Mosaic%20Presentation.pdf"
+                  target="_blank"
+                  >here</a
+                >, and if the video doesn't load, you can find it directly on BrickCon's YouTube channel
+                <a href="https://www.youtube.com/watch?v=G58ZNurxXgQ" target="_blank">here</a>
+              </p>
             </small>
             <div class="row">
               <div class="col-12 col-md-6">
-                <div id="responsive-youtube">
-                  Loading...
-                </div>
+                <div id="responsive-youtube">Loading...</div>
               </div>
             </div>
-            <p style="margin-bottom: 4px; margin-top: 15px; font-weight: 600">These are some other articles and videos featuring Lego Art Remix</p>
+            <p style="margin-bottom: 4px; margin-top: 15px; font-weight: 600">
+              These are some other articles and videos featuring Lego Art Remix
+            </p>
             <small>
-              <p style="margin-bottom: 4px">Some are quite interesting even outside the context of this tool in particular, since they
-                go into the history of Lego mosaics</p>
+              <p style="margin-bottom: 4px">
+                Some are quite interesting even outside the context of this tool in particular, since they go into the
+                history of Lego mosaics
+              </p>
               <p style="margin-bottom: 4px">Note that some were made when the tool was older</p>
               <ul>
-                <li><a href="https://www.instagram.com/explore/tags/legoartremix/" target="_blank">#LegoArtRemix on Instagram</a></li>
-                <li><a href="https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app" target="_blank">Global News Morning Segment</a></li>
-                <li><span style="display: flex; align-items: center;"><a href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/" target="_blank">Brothers Brick Article</a>
-                    &nbsp;<span style="font-size: 0.925em; display: flex; align-items: center;">(2020 Top 3 most popular feature)</span></span></li>
-                <li><a href="http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/" target="_blank">TheBrickBlogger Article</a></li>
-                <li><a href="https://www.youtube.com/watch?v=RY4OJnD99VQ" target="_blank">DuckBricks Video</a></li>
+                <li>
+                  <a href="https://www.instagram.com/explore/tags/legoartremix/" target="_blank"
+                    >#LegoArtRemix on Instagram</a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://globalnews.ca/video/7439079/you-can-store-your-medical-records-on-this-app"
+                    target="_blank"
+                    >Global News Morning Segment</a
+                  >
+                </li>
+                <li>
+                  <span style="display: flex; align-items: center"
+                    ><a
+                      href="https://www.brothers-brick.com/2020/08/27/create-your-own-mosaic-masterpiece-with-lego-art-remix-review-interview/"
+                      target="_blank"
+                      >Brothers Brick Article</a
+                    >
+                    &nbsp;<span style="font-size: 0.925em; display: flex; align-items: center"
+                      >(2020 Top 3 most popular feature)</span
+                    ></span
+                  >
+                </li>
+                <li>
+                  <a
+                    href="http://thebrickblogger.com/2020/12/building-custom-lego-mosaics-with-lego-art-sets/"
+                    target="_blank"
+                    >TheBrickBlogger Article</a
+                  >
+                </li>
+                <li>
+                  <a href="https://www.youtube.com/watch?v=RY4OJnD99VQ" target="_blank">DuckBricks Video</a>
+                </li>
               </ul>
             </small>
-
           </div>
         </div>
       </div>
@@ -1352,59 +2085,75 @@
       <div class="row">
         <div class="col-sm">
           <h5>
-            <a data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="about">
-              About
-            </a>
+            <a data-toggle="collapse" href="#about" aria-expanded="false" aria-controls="about"> About </a>
           </h5>
           <div class="collapse" id="about">
-            <div style="margin-bottom: 15px;">
+            <div style="margin-bottom: 15px">
               <small>
-                <span id="version-number"></span> &bull;
-                <span>Made with ♥ by Deb</span> &bull;
+                <span id="version-number"></span> &bull; <span>Made with ♥ by Deb</span> &bull;
                 <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">Source Code</a>
                 <span id="total-generated-count"></span>
               </small>
             </div>
             <h6>What is it?</h6>
-            <p style="margin-bottom: 5px">In 2020, The Lego Group released the <a href="https://www.lego.com/en-us/campaigns/art" target="_blank">Lego Art<a />
-                theme, which allows people to create a predetermined image using lego studs.<br>
-                Lego Art Remix lets you upload your own image, and then uses computer vision to use the
-                studs from a Lego Art set that you already have to recreate the image.</p>
+            <p style="margin-bottom: 5px">
+              In 2020, The Lego Group released the
+              <a href="https://www.lego.com/en-us/campaigns/art" target="_blank">Lego Art</a>
+              theme, which allows people to create a predetermined image using lego studs.<br />
+              Lego Art Remix lets you upload your own image, and then uses computer vision to use the studs from a Lego
+              Art set that you already have to recreate the image.
+            </p>
             <p>This project is not affiliated with The Lego Group</p>
             <h6>Performance and Security</h6>
             <p style="margin-bottom: 5px">
-              The computer vision techniques used are pretty inexpensive (with the exception of optional depth map generation),
-              and the resolutions being dealt with are naturally quite low, so as of the time of writing, the algorithm runs
-              quite quickly. This allows for it to be run on the client, and on the machines that I tested, it ran in near real time.
+              The computer vision techniques used are pretty inexpensive (with the exception of optional depth map
+              generation), and the resolutions being dealt with are naturally quite low, so as of the time of writing,
+              the algorithm runs quite quickly. This allows for it to be run on the client, and on the machines that I
+              tested, it ran in near real time.
             </p>
             <p style="margin-bottom: 5px">
-              The most computationally expensive part of the process, apart from depth map generation, is generating the instructions,
-              since even pdf generation is done client side.
+              The most computationally expensive part of the process, apart from depth map generation, is generating the
+              instructions, since even pdf generation is done client side.
             </p>
             <p style="margin-bottom: 5px">
-              Since it runs almost entirely within the browser (see the <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>),
-              no image data is sent to a server and so it's very secure. This also makes it much easier for me to maintain and host. The only server code
-              consists of simple increments to anonymously estimate usage for the purposes for tracking performance in case the static deployment needs to be scaled up, and for the counter in the about section.
+              Since it runs almost entirely within the browser (see the
+              <a href="https://github.com/debkbanerji/lego-art-remix" target="_blank">source code</a>), no image data is
+              sent to a server and so it's very secure. This also makes it much easier for me to maintain and host. The
+              only server code consists of simple increments to anonymously estimate usage for the purposes for tracking
+              performance in case the static deployment needs to be scaled up, and for the counter in the about section.
             </p>
-            <p style="margin-bottom: 5px"> Even the deep neural network to compute depth maps is being run entirely within the browser, in a web worker, using a modified version of <a href="https://github.com/microsoft/onnxjs"
-                target="_blank">ONNX.js</a>.
-              I've compiled a version of the library based on <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this pull request</a>, with a small additional change I made to support the resize operation in v10.
-              The model used is <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a> - more specifically, the small ONNX version which can be found <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1"
-                target="_blank">here</a>.</p>
-            <div class="card" style="margin-top:4px; margin-bottom:16px; padding: 4px">
+            <p style="margin-bottom: 5px">
+              Even the deep neural network to compute depth maps is being run entirely within the browser, in a web
+              worker, using a modified version of
+              <a href="https://github.com/microsoft/onnxjs" target="_blank">ONNX.js</a>. I've compiled a version of the
+              library based on
+              <a href="https://github.com/microsoft/onnxjs/pull/228" target="_blank">this pull request</a>, with a small
+              additional change I made to support the resize operation in v10. The model used is
+              <a href="https://github.com/intel-isl/MiDaS" target="_blank">MiDaS</a>
+              - more specifically, the small ONNX version which can be found
+              <a href="https://github.com/intel-isl/MiDaS/releases/tag/v2_1" target="_blank">here</a>.
+            </p>
+            <div class="card" style="margin-top: 4px; margin-bottom: 16px; padding: 4px">
               <b>Citation for Model Used</b>
               <span>
-                Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020). <i>IEEE Transactions on Pattern
-                  Analysis and Machine Intelligence</i></span>
+                Ranftl, René, Katrin Lasinger, David Hafner, Konrad Schindler, and Vladlen Koltun. "Towards robust
+                monocular depth estimation: Mixing datasets for zero-shot cross-dataset transfer." (2020).
+                <i>IEEE Transactions on Pattern Analysis and Machine Intelligence</i></span
+              >
             </div>
             <p></p>
             <h6>Bugs, Feature Requests, and Algorithm Improvements</h6>
-            <em style="margin-bottom: 5px">Direct any concerns or ideas for improvements <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em>
-            <p style="margin-bottom: 5px">As of the time of writing, I don't have all of the sets, and I haven't had much time to test.
-              As a result, there's probably a few bugs, so let me know if you find any.
+            <em style="margin-bottom: 5px"
+              >Direct any concerns or ideas for improvements
+              <a href="https://github.com/debkbanerji/lego-art-remix/issues" target="_blank">here</a></em
+            >
+            <p style="margin-bottom: 5px">
+              As of the time of writing, I don't have all of the sets, and I haven't had much time to test. As a result,
+              there's probably a few bugs, so let me know if you find any.
             </p>
-            <p style="margin-bottom: 5px">Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within
-              a reasonable degree would allow the algorithm to keep running on the client, which I really like.
+            <p style="margin-bottom: 5px">
+              Algorithm improvement ideas are always welcome. Improvements that maintain the efficiency to within a
+              reasonable degree would allow the algorithm to keep running on the client, which I really like.
             </p>
           </div>
         </div>
@@ -1414,13 +2163,13 @@
       <div class="row">
         <div class="col-sm">
           <h5>
-            <a data-toggle="collapse" href="#metrics" aria-expanded="false" aria-controls="metrics">
-              Usage Metrics
-            </a>
+            <a data-toggle="collapse" href="#metrics" aria-expanded="false" aria-controls="metrics"> Usage Metrics </a>
           </h5>
           <div class="collapse" id="metrics">
             <small>
-              <p style="margin-bottom: 4px">Note: No user data is stored, so this is just aggregated info based on simple increments</p>
+              <p style="margin-bottom: 4px">
+                Note: No user data is stored, so this is just aggregated info based on simple increments
+              </p>
             </small>
             <div>
               <table id="input-image-count-table">
@@ -1434,114 +2183,130 @@
         </div>
       </div>
     </div>
-  </div>
+    <!-- </div> -->
 
-  <script>
-    // add background generation code inline so it loads in before other logic
-    function rgbToHex(r, g, b) {
-      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    }
-
-    function handleDarkModeChange() {
-      const isDarkModeEnabled = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      Array.from(document.getElementsByClassName('dark-mode-stylesheet')).forEach(stylesheet => {
-        stylesheet.disabled = !isDarkModeEnabled;
-      });
-
-      const canvas = document.getElementById("background-image-cache-canvas");
-      const ctx = canvas.getContext("2d");
-
-      const CIRCLE_RADIUS = 10;
-      const WIDTH_COUNT = 40;
-      const HEIGHT_COUNT = 20;
-      const MIN_CIRCLE_BRIGHTNESS = 245;
-
-      canvas.width = CIRCLE_RADIUS * WIDTH_COUNT;
-      canvas.height = CIRCLE_RADIUS * HEIGHT_COUNT;
-
-      for (let i = 0; i < HEIGHT_COUNT; i++) {
-        for (let j = 0; j < WIDTH_COUNT; j++) {
-          ctx.beginPath();
-          ctx.arc(
-            CIRCLE_RADIUS + 2 * i * CIRCLE_RADIUS,
-            CIRCLE_RADIUS + 2 * j * CIRCLE_RADIUS,
-            CIRCLE_RADIUS,
-            0,
-            2 * Math.PI
-          );
-          let brightness =
-            MIN_CIRCLE_BRIGHTNESS +
-            Math.floor(Math.random() * (255 - MIN_CIRCLE_BRIGHTNESS));
-          if (isDarkModeEnabled) {
-            brightness = 255 - brightness;
-          }
-          ctx.fillStyle = rgbToHex(brightness, brightness, brightness);
-          ctx.fill();
-        }
+    <script>
+      // add background generation code inline so it loads in before other logic
+      function rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
       }
 
-      const dataURL = canvas.toDataURL("image/png", 1.0);
-
-      document.body.style.backgroundImage = `url('${dataURL}')`;
-    }
-
-    handleDarkModeChange();
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleDarkModeChange);
-  </script>
-
-  <!-- Add firebase to log performance -->
-  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
-  <script>
-    firebase.initializeApp({
-      apiKey: "AIzaSyDZpG-5SrDxpwV9kmbwNiiKXJhg-qaH1d8",
-      authDomain: "lego-art-remix-stats.firebaseapp.com",
-      databaseURL: "https://lego-art-remix-stats.firebaseio.com",
-      projectId: "lego-art-remix-stats",
-      storageBucket: "lego-art-remix-stats.appspot.com",
-      messagingSenderId: "622482243553",
-      appId: "1:622482243553:web:3ef8ee3f3796190528dca0"
-    });
-  </script>
-
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
-  <script src="https://d3js.org/d3.v5.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js" integrity="sha512-IlZV3863HqEgMeFLVllRjbNOoh8uVj0kgx0aYxgt4rdBABTZCl/h5MfshHD9BrnVs6Rs9yNN7kUQpzhcLkNmHw==" crossorigin="anonymous"
-    referrerpolicy="no-referrer"></script>
-  <script src="js/pixi.min.js"></script>
-  <script src="js/bricklink-colors.js"></script>
-  <script src="js/stud-maps.js"></script>
-  <script src="js/heap.js"></script>
-  <script src="js/algo.js"></script>
-  <script src="js/index.js"></script>
-  <script src="js/metrics.js"></script>
-
-  <script>
-    // note that the disableServiceWorker param only disables new service worker registration
-    if ('serviceWorker' in navigator && !window.location.href.match(/disableServiceWorker/gi)) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(function(registration) {
-          console.log('Service worker registration successful, scope is:', registration.scope);
-        })
-        .catch(function(error) {
-          console.error('Service worker registration failed, error:', error);
+      function handleDarkModeChange() {
+        const isDarkModeEnabled = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        Array.from(document.getElementsByClassName("dark-mode-stylesheet")).forEach((stylesheet) => {
+          stylesheet.disabled = !isDarkModeEnabled;
         });
-    }
-  </script>
 
-  <footer>
-    <small class="footer">
-      <p> This project is not affiliated with The Lego Group</p>
-    </small>
-  </footer>
+        const canvas = document.getElementById("background-image-cache-canvas");
+        const ctx = canvas.getContext("2d");
 
-</body>
+        const CIRCLE_RADIUS = 10;
+        const WIDTH_COUNT = 40;
+        const HEIGHT_COUNT = 20;
+        const MIN_CIRCLE_BRIGHTNESS = 245;
 
+        canvas.width = CIRCLE_RADIUS * WIDTH_COUNT;
+        canvas.height = CIRCLE_RADIUS * HEIGHT_COUNT;
+
+        for (let i = 0; i < HEIGHT_COUNT; i++) {
+          for (let j = 0; j < WIDTH_COUNT; j++) {
+            ctx.beginPath();
+            ctx.arc(
+              CIRCLE_RADIUS + 2 * i * CIRCLE_RADIUS,
+              CIRCLE_RADIUS + 2 * j * CIRCLE_RADIUS,
+              CIRCLE_RADIUS,
+              0,
+              2 * Math.PI
+            );
+            let brightness = MIN_CIRCLE_BRIGHTNESS + Math.floor(Math.random() * (255 - MIN_CIRCLE_BRIGHTNESS));
+            if (isDarkModeEnabled) {
+              brightness = 255 - brightness;
+            }
+            ctx.fillStyle = rgbToHex(brightness, brightness, brightness);
+            ctx.fill();
+          }
+        }
+
+        const dataURL = canvas.toDataURL("image/png", 1.0);
+
+        document.body.style.backgroundImage = `url('${dataURL}')`;
+      }
+
+      handleDarkModeChange();
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", handleDarkModeChange);
+    </script>
+
+    <!-- Add firebase to log performance -->
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.0/firebase-database.js"></script>
+    <script>
+      firebase.initializeApp({
+        apiKey: "AIzaSyDZpG-5SrDxpwV9kmbwNiiKXJhg-qaH1d8",
+        authDomain: "lego-art-remix-stats.firebaseapp.com",
+        databaseURL: "https://lego-art-remix-stats.firebaseio.com",
+        projectId: "lego-art-remix-stats",
+        storageBucket: "lego-art-remix-stats.appspot.com",
+        messagingSenderId: "622482243553",
+        appId: "1:622482243553:web:3ef8ee3f3796190528dca0",
+      });
+    </script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js"
+      integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-color-difference"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/2.0.0-alpha.2/cropper.min.js"
+      integrity="sha512-IlZV3863HqEgMeFLVllRjbNOoh8uVj0kgx0aYxgt4rdBABTZCl/h5MfshHD9BrnVs6Rs9yNN7kUQpzhcLkNmHw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/pixi.min.js"></script>
+    <script src="js/bricklink-colors.js"></script>
+    <script src="js/stud-maps.js"></script>
+    <script src="js/heap.js"></script>
+    <script src="js/algo.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/metrics.js"></script>
+
+    <script>
+      // note that the disableServiceWorker param only disables new service worker registration
+      if ("serviceWorker" in navigator && !window.location.href.match(/disableServiceWorker/gi)) {
+        navigator.serviceWorker
+          .register("service-worker.js")
+          .then(function (registration) {
+            console.log("Service worker registration successful, scope is:", registration.scope);
+          })
+          .catch(function (error) {
+            console.error("Service worker registration failed, error:", error);
+          });
+      }
+    </script>
+
+    <footer>
+      <small class="footer">
+        <p>This project is not affiliated with The Lego Group</p>
+      </small>
+    </footer>
+  </body>
 </html>

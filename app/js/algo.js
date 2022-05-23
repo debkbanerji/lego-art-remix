@@ -15,18 +15,14 @@ function inverseHex(hex) {
     return (
         "#" +
         hex
-        .match(/[a-f0-9]{2}/gi)
-        .map(e =>
-            ((255 - parseInt(e, 16)) | 0)
-            .toString(16)
-            .replace(/^([a-f0-9])$/, "0$1")
-        )
-        .join("")
+            .match(/[a-f0-9]{2}/gi)
+            .map((e) => ((255 - parseInt(e, 16)) | 0).toString(16).replace(/^([a-f0-9])$/, "0$1"))
+            .join("")
     );
 }
 
 function uuidv4() {
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
         var r = (Math.random() * 16) | 0,
             v = c == "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
@@ -47,7 +43,7 @@ function drawPixelsOnCanvas(pixels, canvas) {
     const context = canvas.getContext("2d");
 
     const imageData = context.createImageData(canvas.width, canvas.height);
-    Object.keys(pixels).forEach(pixel => {
+    Object.keys(pixels).forEach((pixel) => {
         imageData.data[pixel] = pixels[pixel];
     });
     context.putImageData(imageData, 0, 0);
@@ -96,9 +92,7 @@ function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
         if (i % 4 === 3) {
             result.push(255);
         } else {
-            result.push(
-                Math.round(Math.min((255 * (pixels[i] + 1)) / numLevels, 255))
-            );
+            result.push(Math.round(Math.min((255 * (pixels[i] + 1)) / numLevels, 255)));
         }
     }
     return result;
@@ -106,16 +100,10 @@ function scaleUpDiscreteDepthPixelsForDisplay(pixels, numLevels) {
 
 // aligns each pixel in the input array to the closes pixel in the studMap, and adds in overrides
 // returns the resulting pixels
-function alignPixelsToStudMap(
-    inputPixels,
-    studMap,
-    colorDistanceFunction
-) {
+function alignPixelsToStudMap(inputPixels, studMap, colorDistanceFunction) {
     const alignedPixels = [...inputPixels]; // initialize this way just so we keep 4th pixel values
     // note that 4th pixel values are ignored anyway because it's too much effort to use them
-    const anchorPixels = studMapToSortedColorList(studMap).map(pixel =>
-        hexToRgb(pixel)
-    );
+    const anchorPixels = studMapToSortedColorList(studMap).map((pixel) => hexToRgb(pixel));
     for (let i = 0; i < inputPixels.length / 4; i++) {
         const targetPixelIndex = i * 4;
         const pixelToAlign = [];
@@ -123,25 +111,16 @@ function alignPixelsToStudMap(
             pixelToAlign.push(inputPixels[targetPixelIndex + j]);
         }
         let closestAnchorPixel = 0;
-        for (
-            let anchorPixelIndex = 1; anchorPixelIndex < anchorPixels.length; anchorPixelIndex++
-        ) {
+        for (let anchorPixelIndex = 1; anchorPixelIndex < anchorPixels.length; anchorPixelIndex++) {
             if (
-                colorDistanceFunction(
-                    pixelToAlign,
-                    anchorPixels[anchorPixelIndex]
-                ) <
-                colorDistanceFunction(
-                    pixelToAlign,
-                    anchorPixels[closestAnchorPixel]
-                )
+                colorDistanceFunction(pixelToAlign, anchorPixels[anchorPixelIndex]) <
+                colorDistanceFunction(pixelToAlign, anchorPixels[closestAnchorPixel])
             ) {
                 closestAnchorPixel = anchorPixelIndex;
             }
         }
         for (let j = 0; j < 3; j++) {
-            alignedPixels[targetPixelIndex + j] =
-                anchorPixels[closestAnchorPixel][j];
+            alignedPixels[targetPixelIndex + j] = anchorPixels[closestAnchorPixel][j];
         }
     }
     return alignedPixels;
@@ -159,10 +138,7 @@ function getAverageQuantizationError(pixels1, pixels2, colorDistanceFunction) {
             pixel2.push(pixels2[targetPixelIndex + j]);
         }
 
-        totalError += colorDistanceFunction(
-            pixel1,
-            pixel2
-        );
+        totalError += colorDistanceFunction(pixel1, pixel2);
     }
     return totalError / (pixels1.length / 4);
 }
@@ -194,16 +170,10 @@ function getUsedPixelsStudMap(inputPixels) {
 }
 
 function studMapDifference(map1, map2) {
-    const hexCodes = Array.from(
-        new Set(
-            studMapToSortedColorList(map1).concat(
-                studMapToSortedColorList(map2)
-            )
-        )
-    );
+    const hexCodes = Array.from(new Set(studMapToSortedColorList(map1).concat(studMapToSortedColorList(map2))));
     hexCodes.sort();
     const result = {};
-    hexCodes.forEach(hexCode => {
+    hexCodes.forEach((hexCode) => {
         result[hexCode] = (map1[hexCode] || 0) - (map2[hexCode] || 0);
     });
     return result;
@@ -223,42 +193,27 @@ function correctPixelsForAvailableStuds(
 ) {
     availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
     const usedPixelStudMap = getUsedPixelsStudMap(anchorAlignedPixels);
-    const remainingStudMap = studMapDifference(
-        availableStudMap,
-        usedPixelStudMap
-    );
+    const remainingStudMap = studMapDifference(availableStudMap, usedPixelStudMap);
 
     // Maps each hex code to an array of objects representing which extra pixels to replace
     // because we don't have enough studs
     const problematicPixelsMap = {};
     // first, create and populate arrays with all studs for each color
-    studMapToSortedColorList(availableStudMap).forEach(color => {
+    studMapToSortedColorList(availableStudMap).forEach((color) => {
         problematicPixelsMap[color] = [];
     });
-    studMapToSortedColorList(usedPixelStudMap).forEach(color => {
+    studMapToSortedColorList(usedPixelStudMap).forEach((color) => {
         problematicPixelsMap[color] = [];
     });
 
     for (let i = 0; i < anchorAlignedPixels.length; i += 4) {
-        const alignedHex = rgbToHex(
-            anchorAlignedPixels[i],
-            anchorAlignedPixels[i + 1],
-            anchorAlignedPixels[i + 2]
-        );
+        const alignedHex = rgbToHex(anchorAlignedPixels[i], anchorAlignedPixels[i + 1], anchorAlignedPixels[i + 2]);
         const wasOverridden =
-            overridePixelArray[i] != null &&
-            overridePixelArray[i + 1] != null &&
-            overridePixelArray[i + 2] != null;
-        const originalRGB = wasOverridden ? [
-            overridePixelArray[i],
-            overridePixelArray[i + 1],
-            overridePixelArray[i + 2]
-        ] : [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
-        const alignedRGB = [
-            anchorAlignedPixels[i],
-            anchorAlignedPixels[i + 1],
-            anchorAlignedPixels[i + 2]
-        ];
+            overridePixelArray[i] != null && overridePixelArray[i + 1] != null && overridePixelArray[i + 2] != null;
+        const originalRGB = wasOverridden
+            ? [overridePixelArray[i], overridePixelArray[i + 1], overridePixelArray[i + 2]]
+            : [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
+        const alignedRGB = [anchorAlignedPixels[i], anchorAlignedPixels[i + 1], anchorAlignedPixels[i + 2]];
         const adjustedIndex = i / 4;
         const row = Math.floor(adjustedIndex / imageWidth);
         const col = adjustedIndex % imageWidth;
@@ -277,72 +232,57 @@ function correctPixelsForAvailableStuds(
         } else if (tieResolutionMethod === "mod5") {
             tiebreakFactor *= (adjustedRow + adjustedCol) % 5;
         } else if (tieResolutionMethod === "noisymod2") {
-            tiebreakFactor *=
-                ((adjustedRow + adjustedCol) % 2) + Math.random() * TIEBREAKER_RATIO;
+            tiebreakFactor *= ((adjustedRow + adjustedCol) % 2) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod3") {
-            tiebreakFactor *=
-                ((adjustedRow + adjustedCol) % 3) + Math.random() * TIEBREAKER_RATIO;
+            tiebreakFactor *= ((adjustedRow + adjustedCol) % 3) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod4") {
-            tiebreakFactor *=
-                ((adjustedRow + adjustedCol) % 4) + Math.random() * TIEBREAKER_RATIO;
+            tiebreakFactor *= ((adjustedRow + adjustedCol) % 4) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "noisymod5") {
-            tiebreakFactor *=
-                ((adjustedRow + adjustedCol) % 5) + Math.random() * TIEBREAKER_RATIO;
+            tiebreakFactor *= ((adjustedRow + adjustedCol) % 5) + Math.random() * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingmod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
                 ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                ((adjustedRow + adjustedCol) % 5) *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO;
+                ((adjustedRow + adjustedCol) % 5) * TIEBREAKER_RATIO * TIEBREAKER_RATIO * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "cascadingnoisymod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
                 ((adjustedRow + adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                Math.random() *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO;
+                Math.random() * TIEBREAKER_RATIO * TIEBREAKER_RATIO * TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingmod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
                 ((adjustedRow + adjustedImageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedImageWidth - adjustedCol) % 5) *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO;
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO *
+                    TIEBREAKER_RATIO;
         } else if (tieResolutionMethod === "alternatingnoisymod") {
             tiebreakFactor *=
                 ((adjustedRow + adjustedCol) % 2) +
                 ((adjustedRow + adjustedImageWidth - adjustedCol) % 3) * TIEBREAKER_RATIO +
                 ((adjustedRow + adjustedCol) % 4) * TIEBREAKER_RATIO * TIEBREAKER_RATIO +
-                Math.random() *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO *
-                TIEBREAKER_RATIO;
+                Math.random() * TIEBREAKER_RATIO * TIEBREAKER_RATIO * TIEBREAKER_RATIO;
         }
         problematicPixelsMap[alignedHex].push({
             index: i,
             originalRGB,
             alignedRGB,
-            alignmentDistSquared: colorDistanceFunction(originalRGB, alignedRGB) + tiebreakFactor
+            alignmentDistSquared: colorDistanceFunction(originalRGB, alignedRGB) + tiebreakFactor,
         });
     }
 
     // now sort each array by descending alignmentDistSquared
-    Object.keys(problematicPixelsMap).forEach(anchorPixel => {
-        problematicPixelsMap[anchorPixel].sort(
-            (p1, p2) => p2.alignmentDistSquared - p1.alignmentDistSquared
-        );
+    Object.keys(problematicPixelsMap).forEach((anchorPixel) => {
+        problematicPixelsMap[anchorPixel].sort((p1, p2) => p2.alignmentDistSquared - p1.alignmentDistSquared);
     });
 
     // now truncate each of these arrays so that for each color, the number of pixels
     // left is equal to the number of extra studs we would need to fill in that color
-    Object.keys(problematicPixelsMap).forEach(anchorPixel => {
+    Object.keys(problematicPixelsMap).forEach((anchorPixel) => {
         let availableStuds = availableStudMap[anchorPixel] || 0;
         const pixelArray = problematicPixelsMap[anchorPixel];
         while (pixelArray.length > 0 && availableStuds > 0) {
@@ -353,18 +293,13 @@ function correctPixelsForAvailableStuds(
     });
 
     // now, get a list of all problematic pixels
-    const problematicPixels = [].concat.apply(
-        [],
-        Object.values(problematicPixelsMap)
-    );
+    const problematicPixels = [].concat.apply([], Object.values(problematicPixelsMap));
     // sort from worst to best;
-    problematicPixels.sort(
-        (p1, p2) => p2.alignmentDistSquared - p1.alignmentDistSquared
-    );
+    problematicPixels.sort((p1, p2) => p2.alignmentDistSquared - p1.alignmentDistSquared);
 
     const correctedPixels = [...anchorAlignedPixels];
     // clear remainingStudMap of any studs mapping to non positive values - we can't use these
-    Object.keys(remainingStudMap).forEach(stud => {
+    Object.keys(remainingStudMap).forEach((stud) => {
         if (remainingStudMap[stud] <= 0) {
             delete remainingStudMap[stud];
         }
@@ -375,15 +310,10 @@ function correctPixelsForAvailableStuds(
         const problematicPixel = problematicPixels[i];
         const possibleReplacements = Object.keys(remainingStudMap);
         let replacement = possibleReplacements[0];
-        possibleReplacements.forEach(possibleReplacement => {
+        possibleReplacements.forEach((possibleReplacement) => {
             if (
-                colorDistanceFunction(
-                    problematicPixel.originalRGB,
-                    hexToRgb(possibleReplacement)
-                ) < colorDistanceFunction(
-                    problematicPixel.originalRGB,
-                    hexToRgb(replacement)
-                )
+                colorDistanceFunction(problematicPixel.originalRGB, hexToRgb(possibleReplacement)) <
+                colorDistanceFunction(problematicPixel.originalRGB, hexToRgb(replacement))
             ) {
                 replacement = possibleReplacement;
             }
@@ -407,7 +337,6 @@ function correctPixelsForAvailableStuds(
     return correctedPixels;
 }
 
-
 // Note 1: not normalized - we do that in code based on how many pixels are
 // available for error propogation
 // Note 2: Center is ignored
@@ -419,156 +348,188 @@ const GAUSSIAN_DITHERING_KERNEL = [
     [7, 26, 0, 26, 7],
     [4, 16, 26, 16, 4],
     [1, 4, 6, 4, 1],
-]
+];
 
-const FLOYD_STEINBERG_DITHERING_KERNEL = [{
-    row: 0,
-    col: 1,
-    val: 7
-}, {
-    row: 1,
-    col: -1,
-    val: 3
-}, {
-    row: 1,
-    col: 0,
-    val: 5
-}, {
-    row: 1,
-    col: 1,
-    val: 1
-}];
-const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [{
-    row: 0,
-    col: 1,
-    val: 7
-}, {
-    row: 0,
-    col: 2,
-    val: 5
-}, {
-    row: 1,
-    col: -2,
-    val: 3
-}, {
-    row: 1,
-    col: -1,
-    val: 5
-}, {
-    row: 1,
-    col: 0,
-    val: 7
-}, {
-    row: 1,
-    col: 1,
-    val: 5
-}, {
-    row: 1,
-    col: 2,
-    val: 3
-}, {
-    row: 2,
-    col: -2,
-    val: 1
-}, {
-    row: 2,
-    col: -1,
-    val: 3
-}, {
-    row: 2,
-    col: 0,
-    val: 5
-}, {
-    row: 2,
-    col: 1,
-    val: 3
-}, {
-    row: 2,
-    col: 2,
-    val: 1
-}, ];
-const ATKINSON_DITHERING_KERNEL = [{
-    row: 0,
-    col: 1,
-    val: 1
-}, {
-    row: 0,
-    col: 2,
-    val: 1
-}, {
-    row: 1,
-    col: -1,
-    val: 1
-}, {
-    row: 1,
-    col: 0,
-    val: 1
-}, {
-    row: 1,
-    col: 1,
-    val: 1
-}, {
-    row: 2,
-    col: 0,
-    val: 1
-}, ].map(entry => {
-    entry.val = entry.val * 3 / 4;
-    return entry
+const FLOYD_STEINBERG_DITHERING_KERNEL = [
+    {
+        row: 0,
+        col: 1,
+        val: 7,
+    },
+    {
+        row: 1,
+        col: -1,
+        val: 3,
+    },
+    {
+        row: 1,
+        col: 0,
+        val: 5,
+    },
+    {
+        row: 1,
+        col: 1,
+        val: 1,
+    },
+];
+const JARVIS_JUDICE_NINKE_DITHERING_KERNEL = [
+    {
+        row: 0,
+        col: 1,
+        val: 7,
+    },
+    {
+        row: 0,
+        col: 2,
+        val: 5,
+    },
+    {
+        row: 1,
+        col: -2,
+        val: 3,
+    },
+    {
+        row: 1,
+        col: -1,
+        val: 5,
+    },
+    {
+        row: 1,
+        col: 0,
+        val: 7,
+    },
+    {
+        row: 1,
+        col: 1,
+        val: 5,
+    },
+    {
+        row: 1,
+        col: 2,
+        val: 3,
+    },
+    {
+        row: 2,
+        col: -2,
+        val: 1,
+    },
+    {
+        row: 2,
+        col: -1,
+        val: 3,
+    },
+    {
+        row: 2,
+        col: 0,
+        val: 5,
+    },
+    {
+        row: 2,
+        col: 1,
+        val: 3,
+    },
+    {
+        row: 2,
+        col: 2,
+        val: 1,
+    },
+];
+const ATKINSON_DITHERING_KERNEL = [
+    {
+        row: 0,
+        col: 1,
+        val: 1,
+    },
+    {
+        row: 0,
+        col: 2,
+        val: 1,
+    },
+    {
+        row: 1,
+        col: -1,
+        val: 1,
+    },
+    {
+        row: 1,
+        col: 0,
+        val: 1,
+    },
+    {
+        row: 1,
+        col: 1,
+        val: 1,
+    },
+    {
+        row: 2,
+        col: 0,
+        val: 1,
+    },
+].map((entry) => {
+    entry.val = (entry.val * 3) / 4;
+    return entry;
 });
-const SIERRA_DITHERING_KERNEL = [{
-    row: 0,
-    col: 1,
-    val: 5
-}, {
-    row: 0,
-    col: 2,
-    val: 3
-}, {
-    row: 1,
-    col: -2,
-    val: 2
-}, {
-    row: 1,
-    col: -1,
-    val: 4
-}, {
-    row: 1,
-    col: 0,
-    val: 5
-}, {
-    row: 1,
-    col: 1,
-    val: 4
-}, {
-    row: 1,
-    col: 2,
-    val: 2
-}, {
-    row: 2,
-    col: -1,
-    val: 2
-}, {
-    row: 2,
-    col: 0,
-    val: 3
-}, {
-    row: 2,
-    col: 1,
-    val: 2
-}, ];
+const SIERRA_DITHERING_KERNEL = [
+    {
+        row: 0,
+        col: 1,
+        val: 5,
+    },
+    {
+        row: 0,
+        col: 2,
+        val: 3,
+    },
+    {
+        row: 1,
+        col: -2,
+        val: 2,
+    },
+    {
+        row: 1,
+        col: -1,
+        val: 4,
+    },
+    {
+        row: 1,
+        col: 0,
+        val: 5,
+    },
+    {
+        row: 1,
+        col: 1,
+        val: 4,
+    },
+    {
+        row: 1,
+        col: 2,
+        val: 2,
+    },
+    {
+        row: 2,
+        col: -1,
+        val: 2,
+    },
+    {
+        row: 2,
+        col: 0,
+        val: 3,
+    },
+    {
+        row: 2,
+        col: 1,
+        val: 2,
+    },
+];
 
 function findReplacement(pixelRGB, remainingStudMap, colorDistanceFunction) {
     const possibleReplacements = Object.keys(remainingStudMap);
     let replacement = possibleReplacements[0];
-    possibleReplacements.forEach(possibleReplacement => {
-        if (remainingStudMap[possibleReplacement] > 0 &&
-            colorDistanceFunction(
-                pixelRGB,
-                hexToRgb(possibleReplacement)
-            ) < colorDistanceFunction(
-                pixelRGB,
-                hexToRgb(replacement)
-            )
+    possibleReplacements.forEach((possibleReplacement) => {
+        if (
+            remainingStudMap[possibleReplacement] > 0 &&
+            colorDistanceFunction(pixelRGB, hexToRgb(possibleReplacement)) <
+                colorDistanceFunction(pixelRGB, hexToRgb(replacement))
         ) {
             replacement = possibleReplacement;
         }
@@ -582,22 +543,19 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
     imageWidth,
     colorDistanceFunction,
     skipDithering,
-    assumeInfinitePixelCounts,
+    assumeInfinitePixelCounts
 ) {
     availableStudMap = JSON.parse(JSON.stringify(availableStudMap)); // clone
 
     // We use this to easily get adjacent pixels when propogating dithering error
     const pixelMatrix = [];
-    const height = Math.floor((originalPixels.length / 4) / imageWidth);
+    const height = Math.floor(originalPixels.length / 4 / imageWidth);
     for (let row = 0; row < height; row++) {
         pixelMatrix[row] = [];
         for (let col = 0; col < imageWidth; col++) {
-            const i = (row * imageWidth + col) * 4
+            const i = (row * imageWidth + col) * 4;
 
-            const pixelRGB = [originalPixels[i],
-                originalPixels[i + 1],
-                originalPixels[i + 2]
-            ]
+            const pixelRGB = [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
 
             const tentativeReplacementRGB = findReplacement(pixelRGB, availableStudMap, colorDistanceFunction);
             const tentativeReplacementDistance = colorDistanceFunction(pixelRGB, tentativeReplacementRGB);
@@ -607,7 +565,7 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
                 row,
                 col,
                 tentativeReplacementRGB,
-                tentativeReplacementDistance
+                tentativeReplacementDistance,
             };
             pixelMatrix[row][col] = pixel;
         }
@@ -626,12 +584,11 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
         const dequeuedPixelQuantizationError = [
             nextPixel.pixelRGB[0] - nextPixel.tentativeReplacementRGB[0],
             nextPixel.pixelRGB[1] - nextPixel.tentativeReplacementRGB[1],
-            nextPixel.pixelRGB[2] - nextPixel.tentativeReplacementRGB[2]
+            nextPixel.pixelRGB[2] - nextPixel.tentativeReplacementRGB[2],
         ];
 
         nextPixel.isInPixelQueue = false;
         nextPixel.pixelRGB = nextPixel.tentativeReplacementRGB; // lock this in - we're not changing this pixel now
-
 
         if (!assumeInfinitePixelCounts) {
             const pixelHex = rgbToHex(nextPixel.pixelRGB[0], nextPixel.pixelRGB[1], nextPixel.pixelRGB[2]);
@@ -640,8 +597,15 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
                 // we're out of parts in this color - reassign the nodes and rebuild the heap
                 const oldHeapPixels = [...pixelQueue.heapArray];
                 oldHeapPixels.forEach((oldPixel) => {
-                    const tentativeReplacementRGB = findReplacement(oldPixel.pixelRGB, availableStudMap, colorDistanceFunction);
-                    const tentativeReplacementDistance = colorDistanceFunction(oldPixel.pixelRGB, tentativeReplacementRGB);
+                    const tentativeReplacementRGB = findReplacement(
+                        oldPixel.pixelRGB,
+                        availableStudMap,
+                        colorDistanceFunction
+                    );
+                    const tentativeReplacementDistance = colorDistanceFunction(
+                        oldPixel.pixelRGB,
+                        tentativeReplacementRGB
+                    );
                     oldPixel.tentativeReplacementRGB = tentativeReplacementRGB;
                     oldPixel.tentativeReplacementDistance = tentativeReplacementDistance;
                 });
@@ -649,12 +613,11 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
             }
         }
 
-
         if (!skipDithering) {
             // first, get the adjacent pixels we may need to adjust
             const kernel = GAUSSIAN_DITHERING_KERNEL;
             const kernelHeight = kernel.length;
-            const kernelWidth = kernel[0].length
+            const kernelWidth = kernel[0].length;
             const kernelRowMiddle = Math.floor(kernelHeight / 2);
             const kernelColMiddle = Math.floor(kernelWidth / 2);
 
@@ -684,18 +647,31 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
                             if (neighborhoodPixel != null && neighborhoodPixel.isInPixelQueue) {
                                 // add in error
                                 const errorWeight = kernel[kr][kc] / errorDenominator;
-                                neighborhoodPixel.pixelRGB = [0, 1, 2]
-                                    .map(channel => clamp255(neighborhoodPixel.pixelRGB[channel] + dequeuedPixelQuantizationError[channel] * errorWeight));
+                                neighborhoodPixel.pixelRGB = [0, 1, 2].map((channel) =>
+                                    clamp255(
+                                        neighborhoodPixel.pixelRGB[channel] +
+                                            dequeuedPixelQuantizationError[channel] * errorWeight
+                                    )
+                                );
 
-                                const tentativeReplacementRGB = findReplacement(neighborhoodPixel.pixelRGB, availableStudMap, colorDistanceFunction);
-                                const tentativeReplacementDistance = colorDistanceFunction(neighborhoodPixel.pixelRGB, tentativeReplacementRGB);
-                                const oldReplacementRGB = neighborhoodPixel.tentativeReplacementRGB
+                                const tentativeReplacementRGB = findReplacement(
+                                    neighborhoodPixel.pixelRGB,
+                                    availableStudMap,
+                                    colorDistanceFunction
+                                );
+                                const tentativeReplacementDistance = colorDistanceFunction(
+                                    neighborhoodPixel.pixelRGB,
+                                    tentativeReplacementRGB
+                                );
+                                const oldReplacementRGB = neighborhoodPixel.tentativeReplacementRGB;
                                 neighborhoodPixel.tentativeReplacementRGB = tentativeReplacementRGB;
                                 neighborhoodPixel.tentativeReplacementDistance = tentativeReplacementDistance;
 
-                                if (oldReplacementRGB[0] != neighborhoodPixel.tentativeReplacementRGB[0] ||
+                                if (
+                                    oldReplacementRGB[0] != neighborhoodPixel.tentativeReplacementRGB[0] ||
                                     oldReplacementRGB[1] != neighborhoodPixel.tentativeReplacementRGB[1] ||
-                                    oldReplacementRGB[2] != neighborhoodPixel.tentativeReplacementRGB[2]) {
+                                    oldReplacementRGB[2] != neighborhoodPixel.tentativeReplacementRGB[2]
+                                ) {
                                     pixelQueue.remove(neighborhoodPixel);
                                     pixelQueue.add(neighborhoodPixel);
                                 }
@@ -708,12 +684,14 @@ function correctPixelsForAvailableStudsWithGreedyDynamicDithering(
     }
 
     const result = [];
-    pixelMatrix.forEach(row => row.forEach(pixel => {
-        pixel.tentativeReplacementRGB.forEach(channel => {
-            result.push(channel);
-        });
-        result.push(255);
-    }));
+    pixelMatrix.forEach((row) =>
+        row.forEach((pixel) => {
+            pixel.tentativeReplacementRGB.forEach((channel) => {
+                result.push(channel);
+            });
+            result.push(255);
+        })
+    );
     return new Uint8ClampedArray(result);
 }
 
@@ -728,16 +706,13 @@ function alignPixelsWithTraditionalDithering(
 
     // We use this to easily get adjacent pixels when propogating dithering error
     const pixelMatrix = [];
-    const height = Math.floor((originalPixels.length / 4) / imageWidth);
+    const height = Math.floor(originalPixels.length / 4 / imageWidth);
     for (let row = 0; row < height; row++) {
         pixelMatrix[row] = [];
         for (let col = 0; col < imageWidth; col++) {
-            const i = (row * imageWidth + col) * 4
+            const i = (row * imageWidth + col) * 4;
 
-            const pixelRGB = [originalPixels[i],
-                originalPixels[i + 1],
-                originalPixels[i + 2]
-            ]
+            const pixelRGB = [originalPixels[i], originalPixels[i + 1], originalPixels[i + 2]];
 
             const pixel = {
                 pixelRGB,
@@ -755,15 +730,19 @@ function alignPixelsWithTraditionalDithering(
             const currentPixelQuantizationError = [
                 currentPixel.pixelRGB[0] - replacementRGB[0],
                 currentPixel.pixelRGB[1] - replacementRGB[1],
-                currentPixel.pixelRGB[2] - replacementRGB[2]
+                currentPixel.pixelRGB[2] - replacementRGB[2],
             ];
 
             // spread the error
-            kernel.forEach(kernelEntry => {
+            kernel.forEach((kernelEntry) => {
                 const forwardPixel = (pixelMatrix[row + kernelEntry.row] || {})[col + kernelEntry.col];
                 if (forwardPixel != null) {
-                    forwardPixel.pixelRGB = [0, 1, 2]
-                        .map(channel => clamp255(forwardPixel.pixelRGB[channel] + currentPixelQuantizationError[channel] * kernelEntry.val / kernelDenominator));
+                    forwardPixel.pixelRGB = [0, 1, 2].map((channel) =>
+                        clamp255(
+                            forwardPixel.pixelRGB[channel] +
+                                (currentPixelQuantizationError[channel] * kernelEntry.val) / kernelDenominator
+                        )
+                    );
                 }
             });
 
@@ -773,12 +752,14 @@ function alignPixelsWithTraditionalDithering(
     }
 
     const result = [];
-    pixelMatrix.forEach(row => row.forEach(pixel => {
-        pixel.pixelRGB.forEach(channel => {
-            result.push(channel);
-        });
-        result.push(255);
-    }));
+    pixelMatrix.forEach((row) =>
+        row.forEach((pixel) => {
+            pixel.pixelRGB.forEach((channel) => {
+                result.push(channel);
+            });
+            result.push(255);
+        })
+    );
     return new Uint8ClampedArray(result);
 }
 
@@ -786,38 +767,31 @@ function alignPixelsWithTraditionalDithering(
 function rgb2hsv(r, g, b) {
     let v = Math.max(r, g, b),
         n = v - Math.min(r, g, b);
-    let h =
-        n &&
-        (v == r ? (g - b) / n : v == g ? 2 + (b - r) / n : 4 + (r - g) / n);
+    let h = n && (v == r ? (g - b) / n : v == g ? 2 + (b - r) / n : 4 + (r - g) / n);
     return [60 * (h < 0 ? h + 6 : h), v && n / v, v];
 }
 
 // input: h in [0,360] and s,v in [0,1] - output: r,g,b in [0,1]
 function hsv2rgb(h, s, v) {
-    let f = (n, k = (n + h / 60) % 6) =>
-        v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
+    let f = (n, k = (n + h / 60) % 6) => v - v * s * Math.max(Math.min(k, 4 - k, 1), 0);
     return [f(5), f(3), f(1)];
 }
 
 // input: h (offset) in [0,360] and s,v (offset) in [-1,1] - output: adjusted r,g,b
 function adjustHSV(rgbPixel, h, s, v) {
-    const scaledRGB = rgbPixel.map(pixel => pixel / 255);
+    const scaledRGB = rgbPixel.map((pixel) => pixel / 255);
     const baseHSV = rgb2hsv(scaledRGB[0], scaledRGB[1], scaledRGB[2]);
     const resultHue = (baseHSV[0] + Math.round(h)) % 360;
     const resultSaturation = Math.min(Math.max(baseHSV[1] + s, 0), 1);
     const resultValue = Math.min(Math.max(baseHSV[2] + v, 0), 1);
     const resultRGB = hsv2rgb(resultHue, resultSaturation, resultValue);
-    return resultRGB.map(pixel => Math.round(pixel * 255));
+    return resultRGB.map((pixel) => Math.round(pixel * 255));
 }
 
 function applyPixelFilter(inputPixels, rgbFilter) {
     const outputPixels = [...inputPixels];
     for (let i = 0; i < inputPixels.length; i += 4) {
-        const filteredPixel = rgbFilter([
-            inputPixels[i],
-            inputPixels[i + 1],
-            inputPixels[i + 2]
-        ]);
+        const filteredPixel = rgbFilter([inputPixels[i], inputPixels[i + 1], inputPixels[i + 2]]);
         for (let j = 0; j < 3; j++) {
             outputPixels[i + j] = filteredPixel[j];
         }
@@ -826,33 +800,33 @@ function applyPixelFilter(inputPixels, rgbFilter) {
 }
 
 function applyHSVAdjustment(inputPixels, h, s, v) {
-    return applyPixelFilter(inputPixels, pixel => adjustHSV(pixel, h, s, v));
+    return applyPixelFilter(inputPixels, (pixel) => adjustHSV(pixel, h, s, v));
 }
 
 function adjustBrightness(rgbPixel, brightnessOffset) {
-    return rgbPixel.map(channel => Math.round(Math.min(Math.max(channel + brightnessOffset, 0), 255)));
+    return rgbPixel.map((channel) => Math.round(Math.min(Math.max(channel + brightnessOffset, 0), 255)));
 }
 
 function applyBrightnessAdjustment(inputPixels, brightnessOffset) {
-    return applyPixelFilter(inputPixels, pixel => adjustBrightness(pixel, brightnessOffset));
+    return applyPixelFilter(inputPixels, (pixel) => adjustBrightness(pixel, brightnessOffset));
 }
 
 function adjustContrast(rgbPixel, contrastFactor) {
-    return rgbPixel.map(channel => Math.round(Math.min(Math.max(contrastFactor * (channel - 128) + 128, 0), 255)));
+    return rgbPixel.map((channel) => Math.round(Math.min(Math.max(contrastFactor * (channel - 128) + 128, 0), 255)));
 }
 
 function applyContrastAdjustment(inputPixels, contrastOffset) {
     const contrastFactor = (259 * (255 + contrastOffset)) / (255 * (259 - contrastOffset));
-    return applyPixelFilter(inputPixels, pixel => adjustContrast(pixel, contrastFactor));
+    return applyPixelFilter(inputPixels, (pixel) => adjustContrast(pixel, contrastFactor));
 }
 
 function getDarkenedPixel(rgbPixel) {
-    return rgbPixel.map(color => Math.round((color * Math.PI) / 4));
+    return rgbPixel.map((color) => Math.round((color * Math.PI) / 4));
 }
 
 function getDarkenedStudsToStuds(studList) {
     const result = {};
-    studList.forEach(stud => {
+    studList.forEach((stud) => {
         const darkenedRGB = getDarkenedPixel(hexToRgb(stud));
         result[rgbToHex(darkenedRGB[0], darkenedRGB[1], darkenedRGB[2])] = stud;
     });
@@ -862,10 +836,9 @@ function getDarkenedStudsToStuds(studList) {
 // Gets stud map adjusted for bleedthrough of the black back panel
 function getDarkenedStudMap(studMap) {
     const result = {};
-    Object.keys(studMap).forEach(stud => {
+    Object.keys(studMap).forEach((stud) => {
         const darkenedRGB = getDarkenedPixel(hexToRgb(stud));
-        result[rgbToHex(darkenedRGB[0], darkenedRGB[1], darkenedRGB[2])] =
-            studMap[stud];
+        result[rgbToHex(darkenedRGB[0], darkenedRGB[1], darkenedRGB[2])] = studMap[stud];
     });
     return result;
 }
@@ -873,16 +846,8 @@ function getDarkenedStudMap(studMap) {
 function getDarkenedImage(pixels) {
     const outputPixels = [...pixels];
     for (let i = 0; i < pixels.length; i += 4) {
-        if (
-            pixels[i] != null &&
-            pixels[i + 1] != null &&
-            pixels[i + 2] != null
-        ) {
-            const darkenedPixel = getDarkenedPixel([
-                pixels[i],
-                pixels[i + 1],
-                pixels[i + 2]
-            ]);
+        if (pixels[i] != null && pixels[i + 1] != null && pixels[i + 2] != null) {
+            const darkenedPixel = getDarkenedPixel([pixels[i], pixels[i + 1], pixels[i + 2]]);
             for (let j = 0; j < 3; j++) {
                 outputPixels[i + j] = darkenedPixel[j];
             }
@@ -895,7 +860,7 @@ function revertDarkenedImage(pixels, darkenedStudsToStuds) {
     const outputPixels = [...pixels];
     for (let i = 0; i < pixels.length; i += 4) {
         const pixelHex = rgbToHex(pixels[i], pixels[i + 1], pixels[i + 2]);
-        const revertedPixelHex = pixelHex === '#000000' ? '#000000' : darkenedStudsToStuds[pixelHex];
+        const revertedPixelHex = pixelHex === "#000000" ? "#000000" : darkenedStudsToStuds[pixelHex];
         const revertedPixelRGB = hexToRgb(revertedPixelHex);
         for (let j = 0; j < 3; j++) {
             outputPixels[i + j] = revertedPixelRGB[j];
@@ -908,42 +873,30 @@ function drawPixel(ctx, x, y, radius, pixelHex, strokeHex, pixelType) {
     ctx.beginPath();
     if ([PIXEL_TYPE_OPTIONS[0].number, PIXEL_TYPE_OPTIONS[1].number].includes(pixelType)) {
         // draw a circle
-        ctx.arc(
-            x + radius,
-            y + radius,
-            radius,
-            0,
-            2 * Math.PI
-        );
+        ctx.arc(x + radius, y + radius, radius, 0, 2 * Math.PI);
     } else {
         // draw a square
-        ctx.rect(x,
-            y,
-            2 * radius,
-            2 * radius);
+        ctx.rect(x, y, 2 * radius, 2 * radius);
     }
     ctx.fillStyle = pixelHex;
     ctx.fill();
     ctx.strokeStyle = strokeHex;
-    if (!('' + pixelType).match("^variable.*$")) { // TODO: Look at perf?
+    if (!("" + pixelType).match("^variable.*$")) {
+        // TODO: Look at perf?
         ctx.stroke();
     }
-    if ([
+    if (
+        [
             PIXEL_TYPE_OPTIONS[1].number,
             PIXEL_TYPE_OPTIONS[3].number,
             PIXEL_TYPE_OPTIONS[4].number,
             PIXEL_TYPE_OPTIONS[6].number,
-            PIXEL_TYPE_OPTIONS[7].number
-        ].includes(pixelType)) {
+            PIXEL_TYPE_OPTIONS[7].number,
+        ].includes(pixelType)
+    ) {
         // draw a circle on top of the piece to represent a stud
-        ctx.beginPath()
-        ctx.arc(
-            x + radius,
-            y + radius,
-            radius * 0.6,
-            0,
-            2 * Math.PI
-        );
+        ctx.beginPath();
+        ctx.arc(x + radius, y + radius, radius * 0.6, 0, 2 * Math.PI);
         ctx.stroke();
     }
 }
@@ -961,30 +914,23 @@ function drawStudImageOnCanvas(
 
     canvas.width = width * scalingFactor;
     canvas.height = ((pixels.length / 4) * scalingFactor) / width;
-    ctx.fillRect(
-        0,
-        0,
-        width * scalingFactor,
-        ((pixels.length / 4) * scalingFactor) / width
-    );
+    ctx.fillRect(0, 0, width * scalingFactor, ((pixels.length / 4) * scalingFactor) / width);
 
     const radius = scalingFactor / 2;
     for (let i = 0; i < pixels.length / 4; i++) {
-        const pixelHex = rgbToHex(
-            pixels[i * 4],
-            pixels[i * 4 + 1],
-            pixels[i * 4 + 2]
-        );
-        drawPixel(ctx,
+        const pixelHex = rgbToHex(pixels[i * 4], pixels[i * 4 + 1], pixels[i * 4 + 2]);
+        drawPixel(
+            ctx,
             (i % width) * 2 * radius,
             Math.floor(i / width) * 2 * radius,
             radius,
             pixelHex,
             "#111111",
-            pixelType);
+            pixelType
+        );
     }
 
-    if (('' + pixelType).match("^variable.*$") && plateDimensionsOverlay) {
+    if (("" + pixelType).match("^variable.*$") && plateDimensionsOverlay) {
         for (let row = 0; row < plateDimensionsOverlay.length; row++) {
             for (let col = 0; col < plateDimensionsOverlay[0].length; col++) {
                 const part = plateDimensionsOverlay[row][col];
@@ -992,12 +938,7 @@ function drawStudImageOnCanvas(
                     ctx.strokeStyle = "#888888";
                     ctx.lineWidth = 5;
                     ctx.beginPath();
-                    ctx.rect(
-                        col * 2 * radius,
-                        row * 2 * radius,
-                        2 * radius * part[1],
-                        2 * radius * part[0]
-                    );
+                    ctx.rect(col * 2 * radius, row * 2 * radius, 2 * radius * part[1], 2 * radius * part[0]);
                     ctx.stroke();
                 }
             }
@@ -1008,8 +949,7 @@ function drawStudImageOnCanvas(
 function getSubPixelArray(pixelArray, index, width, plateWidth) {
     const result = [];
     const horizontalOffset = (index * plateWidth) % width;
-    const verticalOffset =
-        plateWidth * Math.floor((index * plateWidth) / width);
+    const verticalOffset = plateWidth * Math.floor((index * plateWidth) / width);
 
     for (var i = 0; i < pixelArray.length / 4; i++) {
         const iHorizontal = i % width;
@@ -1046,29 +986,23 @@ function drawStudCountForContext(
         ctx.beginPath();
         const x = horizontalOffset;
         const y = verticalOffset + radius * 2.5 * number;
-        drawPixel(ctx,
+        drawPixel(
+            ctx,
             x - radius,
             y - radius,
             radius,
             pixelHex,
             inverseHex(pixelHex),
-            PIXEL_TYPE_TO_FLATTENED[pixelType]);
-        ctx.fillStyle = inverseHex(pixelHex);
-        ctx.fillText(
-            number,
-            x - (scalingFactor * (1 + Math.floor(number / 2) / 6)) / 8,
-            y + scalingFactor / 8
+            PIXEL_TYPE_TO_FLATTENED[pixelType]
         );
+        ctx.fillStyle = inverseHex(pixelHex);
+        ctx.fillText(number, x - (scalingFactor * (1 + Math.floor(number / 2) / 6)) / 8, y + scalingFactor / 8);
         ctx.fillStyle = "#000000";
-        if (!('' + pixelType).match("^variable.*$")) {
+        if (!("" + pixelType).match("^variable.*$")) {
             ctx.fillText(`X ${studMap[pixelHex] || 0}`, x + radius * 1.5, y);
         }
         ctx.font = `${scalingFactor / 2.5}px Arial`;
-        ctx.fillText(
-            HEX_TO_COLOR_NAME[pixelHex] || pixelHex,
-            x + radius * 1.5,
-            y + scalingFactor / 2.5
-        );
+        ctx.fillText(HEX_TO_COLOR_NAME[pixelHex] || pixelHex, x + radius * 1.5, y + scalingFactor / 2.5);
         ctx.font = `${scalingFactor / 2}px Arial`;
     });
 
@@ -1103,10 +1037,7 @@ function generateInstructionTitlePage(
 
     const studMap = getUsedPixelsStudMap(pixelArray);
 
-    canvas.height = Math.max(
-        pictureHeight * 1.5,
-        pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5
-    );
+    canvas.height = Math.max(pictureHeight * 1.5, pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5);
     canvas.width = pictureWidth * 2;
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1142,9 +1073,7 @@ function generateInstructionTitlePage(
         0,
         finalImageCanvas.width,
         finalImageCanvas.height,
-        legendHorizontalOffset +
-        legendSquareSide / 4 +
-        (legendSquareSide * width) / plateWidth,
+        legendHorizontalOffset + legendSquareSide / 4 + (legendSquareSide * width) / plateWidth,
         legendVerticalOffset,
         (legendSquareSide * width) / plateWidth,
         legendSquareSide * ((numPlates * plateWidth) / width)
@@ -1193,40 +1122,23 @@ function generateInstructionPage(
 
     const studMap = getUsedPixelsStudMap(pixelArray);
 
-    canvas.height = Math.max(
-        pictureHeight * 1.5,
-        pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5
-    );
+    canvas.height = Math.max(pictureHeight * 1.5, pictureHeight * 0.4 + availableStudHexList.length * radius * 2.5);
     canvas.width = pictureWidth * 2;
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.rect(
-        pictureWidth * 0.75,
-        pictureHeight * 0.2,
-        pictureWidth,
-        pictureHeight
-    );
+    ctx.rect(pictureWidth * 0.75, pictureHeight * 0.2, pictureWidth, pictureHeight);
     ctx.stroke();
     ctx.fillStyle = "#000000";
-    ctx.fillRect(
-        pictureWidth * 0.75,
-        pictureHeight * 0.2,
-        pictureWidth,
-        pictureHeight
-    );
+    ctx.fillRect(pictureWidth * 0.75, pictureHeight * 0.2, pictureWidth, pictureHeight);
 
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#000000";
     ctx.font = `${scalingFactor}px Arial`;
     ctx.beginPath();
-    ctx.fillText(
-        `Section ${plateNumber}`,
-        pictureWidth * 0.75,
-        pictureHeight * 0.2 - scalingFactor
-    );
+    ctx.fillText(`Section ${plateNumber}`, pictureWidth * 0.75, pictureHeight * 0.2 - scalingFactor);
     ctx.stroke();
 
     ctx.lineWidth = 1;
@@ -1249,20 +1161,19 @@ function generateInstructionPage(
             ctx.beginPath();
             const x = pictureWidth * 0.75 + (j * 2 + 1) * radius;
             const y = pictureHeight * 0.2 + ((i % plateWidth) * 2 + 1) * radius;
-            drawPixel(ctx,
+            drawPixel(
+                ctx,
                 x - radius,
                 y - radius,
                 radius,
                 pixelHex,
                 inverseHex(pixelHex),
-                PIXEL_TYPE_TO_FLATTENED[pixelType]);
+                PIXEL_TYPE_TO_FLATTENED[pixelType]
+            );
             ctx.fillStyle = inverseHex(pixelHex);
             ctx.fillText(
                 studToNumber[pixelHex],
-                x -
-                (scalingFactor *
-                    (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) /
-                8,
+                x - (scalingFactor * (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) / 8,
                 y + scalingFactor / 8
             );
         }
@@ -1277,10 +1188,7 @@ function generateInstructionPage(
                 if (piece != null) {
                     ctx.strokeStyle = "#888888";
                     ctx.beginPath();
-                    ctx.rect(x - radius,
-                        y - radius,
-                        2 * radius * piece[1],
-                        2 * radius * piece[0]);
+                    ctx.rect(x - radius, y - radius, 2 * radius * piece[1], 2 * radius * piece[0]);
                     ctx.stroke();
                     ctx.strokeStyle = "#FFFFFF";
                     ctx.beginPath();
@@ -1307,14 +1215,7 @@ function generateInstructionPage(
     );
 }
 
-function getDepthSubPixelMatrix(
-    pixelArray,
-    totalWidth,
-    horizontalOffset,
-    verticalOffset,
-    width,
-    height
-) {
+function getDepthSubPixelMatrix(pixelArray, totalWidth, horizontalOffset, verticalOffset, width, height) {
     const result = [];
     for (var i = 0; i < pixelArray.length / 4; i++) {
         const iHorizontal = i % totalWidth;
@@ -1337,37 +1238,23 @@ function getDepthSubPixelMatrix(
 }
 
 // TODO: Reduce this problem to the one from the previous function?
-function convertPixelArrayToMatrix(
-    pixelArray,
-    totalWidth
-) {
+function convertPixelArrayToMatrix(pixelArray, totalWidth) {
     const result = [];
     for (var i = 0; i < pixelArray.length / 4; i++) {
         const iHorizontal = i % totalWidth;
         const iVertical = Math.floor(i / totalWidth);
 
         result[iVertical] = result[iVertical] || [];
-        result[iVertical][iHorizontal] = [
-            pixelArray[4 * i],
-            pixelArray[4 * i + 1],
-            pixelArray[4 * i + 2]
-        ];
+        result[iVertical][iHorizontal] = [pixelArray[4 * i], pixelArray[4 * i + 1], pixelArray[4 * i + 2]];
     }
 
     return result;
 }
 
-function getSubPixelMatrix(
-    pixelMatrix,
-    horizontalOffset,
-    verticalOffset,
-    width,
-    height
-) {
+function getSubPixelMatrix(pixelMatrix, horizontalOffset, verticalOffset, width, height) {
     const result = [];
     for (let iHorizontal = 0; iHorizontal < pixelMatrix[0].length; iHorizontal++) {
         for (let iVertical = 0; iVertical < pixelMatrix.length; iVertical++) {
-
             if (
                 horizontalOffset <= iHorizontal &&
                 iHorizontal < horizontalOffset + width &&
@@ -1389,9 +1276,8 @@ function getRequiredPartMatrixFromSetPixelMatrix(
     // should be completely true by the end
     setPixelMatrix,
     partDimensions,
-    boundaryWidth = null, // if this is set, don't cross boundaries
+    boundaryWidth = null // if this is set, don't cross boundaries
 ) {
-
     // initial result as a null array
     const result = [];
     for (let i = 0; i < setPixelMatrix.length; i++) {
@@ -1405,35 +1291,26 @@ function getRequiredPartMatrixFromSetPixelMatrix(
     partDimensions.sort(
         // sort in decreasing order of area
         // break ties on the second dimension
-        (part1, part2) =>
-        part2[0] * part2[1] -
-        part2[0] * 0.01 -
-        part1[0] * part1[1] +
-        part1[0] * 0.01
+        (part1, part2) => part2[0] * part2[1] - part2[0] * 0.01 - part1[0] * part1[1] + part1[0] * 0.01
     );
     for (let i = 0; i < partDimensions.length; i++) {
         const part = partDimensions[i];
 
         // place the part as many times as we can
         for (let row = 0; row < setPixelMatrix.length - part[0] + 1; row++) {
-            for (
-                let col = 0; col < setPixelMatrix[0].length - part[1] + 1; col++
-            ) {
+            for (let col = 0; col < setPixelMatrix[0].length - part[1] + 1; col++) {
                 let canPlacePiece = true;
                 for (let pRow = 0; pRow < part[0] && canPlacePiece; pRow++) {
-                    for (
-                        let pCol = 0; pCol < part[1] && canPlacePiece; pCol++
-                    ) {
-                        canPlacePiece =
-                            canPlacePiece &&
-                            !setPixelMatrix[row + pRow][col + pCol];
+                    for (let pCol = 0; pCol < part[1] && canPlacePiece; pCol++) {
+                        canPlacePiece = canPlacePiece && !setPixelMatrix[row + pRow][col + pCol];
                     }
                 }
                 if (boundaryWidth && boundaryWidth > 1) {
                     // make sure we don't cross bounaries on either direction
-                    canPlacePiece = canPlacePiece &&
+                    canPlacePiece =
+                        canPlacePiece &&
                         Math.floor(row / boundaryWidth) === Math.floor((row + part[0] - 1) / boundaryWidth) &&
-                        Math.floor(col / boundaryWidth) === Math.floor((col + part[1] - 1) / boundaryWidth)
+                        Math.floor(col / boundaryWidth) === Math.floor((col + part[1] - 1) / boundaryWidth);
                 }
                 if (canPlacePiece) {
                     result[row][col] = [part[0], part[1]]; // place the piece here
@@ -1451,16 +1328,8 @@ function getRequiredPartMatrixFromSetPixelMatrix(
     return result;
 }
 
-function drawDepthPlatesCountForContext(
-    usedDepthParts,
-    scalingFactor,
-    ctx,
-    horizontalOffset,
-    verticalOffset
-) {
-    let sortedDepthParts = Object.keys(usedDepthParts).filter(
-        part => (usedDepthParts[part] || 0) > 0
-    );
+function drawDepthPlatesCountForContext(usedDepthParts, scalingFactor, ctx, horizontalOffset, verticalOffset) {
+    let sortedDepthParts = Object.keys(usedDepthParts).filter((part) => (usedDepthParts[part] || 0) > 0);
 
     if (sortedDepthParts.length === 0) {
         ctx.fillStyle = "#000000";
@@ -1475,10 +1344,7 @@ function drawDepthPlatesCountForContext(
     sortedDepthParts = sortedDepthParts.sort((part1, part2) => {
         const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
-        return (
-            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
-            Number(part2Numbers[0]) * Number(part2Numbers[1])
-        );
+        return Number(part1Numbers[0]) * Number(part1Numbers[1]) - Number(part2Numbers[0]) * Number(part2Numbers[1]);
     });
 
     ctx.font = `${scalingFactor / 2}px Arial`;
@@ -1489,12 +1355,7 @@ function drawDepthPlatesCountForContext(
         const x = horizontalOffset + scalingFactor * 0.8;
         const y = verticalOffset + lineHeight * (i + 0.75);
         ctx.fillStyle = "#000000";
-        ctx.fillRect(
-            x - lineHeight * 0.1,
-            y - lineHeight * 0.35,
-            lineHeight,
-            lineHeight * 0.5
-        );
+        ctx.fillRect(x - lineHeight * 0.1, y - lineHeight * 0.35, lineHeight, lineHeight * 0.5);
         ctx.fillStyle = "#FFFFFF";
         ctx.fillText(part, x, y);
         ctx.fillStyle = "#000000";
@@ -1504,23 +1365,17 @@ function drawDepthPlatesCountForContext(
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#000000";
     ctx.beginPath();
-    ctx.rect(
-        horizontalOffset,
-        verticalOffset,
-        scalingFactor * 4,
-        lineHeight * (sortedDepthParts.length + 0.5)
-    );
+    ctx.rect(horizontalOffset, verticalOffset, scalingFactor * 4, lineHeight * (sortedDepthParts.length + 0.5));
     ctx.stroke();
 }
 
 function getUsedDepthPartsMap(perDepthLevelMatrices) {
     const result = {};
-    perDepthLevelMatrices.forEach(matrix =>
-        matrix.forEach(row =>
-            row.forEach(part => {
+    perDepthLevelMatrices.forEach((matrix) =>
+        matrix.forEach((row) =>
+            row.forEach((part) => {
                 if (part != null) {
-                    result[getPlateDimensionsString(part)] =
-                        (result[getPlateDimensionsString(part)] || 0) + 1;
+                    result[getPlateDimensionsString(part)] = (result[getPlateDimensionsString(part)] || 0) + 1;
                 }
             })
         )
@@ -1546,19 +1401,13 @@ function generateDepthInstructionTitlePage(
     sortedDepthParts.sort((part1, part2) => {
         const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
-        return (
-            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
-            Number(part2Numbers[0]) * Number(part2Numbers[1])
-        );
+        return Number(part1Numbers[0]) * Number(part1Numbers[1]) - Number(part2Numbers[0]) * Number(part2Numbers[1]);
     });
 
     const betweenLevelPicturePadding = pictureHeight * 0.2;
     canvas.height = Math.max(
-        pictureHeight * 1.5 +
-        (pictureHeight + betweenLevelPicturePadding) *
-        (usedPlatesMatrices[0].length - 1),
-        pictureHeight * 0.4 +
-        sortedDepthParts.length * (scalingFactor / 2) * 2.5
+        pictureHeight * 1.5 + (pictureHeight + betweenLevelPicturePadding) * (usedPlatesMatrices[0].length - 1),
+        pictureHeight * 0.4 + sortedDepthParts.length * (scalingFactor / 2) * 2.5
     );
     canvas.width = pictureWidth * 2;
 
@@ -1574,11 +1423,7 @@ function generateDepthInstructionTitlePage(
     ctx.font = `${scalingFactor * 2}px Arial`;
     ctx.fillText("Lego Art Remix", pictureWidth * 0.75, pictureHeight * 0.28);
     ctx.font = `${scalingFactor / 2}px Arial`;
-    ctx.fillText(
-        `Depth Instructions`,
-        pictureWidth * 0.75,
-        pictureHeight * 0.34
-    );
+    ctx.fillText(`Depth Instructions`, pictureWidth * 0.75, pictureHeight * 0.34);
     ctx.fillText(
         `Resolution: ${targetResolution[0]} x ${targetResolution[1]}`,
         pictureWidth * 0.75,
@@ -1596,9 +1441,7 @@ function generateDepthInstructionTitlePage(
         0,
         finalDepthImageCanvas.width,
         finalDepthImageCanvas.height,
-        legendHorizontalOffset +
-        legendSquareSide / 4 +
-        (legendSquareSide * targetResolution[0]) / plateWidth,
+        legendHorizontalOffset + legendSquareSide / 4 + (legendSquareSide * targetResolution[0]) / plateWidth,
         legendVerticalOffset,
         (legendSquareSide * targetResolution[0]) / plateWidth,
         legendSquareSide * ((numPlates * plateWidth) / targetResolution[0])
@@ -1627,12 +1470,7 @@ function generateDepthInstructionTitlePage(
     }
 }
 
-function generateDepthInstructionPage(
-    perDepthLevelMatrices,
-    scalingFactor,
-    canvas,
-    plateNumber
-) {
+function generateDepthInstructionPage(perDepthLevelMatrices, scalingFactor, canvas, plateNumber) {
     const ctx = canvas.getContext("2d");
 
     pictureWidth = perDepthLevelMatrices[0].length * scalingFactor;
@@ -1645,17 +1483,12 @@ function generateDepthInstructionPage(
     sortedDepthParts.sort((part1, part2) => {
         const part1Numbers = part1.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
         const part2Numbers = part2.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
-        return (
-            Number(part1Numbers[0]) * Number(part1Numbers[1]) -
-            Number(part2Numbers[0]) * Number(part2Numbers[1])
-        );
+        return Number(part1Numbers[0]) * Number(part1Numbers[1]) - Number(part2Numbers[0]) * Number(part2Numbers[1]);
     });
 
     const betweenLevelPicturePadding = pictureHeight * 0.2;
     canvas.height = Math.max(
-        pictureHeight * 1.5 +
-        (pictureHeight + betweenLevelPicturePadding) *
-        (perDepthLevelMatrices.length - 1),
+        pictureHeight * 1.5 + (pictureHeight + betweenLevelPicturePadding) * (perDepthLevelMatrices.length - 1),
         pictureHeight * 0.4 + sortedDepthParts.length * radius * 2.5
     );
     canvas.width = pictureWidth * 2;
@@ -1678,32 +1511,19 @@ function generateDepthInstructionPage(
 
     ctx.font = `${scalingFactor * 0.75}px Arial`;
 
-    for (
-        let depthIndex = 0; depthIndex < perDepthLevelMatrices.length; depthIndex++
-    ) {
+    for (let depthIndex = 0; depthIndex < perDepthLevelMatrices.length; depthIndex++) {
         const horizontalOffset = pictureWidth * 0.75;
-        const verticalOffset =
-            pictureHeight * 0.25 +
-            (pictureHeight + betweenLevelPicturePadding) * depthIndex;
+        const verticalOffset = pictureHeight * 0.25 + (pictureHeight + betweenLevelPicturePadding) * depthIndex;
         ctx.lineWidth = 5;
         ctx.beginPath();
         ctx.rect(horizontalOffset, verticalOffset, pictureWidth, pictureHeight);
         ctx.strokeStyle = "#000000";
         ctx.stroke();
         ctx.fillStyle = "#000000";
-        ctx.fillRect(
-            horizontalOffset,
-            verticalOffset,
-            pictureWidth,
-            pictureHeight
-        );
+        ctx.fillRect(horizontalOffset, verticalOffset, pictureWidth, pictureHeight);
 
         ctx.beginPath();
-        ctx.fillText(
-            `Level ${depthIndex + 1}`,
-            pictureWidth * 0.75,
-            verticalOffset - scalingFactor * 0.5
-        );
+        ctx.fillText(`Level ${depthIndex + 1}`, pictureWidth * 0.75, verticalOffset - scalingFactor * 0.5);
         ctx.stroke();
 
         const partMatrix = perDepthLevelMatrices[depthIndex];
@@ -1774,20 +1594,19 @@ function getSetPixelMatrixFromInputMatrix(inputMatrix, isSetFunction) {
 const PLATE_DIMENSIONS_DEPTH_SEPERATOR = " X ";
 
 function getPlateDimensionsString(part) {
-    return part[0] < part[1] ?
-        `${part[0]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[1]}` :
-        `${part[1]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[0]}`;
+    return part[0] < part[1]
+        ? `${part[0]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[1]}`
+        : `${part[1]}${PLATE_DIMENSIONS_DEPTH_SEPERATOR}${part[0]}`;
 }
 
-
 const TILE_DIMENSIONS_TO_PART_ID = {
-    "1 X 1": '3070b',
-    "1 X 2": '3069b',
+    "1 X 1": "3070b",
+    "1 X 2": "3069b",
     "1 X 3": 63864,
     "1 X 4": 2431,
     "1 X 6": 6636,
     "1 X 8": 4162,
-    "2 X 2": '3068b',
+    "2 X 2": "3068b",
     "2 X 3": 26603,
     "2 X 4": 87079,
     "2 X 6": 69729,
@@ -1811,7 +1630,7 @@ const PLATE_DIMENSIONS_TO_PART_ID = {
     "2 X 8": 3034,
     "4 X 4": 3031,
     "4 X 8": 3035,
-    "4 X 10": 3030
+    "4 X 10": 3030,
 };
 
 const BRICK_DIMENSIONS_TO_PART_ID = {
@@ -1833,10 +1652,10 @@ const BRICK_DIMENSIONS_TO_PART_ID = {
 
 const DEFAULT_DISABLED_DEPTH_PLATES = ["4 X 10", "4 X 8"];
 
-const DEPTH_FILLER_PARTS = Object.keys(PLATE_DIMENSIONS_TO_PART_ID).map(part =>
-    part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map(dimension => Number(dimension))
+const DEPTH_FILLER_PARTS = Object.keys(PLATE_DIMENSIONS_TO_PART_ID).map((part) =>
+    part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR).map((dimension) => Number(dimension))
 );
-Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(part => {
+Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach((part) => {
     const splitPart = part.split(PLATE_DIMENSIONS_DEPTH_SEPERATOR);
     if (splitPart[0] !== splitPart[1]) {
         DEPTH_FILLER_PARTS.push([Number(splitPart[1]), Number(splitPart[0])]);
@@ -1845,8 +1664,8 @@ Object.keys(PLATE_DIMENSIONS_TO_PART_ID).forEach(part => {
 
 function getDepthWantedListXML(depthPartsMap) {
     const items = Object.keys(depthPartsMap).map(
-        part =>
-        `<ITEM>
+        (part) =>
+            `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
       <ITEMID>${PLATE_DIMENSIONS_TO_PART_ID[part]}</ITEMID>
       <COLOR>11</COLOR>
@@ -1861,8 +1680,8 @@ function getDepthWantedListXML(depthPartsMap) {
 
 function getWantedListXML(studMap, partID) {
     const items = Object.keys(studMap).map(
-        stud =>
-        `<ITEM>
+        (stud) =>
+            `<ITEM>
       <ITEMTYPE>P</ITEMTYPE>
       <ITEMID>${partID}</ITEMID>
       <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[stud]]}</COLOR>
@@ -1882,22 +1701,29 @@ function getVariablePixelWantedListXML(pixelColorMatrix, variablePixelPieceDimen
             if (pixelDimensions != null) {
                 const pixelRGB = pixelColorMatrix[i][j];
                 const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
-                const sortedPixelDimensions = pixelDimensions[0] < pixelDimensions[1] ? pixelDimensions : [pixelDimensions[1], pixelDimensions[0]]
-                const pieceKey = pixelHex + '_' + sortedPixelDimensions[0] + PLATE_DIMENSIONS_DEPTH_SEPERATOR + sortedPixelDimensions[1];
-                pieceCounts[pieceKey] = (pieceCounts[pieceKey] || 0) + 1
+                const sortedPixelDimensions =
+                    pixelDimensions[0] < pixelDimensions[1]
+                        ? pixelDimensions
+                        : [pixelDimensions[1], pixelDimensions[0]];
+                const pieceKey =
+                    pixelHex +
+                    "_" +
+                    sortedPixelDimensions[0] +
+                    PLATE_DIMENSIONS_DEPTH_SEPERATOR +
+                    sortedPixelDimensions[1];
+                pieceCounts[pieceKey] = (pieceCounts[pieceKey] || 0) + 1;
             }
         });
     });
 
-
     const usedPieces = Object.keys(pieceCounts);
     usedPieces.sort();
     const items = usedPieces.map((keyString) => {
-        const pieceKey = keyString.split('_');
+        const pieceKey = keyString.split("_");
         let pieceIDMap = PLATE_DIMENSIONS_TO_PART_ID;
-        if (pixelType === 'variable_tile') {
+        if (pixelType === "variable_tile") {
             pieceIDMap = TILE_DIMENSIONS_TO_PART_ID;
-        } else if (pixelType === 'variable_brick') {
+        } else if (pixelType === "variable_brick") {
             pieceIDMap = BRICK_DIMENSIONS_TO_PART_ID;
         }
 
@@ -1906,7 +1732,7 @@ function getVariablePixelWantedListXML(pixelColorMatrix, variablePixelPieceDimen
             <ITEMID>${pieceIDMap[pieceKey[1]]}</ITEMID>
             <COLOR>${COLOR_NAME_TO_ID[HEX_TO_COLOR_NAME[pieceKey[0]]]}</COLOR>
             <MINQTY>${pieceCounts[keyString]}</MINQTY>
-         </ITEM>`
+         </ITEM>`;
     });
 
     return `<?xml version="1.0" encoding="UTF-8"?>
