@@ -526,6 +526,7 @@ const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
     "Lime",
     "Medium Blue",
     "Medium Nougat",
+    "Nougat",
     "Olive Green",
     "Orange",
     "Red",
