@@ -386,6 +386,42 @@ STUD_MAPS = {
             "#f7d117": 900,
         },
     },
+    lots_of_dots: {
+        name: "Lots of DOTS (41935) (Square Tiles Only)",
+        officialName: "Lots of DOTS (41935) (Square Tiles Only)",
+        descriptionHTML:
+            'Only use the square tiles available in <a href="https://www.lego.com/en-us/product/lots-of-dots-41935" target="_blank">Lots of DOTS (Set #41935)</a>',
+        sortedStuds: [
+            "#212121",
+            "#0057a6",
+            "#10cb31",
+            "#f3e055",
+            "#f88379",
+            "#2e5543",
+            "#5f2683",
+            "#008a80",
+            "#b52952",
+            "#42c0fb",
+            "#76a290",
+            "#ffffff",
+            "#f7d117",
+        ],
+        studMap: {
+            "#212121": 20,
+            "#0057a6": 30,
+            "#10cb31": 20,
+            "#f3e055": 20,
+            "#f88379": 30,
+            "#2e5543": 20,
+            "#5f2683": 20,
+            "#008a80": 30,
+            "#b52952": 20,
+            "#42c0fb": 20,
+            "#76a290": 20,
+            "#ffffff": 20,
+            "#f7d117": 30,
+        },
+    },
 };
 
 const availableStudHexes = BRICKLINK_STUD_COLORS.map((color) => color.hex);
