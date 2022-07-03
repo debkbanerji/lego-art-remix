@@ -386,7 +386,7 @@ STUD_MAPS = {
             "#f7d117": 900,
         },
     },
-    lots_of_dots: {
+    lots_of_dots_squares: {
         name: "Lots of DOTS (41935) (Square Tiles Only)",
         officialName: "Lots of DOTS (41935) (Square Tiles Only)",
         descriptionHTML:
@@ -419,6 +419,34 @@ STUD_MAPS = {
             "#42c0fb": 20,
             "#76a290": 20,
             "#ffffff": 20,
+            "#f7d117": 30,
+        },
+    },
+    lots_of_dots_round: {
+        name: "Lots of DOTS (41935) (Round Tiles Only)",
+        officialName: "Lots of DOTS (41935) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/lots-of-dots-41935" target="_blank">Lots of DOTS (Set #41935)</a>',
+        sortedStuds: [
+            "#0057a6",
+            "#f88379",
+            "#143044",
+            "#008a80",
+            "#b18cbf",
+            "#ccffff",
+            "#ff7e14",
+            "#b30006",
+            "#f7d117",
+        ],
+        studMap: {
+            "#0057a6": 30,
+            "#f88379": 30,
+            "#143044": 20,
+            "#008a80": 30,
+            "#b18cbf": 20,
+            "#ccffff": 20,
+            "#ff7e14": 20,
+            "#b30006": 20,
             "#f7d117": 30,
         },
     },
