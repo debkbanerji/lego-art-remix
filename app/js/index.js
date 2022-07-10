@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.7.3";
+const VERSION_NUMBER = "v2022.7.9";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -721,7 +721,7 @@ Object.keys(quantizationAlgorithmsInfo).forEach((key) => {
 const DIVIDER = "DIVIDER";
 const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
 const NUM_SET_STUD_MAPS = 11;
-const NUM_PARTIAL_SET_STUD_MAPS = 2;
+const NUM_PARTIAL_SET_STUD_MAPS = 7;
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER);
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS + NUM_PARTIAL_SET_STUD_MAPS + 1, 0, DIVIDER);
 

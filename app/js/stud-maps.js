@@ -450,6 +450,63 @@ STUD_MAPS = {
             "#f7d117": 30,
         },
     },
+    pineapple_pencil_holder: {
+        name: "Pineapple Pencil Holder (41906) (Round Tiles Only)",
+        officialName: "Pineapple Pencil Holder (41906) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/pineapple-pencil-holder-41906" target="_blank">Pineapple Pencil Holder (Set #41906)</a>',
+        sortedStuds: ["#212121", "#ffbbff", "#a6ca55", "#ffffff"],
+        studMap: {
+            "#212121": 2,
+            "#ffbbff": 24,
+            "#a6ca55": 32,
+            "#ffffff": 24,
+        },
+    },
+    cute_banana_pen_holder: {
+        name: "Cute Banana Pen Holder (41948) (Round Tiles Only)",
+        officialName: "Cute Banana Pen Holder (41948) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/cute-banana-pen-holder-41948" target="_blank">Cute Banana Pen Holder (Set #41948)</a>',
+        sortedStuds: ["#b35408", "#ffffff"],
+        studMap: {
+            "#b35408": 20,
+            "#ffffff": 26,
+        },
+    },
+    extra_dots_series_2: {
+        name: "Extra DOTS - Series 2 (41916) (Round Tiles Only)",
+        officialName: "Extra DOTS - Series 2 (41916) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/extra-dots-series-2-41916" target="_blank">Extra DOTS - Series 2 (Set #41916)</a>',
+        sortedStuds: ["#0057a6", "#f88379"],
+        studMap: {
+            "#0057a6": 19,
+            "#f88379": 20,
+        },
+    },
+    extra_dots_series_6: {
+        name: "Extra DOTS - Series 6 (41946) (Round Tiles Only)",
+        officialName: "Extra DOTS - Series 6 (41946) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/extra-dots-series-6-41946" target="_blank">Extra DOTS - Series 6 (Set #41946)</a>',
+        sortedStuds: ["#c87080", "#dfeea5"],
+        studMap: {
+            "#c87080": 19,
+            "#dfeea5": 19,
+        },
+    },
+    extra_dots_series_7: {
+        name: "Extra DOTS - Series 7 (41958) (Round Tiles Only)",
+        officialName: "Extra DOTS - Series 7 (41958) (Round Tiles Only)",
+        descriptionHTML:
+            'Only use the round tiles available in <a href="https://www.lego.com/en-us/product/extra-dots-series-7-sport-41958" target="_blank">Extra DOTS - Series 7 (Set #41958)</a>',
+        sortedStuds: ["#ccffff", "#fffc00"],
+        studMap: {
+            "#ccffff": 15,
+            "#fffc00": 15,
+        },
+    },
 };
 
 const availableStudHexes = BRICKLINK_STUD_COLORS.map((color) => color.hex);

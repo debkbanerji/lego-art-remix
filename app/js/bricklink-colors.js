@@ -414,6 +414,11 @@ let ALL_BRICKLINK_SOLID_COLORS = [
         hex: "#ffe1ff",
         id: 56,
     },
+    {
+        name: "Neon Yellow",
+        hex: "#fffc00",
+        id: 236,
+    },
     // add in some pearl colors to support specific sets,
     // but avoid the other pearl colors for now since they
     // may weirdly replace similar solid non pearl
@@ -558,6 +563,7 @@ const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
     "Dark Pink", // manually added from Warhol
     "Magenta", // manually added from Warhol
     "Medium Azure", // manually added from Warhol
+    "Neon Yellow", // manually added from dots
 ];
 
 const BRICKLINK_STUD_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter((color) =>
