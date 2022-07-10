@@ -721,7 +721,9 @@ Object.keys(quantizationAlgorithmsInfo).forEach((key) => {
 const DIVIDER = "DIVIDER";
 const STUD_MAP_KEYS = Object.keys(STUD_MAPS);
 const NUM_SET_STUD_MAPS = 11;
+const NUM_PARTIAL_SET_STUD_MAPS = 2;
 STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS, 0, DIVIDER);
+STUD_MAP_KEYS.splice(NUM_SET_STUD_MAPS + NUM_PARTIAL_SET_STUD_MAPS + 1, 0, DIVIDER);
 
 STUD_MAP_KEYS.filter((key) => key !== "rgb").forEach((studMap) => {
     if (studMap === DIVIDER) {
