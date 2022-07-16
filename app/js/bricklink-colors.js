@@ -564,6 +564,12 @@ const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
     "Magenta", // manually added from Warhol
     "Medium Azure", // manually added from Warhol
     "Neon Yellow", // manually added from dots
+    "Dark Azure", // manually added from art project
+    "Light Aqua", // manually added from art project
+    "Bright Light Yellow", // manually added from art project
+    "Bright Green", // manually added from art project
+    "Dark Turquoise", // manually added from dots
+    "Yellowish Green", // manually added from dots
 ];
 
 const BRICKLINK_STUD_COLORS = ALL_BRICKLINK_SOLID_COLORS.filter((color) =>
