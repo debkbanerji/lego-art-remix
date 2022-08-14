@@ -247,7 +247,7 @@ STUD_MAPS = {
         name: "World Map (31203)",
         officialName: "World Map (31203)",
         descriptionHTML:
-            'Only use pieces available in <a href="https://www.lego.com/en-us/product/world-map-31203" target="_blank">World Map (Set #31203)</a>',
+            'Only use pieces available in <a href="https://www.lego.com/en-us/product/world-map-31203" target="_blank">World Map (Set #31203)</a> (both plates and tiles)',
         sortedStuds: [
             "#ffffff",
             "#143044",
@@ -357,6 +357,23 @@ STUD_MAPS = {
             "#10cb31": 210,
             "#885e9e": 95,
             "#b30006": 112,
+        },
+    },
+    floral_art: {
+        name: "Floral Art (31207)",
+        officialName: "Floral Art (31207)",
+        descriptionHTML:
+            'Only use pieces available in <a href="https://www.lego.com/en-us/product/floral-art-31207" target="_blank">Floral Art (Set #31207)</a> (both plates and tiles)',
+        sortedStuds: ["#008a80", "#0057a6", "#c87080", "#143044", "#f7ba30", "#feccb0", "#ffbbff", "#ffffff"],
+        studMap: {
+            "#008a80": 370,
+            "#0057a6": 242,
+            "#c87080": 370,
+            "#143044": 281,
+            "#f7ba30": 370,
+            "#feccb0": 370,
+            "#ffbbff": 158,
+            "#ffffff": 550,
         },
     },
     // personalized_portrait_6000: {
