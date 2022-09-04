@@ -1206,7 +1206,7 @@ function runStep1() {
 }
 
 function runStep2() {
-    const downSamplingMethod = "maxPooling";
+    const downSamplingMethod = "minPooling";
     let inputPixelArray;
     if (downSamplingMethod === "default") {
         const croppedCanvas = inputImageCropper.getCroppedCanvas({

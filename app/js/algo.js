@@ -1282,7 +1282,15 @@ function maxPoolingKernel(inputPixels) {
     return result;
 }
 
-function minPoolingKernel(inputPixels) {}
+function minPoolingKernel(inputPixels) {
+    let result = [255, 255, 255];
+    inputPixels.forEach((pixel) => {
+        pixel.forEach((val, channel) => {
+            result[channel] = Math.min(result[channel], val);
+        });
+    });
+    return result;
+}
 
 function avgPoolingKernel(inputPixels) {}
 
