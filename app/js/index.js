@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.8.13";
+const VERSION_NUMBER = "v2022.9.3";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -591,6 +591,38 @@ TIEBREAK_TECHNIQUES.forEach((technique) => {
         runStep1();
     });
     document.getElementById("color-ties-resolution-options").appendChild(option);
+});
+
+let selectedInterpolationAlgorithm = "default";
+const INTERPOLATION_ALGORITHMS = [
+    {
+        name: "Browser Default",
+        value: "default",
+    },
+    {
+        name: "Dual Min Max Pooling",
+        value: "dualMinMaxPooling",
+    },
+    {
+        name: "Min Pooling",
+        value: "minPooling",
+    },
+    {
+        name: "Max Pooling",
+        value: "maxPooling",
+    },
+];
+INTERPOLATION_ALGORITHMS.forEach((algorithm) => {
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = algorithm.name;
+    option.value = algorithm.value;
+    option.addEventListener("click", () => {
+        document.getElementById("interpolation-algorithm-button").innerHTML = algorithm.name;
+        selectedInterpolationAlgorithm = algorithm.value;
+        runStep2();
+    });
+    document.getElementById("interpolation-algorithm-options").appendChild(option);
 });
 
 // Color distance stuff
@@ -1206,9 +1238,8 @@ function runStep1() {
 }
 
 function runStep2() {
-    const downSamplingMethod = "default";
     let inputPixelArray;
-    if (downSamplingMethod === "default") {
+    if (selectedInterpolationAlgorithm === "default") {
         const croppedCanvas = inputImageCropper.getCroppedCanvas({
             width: targetResolution[0],
             height: targetResolution[1],
@@ -1226,14 +1257,14 @@ function runStep2() {
         });
         rawCroppedData = getPixelArrayFromCanvas(croppedCanvas);
         let subArrayPoolingFunction;
-        if (downSamplingMethod === "maxPooling") {
+        if (selectedInterpolationAlgorithm === "maxPooling") {
             subArrayPoolingFunction = maxPoolingKernel;
-        } else if (downSamplingMethod === "minPooling") {
+        } else if (selectedInterpolationAlgorithm === "minPooling") {
             subArrayPoolingFunction = minPoolingKernel;
-        } else if (downSamplingMethod === "avgPooling") {
+        } else if (selectedInterpolationAlgorithm === "avgPooling") {
             subArrayPoolingFunction = avgPoolingKernel;
         } else {
-            //  downSamplingMethod === "dualMinMaxPooling"
+            //  selectedInterpolationAlgorithm === "dualMinMaxPooling"
             subArrayPoolingFunction = dualMinMaxPoolingKernel;
         }
         inputPixelArray = resizeImagePixelsWithAdaptivePooling(
