@@ -1206,14 +1206,41 @@ function runStep1() {
 }
 
 function runStep2() {
-    const croppedCanvas = inputImageCropper.getCroppedCanvas({
-        width: targetResolution[0],
-        height: targetResolution[1],
-        maxWidth: 4096,
-        maxHeight: 4096,
-        imageSmoothingEnabled: false,
-    });
-    const inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
+    const downSamplingMethod = "maxPooling";
+    let inputPixelArray;
+    if (downSamplingMethod === "default") {
+        const croppedCanvas = inputImageCropper.getCroppedCanvas({
+            width: targetResolution[0],
+            height: targetResolution[1],
+            maxWidth: 4096,
+            maxHeight: 4096,
+            imageSmoothingEnabled: false,
+        });
+        inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
+    } else {
+        // We're using pooling
+        const croppedCanvas = inputImageCropper.getCroppedCanvas({
+            maxWidth: 4096,
+            maxHeight: 4096,
+            imageSmoothingEnabled: false,
+        });
+        rawCroppedData = getPixelArrayFromCanvas(croppedCanvas);
+        let subArrayPoolingFunction;
+        if (downSamplingMethod === "maxPooling") {
+            subArrayPoolingFunction = maxPoolingKernel;
+        } else if (downSamplingMethod === "minPooling") {
+            subArrayPoolingFunction = minPoolingKernel;
+        } else {
+            subArrayPoolingFunction = avgPoolingKernel;
+        }
+        inputPixelArray = resizeImagePixelsWithAdaptivePooling(
+            rawCroppedData,
+            croppedCanvas.width,
+            targetResolution[0],
+            targetResolution[1],
+            subArrayPoolingFunction
+        );
+    }
     let filteredPixelArray = applyHSVAdjustment(
         inputPixelArray,
         document.getElementById("hue-slider").value,
