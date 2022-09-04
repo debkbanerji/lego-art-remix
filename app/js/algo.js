@@ -1292,9 +1292,17 @@ function minPoolingKernel(inputPixels) {
     return result;
 }
 
-function avgPoolingKernel(inputPixels) {}
+function avgPoolingKernel(inputPixels) {
+    let sum = [0, 0, 0];
+    inputPixels.forEach((pixel) => {
+        pixel.forEach((val, channel) => {
+            sum[channel] += val;
+        });
+    });
+    return sum.map((channel) => Math.round(channel / inputPixels.length));
+}
 
-function stickyPoolingKernel(inputPixels) {}
+function dualMinMaxPoolingKernel(inputPixels) {}
 
 function resizeImageArrayWithAdaptivePooling(input2DArray, outputWidth, outputHeight, subArrayPoolingFunction) {
     const result = [];

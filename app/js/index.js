@@ -1206,7 +1206,7 @@ function runStep1() {
 }
 
 function runStep2() {
-    const downSamplingMethod = "minPooling";
+    const downSamplingMethod = "avgPooling";
     let inputPixelArray;
     if (downSamplingMethod === "default") {
         const croppedCanvas = inputImageCropper.getCroppedCanvas({
@@ -1218,7 +1218,7 @@ function runStep2() {
         });
         inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
     } else {
-        // We're using pooling
+        // We're using adaptive pooling
         const croppedCanvas = inputImageCropper.getCroppedCanvas({
             maxWidth: 4096,
             maxHeight: 4096,
@@ -1230,8 +1230,11 @@ function runStep2() {
             subArrayPoolingFunction = maxPoolingKernel;
         } else if (downSamplingMethod === "minPooling") {
             subArrayPoolingFunction = minPoolingKernel;
-        } else {
+        } else if (downSamplingMethod === "avgPooling") {
             subArrayPoolingFunction = avgPoolingKernel;
+        } else {
+            //  downSamplingMethod === "dualMinMaxPooling"
+            subArrayPoolingFunction = dualMinMaxPoolingKernel;
         }
         inputPixelArray = resizeImagePixelsWithAdaptivePooling(
             rawCroppedData,
