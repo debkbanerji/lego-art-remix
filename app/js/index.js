@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.8.13";
+const VERSION_NUMBER = "v2022.9.3";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -361,11 +361,11 @@ document.getElementById("height-slider").addEventListener(
 );
 document.getElementById("clear-overrides-button").addEventListener("click", () => {
     overridePixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
-    runStep1();
+    runStep2();
 });
 document.getElementById("clear-depth-overrides-button").addEventListener("click", () => {
     overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
-    runStep1();
+    runStep2();
 });
 
 document.getElementById("resolution-limit-increase-button").addEventListener("click", () => {
@@ -591,6 +591,42 @@ TIEBREAK_TECHNIQUES.forEach((technique) => {
         runStep1();
     });
     document.getElementById("color-ties-resolution-options").appendChild(option);
+});
+
+let selectedInterpolationAlgorithm = "default";
+const INTERPOLATION_ALGORITHMS = [
+    {
+        name: "Browser Default",
+        value: "default",
+    },
+    {
+        name: "Average Pooling",
+        value: "avgPooling",
+    },
+    {
+        name: "Dual Min Max Pooling",
+        value: "dualMinMaxPooling",
+    },
+    {
+        name: "Min Pooling",
+        value: "minPooling",
+    },
+    {
+        name: "Max Pooling",
+        value: "maxPooling",
+    },
+];
+INTERPOLATION_ALGORITHMS.forEach((algorithm) => {
+    const option = document.createElement("a");
+    option.className = "dropdown-item btn";
+    option.textContent = algorithm.name;
+    option.value = algorithm.value;
+    option.addEventListener("click", () => {
+        document.getElementById("interpolation-algorithm-button").innerHTML = algorithm.name;
+        selectedInterpolationAlgorithm = algorithm.value;
+        runStep2();
+    });
+    document.getElementById("interpolation-algorithm-options").appendChild(option);
 });
 
 // Color distance stuff
@@ -940,7 +976,7 @@ document.getElementById("add-custom-stud-button").addEventListener("click", () =
 
 const onHueChange = () => {
     document.getElementById("hue-text").innerHTML = document.getElementById("hue-slider").value + "<span>&#176;</span>";
-    runStep1();
+    runStep2();
 };
 document.getElementById("hue-slider").addEventListener("change", onHueChange, false);
 document.getElementById("hue-increment").addEventListener(
@@ -966,7 +1002,7 @@ document.getElementById("hue-decrement").addEventListener(
 
 const onSaturationChange = () => {
     document.getElementById("saturation-text").innerHTML = document.getElementById("saturation-slider").value + "%";
-    runStep1();
+    runStep2();
 };
 document.getElementById("saturation-slider").addEventListener("change", onSaturationChange, false);
 document.getElementById("saturation-increment").addEventListener(
@@ -1000,7 +1036,7 @@ document.getElementById("saturation-decrement").addEventListener(
 
 const onValueChange = () => {
     document.getElementById("value-text").innerHTML = document.getElementById("value-slider").value + "%";
-    runStep1();
+    runStep2();
 };
 document.getElementById("value-slider").addEventListener("change", onValueChange, false);
 document.getElementById("value-increment").addEventListener(
@@ -1032,7 +1068,7 @@ const onBrightnessChange = () => {
     document.getElementById("brightness-text").innerHTML =
         (document.getElementById("brightness-slider").value > 0 ? "+" : "") +
         document.getElementById("brightness-slider").value;
-    runStep1();
+    runStep2();
 };
 document.getElementById("brightness-slider").addEventListener("change", onBrightnessChange, false);
 document.getElementById("brightness-increment").addEventListener(
@@ -1068,7 +1104,7 @@ const onContrastChange = () => {
     document.getElementById("contrast-text").innerHTML =
         (document.getElementById("contrast-slider").value > 0 ? "+" : "") +
         document.getElementById("contrast-slider").value;
-    runStep1();
+    runStep2();
 };
 document.getElementById("contrast-slider").addEventListener("change", onContrastChange, false);
 document.getElementById("contrast-increment").addEventListener(
@@ -1144,7 +1180,7 @@ document.getElementById("reset-hsv-button").addEventListener(
             document.getElementById("hue-slider").value + "<span>&#176;</span>";
         document.getElementById("saturation-text").innerHTML = document.getElementById("saturation-slider").value + "%";
         document.getElementById("value-text").innerHTML = document.getElementById("value-slider").value + "%";
-        runStep1();
+        runStep2();
     },
     false
 );
@@ -1154,7 +1190,7 @@ document.getElementById("reset-brightness-button").addEventListener(
     () => {
         document.getElementById("brightness-slider").value = 0;
         document.getElementById("brightness-text").innerHTML = document.getElementById("brightness-slider").value;
-        runStep1();
+        runStep2();
     },
     false
 );
@@ -1164,7 +1200,7 @@ document.getElementById("reset-contrast-button").addEventListener(
     () => {
         document.getElementById("contrast-slider").value = 0;
         document.getElementById("contrast-text").innerHTML = document.getElementById("contrast-slider").value;
-        runStep1();
+        runStep2();
     },
     false
 );
@@ -1206,14 +1242,43 @@ function runStep1() {
 }
 
 function runStep2() {
-    const croppedCanvas = inputImageCropper.getCroppedCanvas({
-        width: targetResolution[0],
-        height: targetResolution[1],
-        maxWidth: 4096,
-        maxHeight: 4096,
-        imageSmoothingEnabled: false,
-    });
-    const inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
+    let inputPixelArray;
+    if (selectedInterpolationAlgorithm === "default") {
+        const croppedCanvas = inputImageCropper.getCroppedCanvas({
+            width: targetResolution[0],
+            height: targetResolution[1],
+            maxWidth: 4096,
+            maxHeight: 4096,
+            imageSmoothingEnabled: false,
+        });
+        inputPixelArray = getPixelArrayFromCanvas(croppedCanvas);
+    } else {
+        // We're using adaptive pooling
+        const croppedCanvas = inputImageCropper.getCroppedCanvas({
+            maxWidth: 4096,
+            maxHeight: 4096,
+            imageSmoothingEnabled: false,
+        });
+        rawCroppedData = getPixelArrayFromCanvas(croppedCanvas);
+        let subArrayPoolingFunction;
+        if (selectedInterpolationAlgorithm === "maxPooling") {
+            subArrayPoolingFunction = maxPoolingKernel;
+        } else if (selectedInterpolationAlgorithm === "minPooling") {
+            subArrayPoolingFunction = minPoolingKernel;
+        } else if (selectedInterpolationAlgorithm === "avgPooling") {
+            subArrayPoolingFunction = avgPoolingKernel;
+        } else {
+            //  selectedInterpolationAlgorithm === "dualMinMaxPooling"
+            subArrayPoolingFunction = dualMinMaxPoolingKernel;
+        }
+        inputPixelArray = resizeImagePixelsWithAdaptivePooling(
+            rawCroppedData,
+            croppedCanvas.width,
+            targetResolution[0],
+            targetResolution[1],
+            subArrayPoolingFunction
+        );
+    }
     let filteredPixelArray = applyHSVAdjustment(
         inputPixelArray,
         document.getElementById("hue-slider").value,

@@ -1251,6 +1251,7 @@ function convertPixelArrayToMatrix(pixelArray, totalWidth) {
     return result;
 }
 
+// TODO: Make more efficient
 function getSubPixelMatrix(pixelMatrix, horizontalOffset, verticalOffset, width, height) {
     const result = [];
     for (let iHorizontal = 0; iHorizontal < pixelMatrix[0].length; iHorizontal++) {
@@ -1269,6 +1270,98 @@ function getSubPixelMatrix(pixelMatrix, horizontalOffset, verticalOffset, width,
         }
     }
     return result;
+}
+
+function maxPoolingKernel(inputPixels) {
+    let result = [0, 0, 0];
+    inputPixels.forEach((pixel) => {
+        pixel.forEach((val, channel) => {
+            result[channel] = Math.max(result[channel], val);
+        });
+    });
+    return result;
+}
+
+function minPoolingKernel(inputPixels) {
+    let result = [255, 255, 255];
+    inputPixels.forEach((pixel) => {
+        pixel.forEach((val, channel) => {
+            result[channel] = Math.min(result[channel], val);
+        });
+    });
+    return result;
+}
+
+function avgPoolingKernel(inputPixels) {
+    let sum = [0, 0, 0];
+    inputPixels.forEach((pixel) => {
+        pixel.forEach((val, channel) => {
+            sum[channel] += val;
+        });
+    });
+    return sum.map((channel) => Math.round(channel / inputPixels.length));
+}
+
+function dualMinMaxPoolingKernel(inputPixels) {
+    const maxPool = maxPoolingKernel(inputPixels);
+    const minPool = minPoolingKernel(inputPixels);
+    const avgPool = avgPoolingKernel(inputPixels);
+    return [0, 1, 2].map((channel) => {
+        const min = minPool[channel];
+        const max = maxPool[channel];
+        const avg = avgPool[channel];
+        return avg - min < max - avg ? min : max;
+    });
+}
+
+function resizeImageArrayWithAdaptivePooling(input2DArray, outputWidth, outputHeight, subArrayPoolingFunction) {
+    const result = [];
+    for (let h = 0; h < outputHeight; h++) {
+        const row = [];
+        for (let w = 0; w < outputWidth; w++) {
+            const startW = Math.floor((w * input2DArray[1].length) / outputWidth);
+            const endW = Math.ceil(((w + 1) * input2DArray[1].length) / outputWidth);
+            const startH = Math.floor((h * input2DArray.length) / outputHeight);
+            const endH = Math.ceil(((h + 1) * input2DArray.length) / outputHeight);
+
+            const kernelPixels = [];
+            for (k_w = startW; k_w < endW; k_w++) {
+                for (k_h = startH; k_h < endH; k_h++) {
+                    kernelPixels.push(input2DArray[k_h][k_w]);
+                }
+            }
+            row.push(subArrayPoolingFunction(kernelPixels));
+        }
+        result.push(row);
+    }
+    return result;
+}
+
+function resizeImagePixelsWithAdaptivePooling(
+    inputPixels,
+    inputImageWidth,
+    outputWidth,
+    outputHeight,
+    subArrayPoolingFunction
+) {
+    const pixelMatrix = convertPixelArrayToMatrix(inputPixels, inputImageWidth);
+    const outputPixels = resizeImageArrayWithAdaptivePooling(
+        pixelMatrix,
+        outputWidth,
+        outputHeight,
+        subArrayPoolingFunction
+    );
+
+    const result = [];
+    outputPixels.forEach((row) => {
+        row.forEach((pixel) => {
+            pixel.forEach((channel) => {
+                result.push(channel);
+            });
+            result.push(255); // opacity
+        });
+    });
+    return new Uint8ClampedArray(result);
 }
 
 function getRequiredPartMatrixFromSetPixelMatrix(

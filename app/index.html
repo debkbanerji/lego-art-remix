@@ -628,8 +628,55 @@
               <canvas id="step-2-canvas" hidden></canvas>
               <canvas id="step-2-canvas-upscaled" style="width: 100%"></canvas>
               <h4>Step 2</h4>
-              <small className="step-header-subtitle">Adjust colors</small>
+              <small className="step-header-subtitle">Interpolate + Adjust colors</small>
+
               <div id="step-2-accordion">
+                <div class="card accordion-card">
+                  <div class="card-header" id="step-2-4-heading">
+                    <h5 class="mb-0">
+                      <button
+                        class="btn btn-link collapsed"
+                        data-toggle="collapse"
+                        data-target="#step-2-4-collapse"
+                        aria-expanded="false"
+                        aria-controls="step-2-4-collapse"
+                      >
+                        Interpolation
+                      </button>
+                    </h5>
+                  </div>
+                  <div
+                    id="step-2-4-collapse"
+                    class="collapse"
+                    aria-labelledby="step-2-4-heading"
+                    data-parent="#step-2-accordion"
+                  >
+                    <div class="card-body accordion-card-body">
+                      <div style="width: 100%">
+                        <div style="margin-top: 12px; margin-left: 4px" id="color-ties-resolution-section">
+                          <small>
+                            <p style="margin-bottom: 4px">
+                              This setting determines which algorithm is used to resize the picture to the selected
+                              resolution
+                            </p>
+                          </small>
+                        </div>
+                        <div class="btn-group">
+                          <button
+                            class="btn dropdown-toggle btn-outline-dark"
+                            type="button"
+                            id="interpolation-algorithm-button"
+                            data-toggle="dropdown"
+                          >
+                            Browser Default
+                          </button>
+                          <div class="dropdown-menu" id="interpolation-algorithm-options"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="card accordion-card">
                   <div class="card-header" id="step-2-1-heading">
                     <h5 class="mb-0">
