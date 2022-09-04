@@ -1206,7 +1206,7 @@ function runStep1() {
 }
 
 function runStep2() {
-    const downSamplingMethod = "avgPooling";
+    const downSamplingMethod = "default";
     let inputPixelArray;
     if (downSamplingMethod === "default") {
         const croppedCanvas = inputImageCropper.getCroppedCanvas({

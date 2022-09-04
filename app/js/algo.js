@@ -1302,7 +1302,17 @@ function avgPoolingKernel(inputPixels) {
     return sum.map((channel) => Math.round(channel / inputPixels.length));
 }
 
-function dualMinMaxPoolingKernel(inputPixels) {}
+function dualMinMaxPoolingKernel(inputPixels) {
+    const maxPool = maxPoolingKernel(inputPixels);
+    const minPool = minPoolingKernel(inputPixels);
+    const avgPool = avgPoolingKernel(inputPixels);
+    return [0, 1, 2].map((channel) => {
+        const min = minPool[channel];
+        const max = maxPool[channel];
+        const avg = avgPool[channel];
+        return avg - min < max - avg ? min : max;
+    });
+}
 
 function resizeImageArrayWithAdaptivePooling(input2DArray, outputWidth, outputHeight, subArrayPoolingFunction) {
     const result = [];
