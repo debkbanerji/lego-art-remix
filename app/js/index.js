@@ -600,6 +600,10 @@ const INTERPOLATION_ALGORITHMS = [
         value: "default",
     },
     {
+        name: "Average Pooling",
+        value: "avgPooling",
+    },
+    {
         name: "Dual Min Max Pooling",
         value: "dualMinMaxPooling",
     },
