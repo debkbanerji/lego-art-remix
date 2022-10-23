@@ -438,11 +438,11 @@ let ALL_BRICKLINK_SOLID_COLORS = [
         id: 95,
     },
     // The 2 below are new in 2022
-    {
-        name: "Medium Brown",
-        hex: "#A16C42",
-        id: 240,
-    },
+    // {
+    //     name: "Medium Brown",
+    //     hex: "#A16C42",
+    //     id: 240,
+    // },
     {
         name: "Medium Tan",
         hex: "#D9C594",
