@@ -2102,7 +2102,7 @@ step4Canvas3dUpscaled.addEventListener("mouseleave", function (e) {
 
 document.getElementById("3d-effect-intensity").addEventListener("change", create3dPreview, false);
 
-async function runStep4(asyncCallback) {
+function runStep4(asyncCallback) {
     const step2PixelArray = getPixelArrayFromCanvas(step2Canvas);
     const step3PixelArray = getPixelArrayFromCanvas(step3Canvas);
     step4Canvas.width = 0;
@@ -2339,7 +2339,7 @@ async function runStep4(asyncCallback) {
             setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
         }
         if (asyncCallback) {
-            await asyncCallback();
+            asyncCallback();
         }
         enableInteraction();
     } catch (_e) {
