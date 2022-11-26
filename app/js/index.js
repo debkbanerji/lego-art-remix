@@ -1208,7 +1208,7 @@ document.getElementById("reset-contrast-button").addEventListener(
     false
 );
 
-function runStep1(skipStep2) {
+function runStep1() {
     disableInteraction();
     updateStudCountText();
 
@@ -1239,9 +1239,7 @@ function runStep1(skipStep2) {
         step1CanvasUpscaled.width,
         step1CanvasUpscaled.height
     );
-    if (!skipStep2) {
-        runStep2();
-    }
+    runStep2();
 }
 
 function runStep2() {
