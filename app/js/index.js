@@ -590,7 +590,6 @@ TIEBREAK_TECHNIQUES.forEach((technique) => {
             /*"Color Tie Resolution: " +*/
             "Strategy: " + technique.name;
         selectedTiebreakTechnique = technique.value;
-        debugger;
         runStep1();
     });
     document.getElementById("color-ties-resolution-options").appendChild(option);
@@ -2774,7 +2773,6 @@ function triggerDepthMapGeneration() {
             loadingMessageComponent.hidden = true;
             enableInteraction();
             overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
-            debugger;
             runStep1();
         } else if (loadingMessage != null) {
             loadingMessageComponent.innerHTML = loadingMessage;
