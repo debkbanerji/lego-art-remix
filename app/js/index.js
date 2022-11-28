@@ -338,7 +338,7 @@ function handleResolutionChange() {
     ).toFixed(1)}″`;
     $('[data-toggle="tooltip"]').tooltip("dispose");
     $('[data-toggle="tooltip"]').tooltip();
-    runStep1(true);
+    runStep1();
     initializeCropper();
 }
 
