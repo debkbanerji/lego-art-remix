@@ -181,13 +181,15 @@ function initializeCropper() {
         minContainerWidth: 1,
         minContainerHeight: 1,
         cropend() {
+            runStep1();
             overridePixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
             overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
         },
+        ready() {
+            runStep1();
+        },
     });
 }
-
-step1CanvasUpscaled.addEventListener("cropend", runStep1);
 
 window.addEventListener("resize", () => {
     [step4Canvas].forEach((canvas) => {
@@ -337,7 +339,6 @@ function handleResolutionChange() {
     $('[data-toggle="tooltip"]').tooltip("dispose");
     $('[data-toggle="tooltip"]').tooltip();
     initializeCropper();
-    runStep1();
 }
 
 document.getElementById("width-slider").addEventListener(
@@ -1236,9 +1237,7 @@ function runStep1() {
         step1CanvasUpscaled.width,
         step1CanvasUpscaled.height
     );
-    setTimeout(() => {
-        runStep2();
-    }, 1); // TODO: find better way to check that input is finished
+    runStep2();
 }
 
 function runStep2() {
@@ -1333,31 +1332,29 @@ function runStep2() {
     );
     drawPixelsOnCanvas(discreteDepthPixels, step2DepthCanvas);
 
-    setTimeout(() => {
-        runStep3();
-        step2CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
-        step2CanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
-        step2CanvasUpscaledContext.imageSmoothingEnabled = false;
-        step2CanvasUpscaledContext.drawImage(
-            step2Canvas,
-            0,
-            0,
-            targetResolution[0] * SCALING_FACTOR,
-            targetResolution[1] * SCALING_FACTOR
-        );
-        step2DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
-        step2DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
-        drawStudImageOnCanvas(
-            scaleUpDiscreteDepthPixelsForDisplay(
-                discreteDepthPixels,
-                document.getElementById("num-depth-levels-slider").value
-            ),
-            targetResolution[0],
-            SCALING_FACTOR,
-            step2DepthCanvasUpscaled,
-            selectedPixelPartNumber
-        );
-    }, 1); // TODO: find better way to check that input is finished
+    runStep3();
+    step2CanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+    step2CanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+    step2CanvasUpscaledContext.imageSmoothingEnabled = false;
+    step2CanvasUpscaledContext.drawImage(
+        step2Canvas,
+        0,
+        0,
+        targetResolution[0] * SCALING_FACTOR,
+        targetResolution[1] * SCALING_FACTOR
+    );
+    step2DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+    step2DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+    drawStudImageOnCanvas(
+        scaleUpDiscreteDepthPixelsForDisplay(
+            discreteDepthPixels,
+            document.getElementById("num-depth-levels-slider").value
+        ),
+        targetResolution[0],
+        SCALING_FACTOR,
+        step2DepthCanvasUpscaled,
+        selectedPixelPartNumber
+    );
 }
 
 function getVariablePixelAvailablePartDimensions() {
@@ -1494,39 +1491,37 @@ function runStep3() {
     );
     document.getElementById("step-3-quantization-error").innerHTML = step3QuantizationError.toFixed(3);
 
-    setTimeout(() => {
-        if (!isStep3ViewExpanded) {
-            runStep4();
-        } else {
-            enableInteraction();
-        }
-        step3CanvasUpscaledContext.imageSmoothingEnabled = false;
-        drawStudImageOnCanvas(
-            isBleedthroughEnabled()
-                ? revertDarkenedImage(
-                      alignedPixelArray,
-                      getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
-                  )
-                : alignedPixelArray,
-            targetResolution[0],
-            SCALING_FACTOR,
-            step3CanvasUpscaled,
-            selectedPixelPartNumber,
-            step3VariablePixelPieceDimensions
-        );
-        step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
-        step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
-        drawStudImageOnCanvas(
-            scaleUpDiscreteDepthPixelsForDisplay(
-                adjustedDepthPixelArray,
-                document.getElementById("num-depth-levels-slider").value
-            ),
-            targetResolution[0],
-            SCALING_FACTOR,
-            step3DepthCanvasUpscaled,
-            selectedPixelPartNumber
-        );
-    }, 1); // TODO: find better way to check that input is finished
+    if (!isStep3ViewExpanded) {
+        runStep4();
+    } else {
+        enableInteraction();
+    }
+    step3CanvasUpscaledContext.imageSmoothingEnabled = false;
+    drawStudImageOnCanvas(
+        isBleedthroughEnabled()
+            ? revertDarkenedImage(
+                  alignedPixelArray,
+                  getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
+              )
+            : alignedPixelArray,
+        targetResolution[0],
+        SCALING_FACTOR,
+        step3CanvasUpscaled,
+        selectedPixelPartNumber,
+        step3VariablePixelPieceDimensions
+    );
+    step3DepthCanvasUpscaled.width = targetResolution[0] * SCALING_FACTOR;
+    step3DepthCanvasUpscaled.height = targetResolution[1] * SCALING_FACTOR;
+    drawStudImageOnCanvas(
+        scaleUpDiscreteDepthPixelsForDisplay(
+            adjustedDepthPixelArray,
+            document.getElementById("num-depth-levels-slider").value
+        ),
+        targetResolution[0],
+        SCALING_FACTOR,
+        step3DepthCanvasUpscaled,
+        selectedPixelPartNumber
+    );
 }
 
 let isStep3ViewExpanded = false;
@@ -2187,163 +2182,161 @@ function runStep4(asyncCallback) {
         );
         document.getElementById("step-4-quantization-error").innerHTML = step4QuantizationError.toFixed(3);
 
-        setTimeout(async () => {
-            step4CanvasUpscaledContext.imageSmoothingEnabled = false;
-            const pixelsToDraw = isBleedthroughEnabled()
-                ? revertDarkenedImage(
-                      availabilityCorrectedPixelArray,
-                      getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
-                  )
-                : availabilityCorrectedPixelArray;
-            drawPixelsOnCanvas(pixelsToDraw, bricklinkCacheCanvas);
+        step4CanvasUpscaledContext.imageSmoothingEnabled = false;
+        const pixelsToDraw = isBleedthroughEnabled()
+            ? revertDarkenedImage(
+                  availabilityCorrectedPixelArray,
+                  getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
+              )
+            : availabilityCorrectedPixelArray;
+        drawPixelsOnCanvas(pixelsToDraw, bricklinkCacheCanvas);
 
-            drawStudImageOnCanvas(
-                pixelsToDraw,
-                targetResolution[0],
-                SCALING_FACTOR,
-                step4CanvasUpscaled,
-                selectedPixelPartNumber,
-                step3VariablePixelPieceDimensions
-            );
+        drawStudImageOnCanvas(
+            pixelsToDraw,
+            targetResolution[0],
+            SCALING_FACTOR,
+            step4CanvasUpscaled,
+            selectedPixelPartNumber,
+            step3VariablePixelPieceDimensions
+        );
 
-            // create stud map result table
-            const usedPixelsStudMap = getUsedPixelsStudMap(pixelsToDraw);
-            const usedPixelsTableBody = document.getElementById("studs-used-table-body");
-            usedPixelsTableBody.innerHTML = "";
-            const variablePixelsUsed = ("" + selectedPixelPartNumber).match("^variable.*$");
-            document.getElementById("pieces-used-dimensions-header").hidden = !variablePixelsUsed;
-            let pieceCountsForTable = {}; // map piece identifier strings to counts
-            if (variablePixelsUsed) {
-                const pixelMatrix = convertPixelArrayToMatrix(pixelsToDraw, targetResolution[0]);
-                step3VariablePixelPieceDimensions.forEach((row, i) => {
-                    row.forEach((pixelDimensions, j) => {
-                        if (pixelDimensions != null) {
-                            const pixelRGB = pixelMatrix[i][j];
-                            const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
-                            const sortedPixelDimensions =
-                                pixelDimensions[0] < pixelDimensions[1]
-                                    ? pixelDimensions
-                                    : [pixelDimensions[1], pixelDimensions[0]];
-                            studRowKey =
-                                pixelHex +
-                                "_" +
-                                sortedPixelDimensions[0] +
-                                PLATE_DIMENSIONS_DEPTH_SEPERATOR +
-                                sortedPixelDimensions[1];
-                            pieceCountsForTable[studRowKey] = (pieceCountsForTable[studRowKey] || 0) + 1;
-                        }
-                    });
-                });
-            } else {
-                pieceCountsForTable = usedPixelsStudMap;
-            }
-
-            const usedColors = Object.keys(pieceCountsForTable);
-            usedColors.sort();
-            usedColors.forEach((keyString) => {
-                const pieceKey = keyString.split("_");
-                const color = pieceKey[0];
-                const studRow = document.createElement("tr");
-                studRow.style = "height: 1px;";
-
-                const colorCell = document.createElement("td");
-                const colorSquare = getColorSquare(color);
-                colorCell.appendChild(colorSquare);
-                const colorLabel = document.createElement("small");
-                colorLabel.innerHTML = HEX_TO_COLOR_NAME[color] || color;
-                colorCell.appendChild(colorLabel);
-                studRow.appendChild(colorCell);
-
-                if (pieceKey.length > 1) {
-                    const dimensionsCell = document.createElement("td");
-                    dimensionsCell.style = "height: inherit;";
-                    const dimensionsCellChild = document.createElement("div");
-                    dimensionsCellChild.style =
-                        "height: 100%; display: flex; flex-direction:column; justify-content: center";
-                    const dimensionsCellChild2 = document.createElement("div");
-                    dimensionsCellChild2.style = "";
-                    dimensionsCellChild2.innerHTML = pieceKey[1];
-
-                    dimensionsCellChild.appendChild(dimensionsCellChild2);
-                    dimensionsCell.appendChild(dimensionsCellChild);
-                    studRow.appendChild(dimensionsCell);
-                }
-
-                const numberCell = document.createElement("td");
-                numberCell.style = "height: inherit;";
-                const numberCellChild = document.createElement("div");
-                numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center";
-                const numberCellChild2 = document.createElement("div");
-                numberCellChild2.style = "";
-                numberCellChild2.innerHTML = pieceCountsForTable[keyString];
-
-                numberCellChild.appendChild(numberCellChild2);
-                numberCell.appendChild(numberCellChild);
-                studRow.appendChild(numberCell);
-
-                usedPixelsTableBody.appendChild(studRow);
-            });
-
-            const missingPixelsTableBody = document.getElementById("studs-missing-table-body");
-            missingPixelsTableBody.innerHTML = "";
-
-            let missingPixelsExist = false;
-            if (!shouldSideStepStep4) {
-                // create stud map missing pieces table
-                const missingPixelsStudMap = studMapDifference(
-                    getUsedPixelsStudMap(
-                        isBleedthroughEnabled()
-                            ? revertDarkenedImage(
-                                  step3PixelArray,
-                                  getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
-                              )
-                            : step3PixelArray
-                    ),
-                    selectedStudMap
-                );
-                const usedColors = Object.keys(missingPixelsStudMap);
-                usedColors.sort();
-                usedColors.forEach((color) => {
-                    if (missingPixelsStudMap[color] > 0) {
-                        missingPixelsExist = true;
-                        const studRow = document.createElement("tr");
-                        studRow.style = "height: 1px;";
-
-                        const colorCell = document.createElement("td");
-                        const colorSquare = getColorSquare(color);
-                        colorCell.appendChild(colorSquare);
-                        const colorLabel = document.createElement("small");
-                        colorLabel.innerHTML = HEX_TO_COLOR_NAME[color] || color;
-                        colorCell.appendChild(colorLabel);
-                        studRow.appendChild(colorCell);
-
-                        const numberCell = document.createElement("td");
-                        numberCell.style = "height: inherit;";
-                        const numberCellChild = document.createElement("div");
-                        numberCellChild.style =
-                            "height: 100%; display: flex; flex-direction:column; justify-content: center";
-                        const numberCellChild2 = document.createElement("div");
-                        numberCellChild2.style = "";
-                        numberCellChild2.innerHTML = missingPixelsStudMap[color];
-
-                        numberCellChild.appendChild(numberCellChild2);
-                        numberCell.appendChild(numberCellChild);
-                        studRow.appendChild(numberCell);
-
-                        missingPixelsTableBody.appendChild(studRow);
+        // create stud map result table
+        const usedPixelsStudMap = getUsedPixelsStudMap(pixelsToDraw);
+        const usedPixelsTableBody = document.getElementById("studs-used-table-body");
+        usedPixelsTableBody.innerHTML = "";
+        const variablePixelsUsed = ("" + selectedPixelPartNumber).match("^variable.*$");
+        document.getElementById("pieces-used-dimensions-header").hidden = !variablePixelsUsed;
+        let pieceCountsForTable = {}; // map piece identifier strings to counts
+        if (variablePixelsUsed) {
+            const pixelMatrix = convertPixelArrayToMatrix(pixelsToDraw, targetResolution[0]);
+            step3VariablePixelPieceDimensions.forEach((row, i) => {
+                row.forEach((pixelDimensions, j) => {
+                    if (pixelDimensions != null) {
+                        const pixelRGB = pixelMatrix[i][j];
+                        const pixelHex = rgbToHex(pixelRGB[0], pixelRGB[1], pixelRGB[2]);
+                        const sortedPixelDimensions =
+                            pixelDimensions[0] < pixelDimensions[1]
+                                ? pixelDimensions
+                                : [pixelDimensions[1], pixelDimensions[0]];
+                        studRowKey =
+                            pixelHex +
+                            "_" +
+                            sortedPixelDimensions[0] +
+                            PLATE_DIMENSIONS_DEPTH_SEPERATOR +
+                            sortedPixelDimensions[1];
+                        pieceCountsForTable[studRowKey] = (pieceCountsForTable[studRowKey] || 0) + 1;
                     }
                 });
-            }
-            document.getElementById("studs-missing-container").hidden = !missingPixelsExist;
+            });
+        } else {
+            pieceCountsForTable = usedPixelsStudMap;
+        }
 
-            if (document.getElementById("step-4-depth-tab").className.includes("active")) {
-                setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
+        const usedColors = Object.keys(pieceCountsForTable);
+        usedColors.sort();
+        usedColors.forEach((keyString) => {
+            const pieceKey = keyString.split("_");
+            const color = pieceKey[0];
+            const studRow = document.createElement("tr");
+            studRow.style = "height: 1px;";
+
+            const colorCell = document.createElement("td");
+            const colorSquare = getColorSquare(color);
+            colorCell.appendChild(colorSquare);
+            const colorLabel = document.createElement("small");
+            colorLabel.innerHTML = HEX_TO_COLOR_NAME[color] || color;
+            colorCell.appendChild(colorLabel);
+            studRow.appendChild(colorCell);
+
+            if (pieceKey.length > 1) {
+                const dimensionsCell = document.createElement("td");
+                dimensionsCell.style = "height: inherit;";
+                const dimensionsCellChild = document.createElement("div");
+                dimensionsCellChild.style =
+                    "height: 100%; display: flex; flex-direction:column; justify-content: center";
+                const dimensionsCellChild2 = document.createElement("div");
+                dimensionsCellChild2.style = "";
+                dimensionsCellChild2.innerHTML = pieceKey[1];
+
+                dimensionsCellChild.appendChild(dimensionsCellChild2);
+                dimensionsCell.appendChild(dimensionsCellChild);
+                studRow.appendChild(dimensionsCell);
             }
-            if (asyncCallback) {
-                await asyncCallback();
-            }
-            enableInteraction();
-        }, 1); // TODO: find better way to check that input is finished
+
+            const numberCell = document.createElement("td");
+            numberCell.style = "height: inherit;";
+            const numberCellChild = document.createElement("div");
+            numberCellChild.style = "height: 100%; display: flex; flex-direction:column; justify-content: center";
+            const numberCellChild2 = document.createElement("div");
+            numberCellChild2.style = "";
+            numberCellChild2.innerHTML = pieceCountsForTable[keyString];
+
+            numberCellChild.appendChild(numberCellChild2);
+            numberCell.appendChild(numberCellChild);
+            studRow.appendChild(numberCell);
+
+            usedPixelsTableBody.appendChild(studRow);
+        });
+
+        const missingPixelsTableBody = document.getElementById("studs-missing-table-body");
+        missingPixelsTableBody.innerHTML = "";
+
+        let missingPixelsExist = false;
+        if (!shouldSideStepStep4) {
+            // create stud map missing pieces table
+            const missingPixelsStudMap = studMapDifference(
+                getUsedPixelsStudMap(
+                    isBleedthroughEnabled()
+                        ? revertDarkenedImage(
+                              step3PixelArray,
+                              getDarkenedStudsToStuds(ALL_BRICKLINK_SOLID_COLORS.map((color) => color.hex))
+                          )
+                        : step3PixelArray
+                ),
+                selectedStudMap
+            );
+            const usedColors = Object.keys(missingPixelsStudMap);
+            usedColors.sort();
+            usedColors.forEach((color) => {
+                if (missingPixelsStudMap[color] > 0) {
+                    missingPixelsExist = true;
+                    const studRow = document.createElement("tr");
+                    studRow.style = "height: 1px;";
+
+                    const colorCell = document.createElement("td");
+                    const colorSquare = getColorSquare(color);
+                    colorCell.appendChild(colorSquare);
+                    const colorLabel = document.createElement("small");
+                    colorLabel.innerHTML = HEX_TO_COLOR_NAME[color] || color;
+                    colorCell.appendChild(colorLabel);
+                    studRow.appendChild(colorCell);
+
+                    const numberCell = document.createElement("td");
+                    numberCell.style = "height: inherit;";
+                    const numberCellChild = document.createElement("div");
+                    numberCellChild.style =
+                        "height: 100%; display: flex; flex-direction:column; justify-content: center";
+                    const numberCellChild2 = document.createElement("div");
+                    numberCellChild2.style = "";
+                    numberCellChild2.innerHTML = missingPixelsStudMap[color];
+
+                    numberCellChild.appendChild(numberCellChild2);
+                    numberCell.appendChild(numberCellChild);
+                    studRow.appendChild(numberCell);
+
+                    missingPixelsTableBody.appendChild(studRow);
+                }
+            });
+        }
+        document.getElementById("studs-missing-container").hidden = !missingPixelsExist;
+
+        if (document.getElementById("step-4-depth-tab").className.includes("active")) {
+            setTimeout(create3dPreview, 50); // TODO: find better way to check that input is finished
+        }
+        if (asyncCallback) {
+            asyncCallback();
+        }
+        enableInteraction();
     } catch (_e) {
         enableInteraction();
     }
@@ -2752,46 +2745,40 @@ function triggerDepthMapGeneration() {
         CNN_INPUT_IMAGE_WIDTH,
         CNN_INPUT_IMAGE_HEIGHT
     );
-    setTimeout(() => {
-        const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
-        worker.postMessage({
-            inputPixelArray,
-        });
+    const inputPixelArray = getPixelArrayFromCanvas(webWorkerInputCanvas);
+    worker.postMessage({
+        inputPixelArray,
+    });
 
-        worker.addEventListener("message", (e) => {
-            const { result, loadingMessage } = e.data;
-            if (result != null) {
-                webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
-                webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
-                drawPixelsOnCanvas(result, webWorkerOutputCanvas);
-                setTimeout(() => {
-                    inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
-                    inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
-                    inputDepthCanvasContext.drawImage(
-                        webWorkerOutputCanvas,
-                        0,
-                        0,
-                        CNN_INPUT_IMAGE_WIDTH,
-                        CNN_INPUT_IMAGE_HEIGHT,
-                        0,
-                        0,
-                        SERIALIZE_EDGE_LENGTH,
-                        SERIALIZE_EDGE_LENGTH
-                    );
-                    setTimeout(() => {
-                        loadingMessageComponent.hidden = true;
-                        enableInteraction();
-                        overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
-                        runStep1();
-                    }, 50); // TODO: find better way to check that input is finished
-                }, 50); // TODO: find better way to check that input is finished
-            } else if (loadingMessage != null) {
-                loadingMessageComponent.innerHTML = loadingMessage;
-            } else {
-                console.log("Message from web worker: ", e.data);
-            }
-        });
-    }, 50); // TODO: find better way to check that input is finished
+    worker.addEventListener("message", (e) => {
+        const { result, loadingMessage } = e.data;
+        if (result != null) {
+            webWorkerOutputCanvas.width = CNN_INPUT_IMAGE_WIDTH;
+            webWorkerOutputCanvas.height = CNN_INPUT_IMAGE_HEIGHT;
+            drawPixelsOnCanvas(result, webWorkerOutputCanvas);
+            inputDepthCanvas.width = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvas.height = SERIALIZE_EDGE_LENGTH;
+            inputDepthCanvasContext.drawImage(
+                webWorkerOutputCanvas,
+                0,
+                0,
+                CNN_INPUT_IMAGE_WIDTH,
+                CNN_INPUT_IMAGE_HEIGHT,
+                0,
+                0,
+                SERIALIZE_EDGE_LENGTH,
+                SERIALIZE_EDGE_LENGTH
+            );
+            loadingMessageComponent.hidden = true;
+            enableInteraction();
+            overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
+            runStep1();
+        } else if (loadingMessage != null) {
+            loadingMessageComponent.innerHTML = loadingMessage;
+        } else {
+            console.log("Message from web worker: ", e.data);
+        }
+    });
 }
 
 document.getElementById("generate-depth-image").addEventListener("click", triggerDepthMapGeneration);
@@ -2830,14 +2817,6 @@ function handleInputImage(e, dontClearDepth, dontLog) {
                 inputDepthCanvasContext.fillStyle = "black";
                 inputDepthCanvasContext.fillRect(0, 0, inputDepthCanvas.width, inputDepthCanvas.height);
             }
-        };
-        inputImage.src = event.target.result;
-        document.getElementById("steps-row").hidden = false;
-        document.getElementById("input-image-selector").innerHTML = "Reselect Input Image";
-        document.getElementById("image-input-new").appendChild(document.getElementById("image-input"));
-        document.getElementById("image-input-card").hidden = true;
-        document.getElementById("run-example-input-container").hidden = true;
-        setTimeout(() => {
             step1CanvasUpscaled.width = SERIALIZE_EDGE_LENGTH;
             step1CanvasUpscaled.height = Math.floor((SERIALIZE_EDGE_LENGTH * inputImage.height) / inputImage.width);
             step1CanvasUpscaledContext.drawImage(
@@ -2855,8 +2834,13 @@ function handleInputImage(e, dontClearDepth, dontLog) {
             overridePixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
             overrideDepthPixelArray = new Array(targetResolution[0] * targetResolution[1] * 4).fill(null);
             initializeCropper();
-            runStep1();
-        }, 50); // TODO: find better way to check that input is finished
+        };
+        inputImage.src = event.target.result;
+        document.getElementById("steps-row").hidden = false;
+        document.getElementById("input-image-selector").innerHTML = "Reselect Input Image";
+        document.getElementById("image-input-new").appendChild(document.getElementById("image-input"));
+        document.getElementById("image-input-card").hidden = true;
+        document.getElementById("run-example-input-container").hidden = true;
 
         if (!dontLog) {
             perfLoggingDatabase.ref("input-image-count/total").transaction(incrementTransaction);
@@ -2888,9 +2872,7 @@ function handleInputDepthMapImage(e) {
             );
         };
         inputImage.src = event.target.result;
-        setTimeout(() => {
-            runStep1();
-        }, 50); // TODO: find better way to check that input is finished
+        runStep1();
 
         // TODO: log for perf estimation?
     };
@@ -2934,20 +2916,18 @@ document.getElementById("run-example-input").addEventListener("click", () => {
                     );
                 };
                 inputDepthImage.src = depthImageURL;
-                setTimeout(() => {
-                    fetch(EXAMPLES_BASE_URL + example.colorFile)
-                        .then((response) => response.blob())
-                        .then((colorImage) => {
-                            // use an object url to get around possible bad browser caching race conditions
-                            const colorImageURL = URL.createObjectURL(colorImage);
-                            const e = {
-                                target: {
-                                    files: [colorImage],
-                                },
-                            };
-                            handleInputImage(e, true, true);
-                        });
-                }, 50); // TODO: find better way to check that input is finished
+                fetch(EXAMPLES_BASE_URL + example.colorFile)
+                    .then((response) => response.blob())
+                    .then((colorImage) => {
+                        // use an object url to get around possible bad browser caching race conditions
+                        const colorImageURL = URL.createObjectURL(colorImage);
+                        const e = {
+                            target: {
+                                files: [colorImage],
+                            },
+                        };
+                        handleInputImage(e, true, true);
+                    });
             };
             depthReader.readAsDataURL(depthImage);
         });
