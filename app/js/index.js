@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "v2022.12.11";
+const VERSION_NUMBER = "Monochrome-instructions-testing-only";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;
@@ -2350,6 +2350,7 @@ function runStep4(asyncCallback) {
 }
 
 function addWaterMark(pdf, isHighQuality) {
+    return;
     for (let i = 0; i < pdf.internal.getNumberOfPages(); i++) {
         pdf.setPage(i + 1);
         pdf.setFontSize(isHighQuality ? 20 : 10);

@@ -1166,11 +1166,11 @@ function generateInstructionPage(
                 x - radius,
                 y - radius,
                 radius,
-                pixelHex,
-                inverseHex(pixelHex),
+                '#000000',
+                '#FFFFFF',
                 PIXEL_TYPE_TO_FLATTENED[pixelType]
             );
-            ctx.fillStyle = inverseHex(pixelHex);
+            ctx.fillStyle = '#FFFFFF';
             ctx.fillText(
                 studToNumber[pixelHex],
                 x - (scalingFactor * (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) / 8,
