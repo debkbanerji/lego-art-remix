@@ -1,4 +1,4 @@
-const VERSION_NUMBER = "Monochrome-instructions-testing-only";
+const VERSION_NUMBER = "v2023.2.7";
 document.getElementById("version-number").innerHTML = VERSION_NUMBER;
 
 let perfLoggingDatabase;

@@ -1166,11 +1166,11 @@ function generateInstructionPage(
                 x - radius,
                 y - radius,
                 radius,
-                '#000000',
-                '#FFFFFF',
+                window.location.href.includes("forceMonochromeInstructions")? '#000000' : pixelHex,
+                window.location.href.includes("forceMonochromeInstructions")? '#FFFFFF' : inverseHex(pixelHex),
                 PIXEL_TYPE_TO_FLATTENED[pixelType]
             );
-            ctx.fillStyle = '#FFFFFF';
+            ctx.fillStyle = window.location.href.includes("forceMonochromeInstructions") ? '#FFFFFF' : inverseHex(pixelHex);
             ctx.fillText(
                 studToNumber[pixelHex],
                 x - (scalingFactor * (1 + Math.floor(studToNumber[pixelHex] / 2) / 6)) / 8,
