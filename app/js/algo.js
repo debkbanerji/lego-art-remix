@@ -1166,8 +1166,8 @@ function generateInstructionPage(
                 x - radius,
                 y - radius,
                 radius,
-                window.location.href.includes("forceMonochromeInstructions")? '#000000' : pixelHex,
-                window.location.href.includes("forceMonochromeInstructions")? '#FFFFFF' : inverseHex(pixelHex),
+                window.location.href.includes("forceMonochromeInstructions") ? '#000000' : pixelHex,
+                window.location.href.includes("forceMonochromeInstructions") ? '#FFFFFF' : inverseHex(pixelHex),
                 PIXEL_TYPE_TO_FLATTENED[pixelType]
             );
             ctx.fillStyle = window.location.href.includes("forceMonochromeInstructions") ? '#FFFFFF' : inverseHex(pixelHex);
