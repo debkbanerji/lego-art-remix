@@ -391,7 +391,7 @@ let ALL_BRICKLINK_SOLID_COLORS = [
     },
     {
         name: "Dark Pink",
-        hex: "#c87080",
+        hex: "#e167b4",
         id: 47,
     },
     {
