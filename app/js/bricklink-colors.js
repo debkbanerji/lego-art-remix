@@ -445,7 +445,7 @@ let ALL_BRICKLINK_SOLID_COLORS = [
     // },
     {
         name: "Medium Tan",
-        hex: "#D9C594",
+        hex: "#d9c594",
         id: 241,
     },
 ];
@@ -521,6 +521,7 @@ const KNOWN_BRICKLINK_STUD_COLOR_NAMES = [
     "Glow In Dark White",
     "Medium Lavender", // manually added from Batman
     "Light Aqua", // manually added from Batman
+    "Medium Tan",// manually added
 ];
 
 const KNOWN_BRICKLINK_TILE_COLOR_NAMES = [
