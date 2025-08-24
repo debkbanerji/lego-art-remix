@@ -156,7 +156,7 @@ let targetResolution = [
 const PIXEL_WIDTH_CM = 0.8;
 const INCHES_IN_CM = 0.393701;
 const SCALING_FACTOR = 40;
-const PLATE_WIDTH = 16;
+const PLATE_WIDTH = 8;
 
 document.getElementById("width-text").title = `${(targetResolution[0] * PIXEL_WIDTH_CM).toFixed(1)} cm, ${(
     targetResolution[0] *
